@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(145deg, #000, #035925);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        .signup-box {
+            width: 100%;
+            max-width: 550px;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in-out;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #ddd;
+        }
+        input {
+            display: block;
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            background-color: #222;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input:focus {
+            border-color: #56cfe1;
+            box-shadow: 0 0 8px rgba(86, 207, 225, 0.5);
+            outline: none;
+        }
+        button {
+            background-color: #035925;
+            color: #fff;
+            padding: 0.8rem;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        button:hover {
+            background-color: #023b1a;
+            box-shadow: 0 4px 10px rgba(0, 255, 0, 0.5);
+        }
+        a {
+            display: block;
+            margin-top: 1rem;
+            text-align: center;
+            color: #56cfe1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        a:hover {
+            color: #29a3d1;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width: 576px) {
+            body {
+                padding: 1rem;
+            }
+            .signup-box {
+                padding: 1.5rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-box">
+        <h2>Signup</h2>
+        <% if (error) { %>
+            <div style="background-color: #a94442; padding: 0.8rem; border-radius: 4px; margin-bottom: 1rem; color: #fff;">
+                <%= error %>
+            </div>
+        <% } %>
+        <form action="/auth/signup" method="POST">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            <label for="confirm-password">Confirm Password</label>
+        <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+
+            <button type="submit">Signup</button>
+        </form>
+        <a href="/auth/login">Already have an account? Login</a>
+    </div>
+</body>
+</html>
+
+
+

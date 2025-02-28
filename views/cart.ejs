@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .navbar-custom {
+            background-color: #000;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #fff;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #ccc;
+        }
+
+        .navbar-toggler {
+            background-color: #fff;
+            border: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"%3E%3Cpath stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /%3E%3C/svg%3E');
+        }
+
+        .cart-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item h5 {
+            font-size: 1.2rem;
+            margin: 0;
+        }
+
+        .cart-item p {
+            margin: 0;
+        }
+
+        .cart-item .btn {
+            font-size: 0.9rem;
+        }
+
+        .total {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #035925;
+        }
+
+        .btn-custom {
+            background-color: #000;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: #444;
+        }
+
+        .btn-checkout {
+            background-color: #035925;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-checkout:hover {
+            background-color: #028a1b;
+        }
+
+        .footer {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .btn-explore {
+            background-color: #000;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-explore:hover {
+            background-color: #444;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+        }
+
+        .modal-footer .btn {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom mb-4">
+        <a class="navbar-brand" href="/">
+            <img src="/images/Cloud.png" sty alt="Logo" style="height: 70px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="content container mt-5">
+        <h1 class="mb-4">Shopping Cart</h1>
+
+        <!-- Cart Items -->
+        <div class="cart-items">
+            <% if (cart && cart.length> 0) { %>
+                <% cart.forEach(function(item) { %>
+                    <div class="cart-item">
+                        <div>
+                            <h5>
+                                <%= item.productId.name %>
+                            </h5>
+                            <p>Price: KES <%= item.productId.price.toFixed(2) %>
+                            </p>
+                            <p>Quantity: <%= item.quantity %>
+                            </p>
+                        </div>
+                        <div>
+                            <!-- Remove Button with AJAX -->
+                            <button class="btn btn-custom" onclick="removeItem('<%= item._id %>')">
+                                <i class="fas fa-trash-alt"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    <% }); %>
+
+                        <p class="total">Total: KES <%= total.toFixed(2) %>
+                        </p>
+
+                        <!-- Checkout Button -->
+                        <div class="row mb-4">
+                            <div class="col-md-12 text-right">
+                                <button class="btn btn-checkout" data-toggle="modal" data-target="#checkoutModal">
+                                    <i class="fas fa-credit-card"></i> Proceed to Checkout
+                                </button>
+                            </div>
+                        </div>
+                        <% } else { %>
+                            <p>Your cart is empty.</p>
+                            <div class="text-center mt-4">
+                                <a href="/products" class="btn btn-explore"><i class="fas fa-search"></i> Explore
+                                    Products</a>
+                            </div>
+                            <% } %>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Greenleaf Haven. All rights reserved.</p>
+    </footer>
+
+    <!-- Checkout Modal -->
+    <div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checkoutModalLabel"><i class="fas fa-check-circle"></i> Checkout</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="checkoutForm" method="POST" action="/checkout">
+                        <div class="form-group">
+                            <label for="customerName">Name</label>
+                            <input type="text" class="form-control" id="customerName" name="customerName"
+                                placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerEmail">Email</label>
+                            <input type="email" class="form-control" id="customerEmail" name="customerEmail"
+                                placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerPhone">Phone Number</label>
+                            <input type="tel" class="form-control" id="customerPhone" name="customerPhone"
+                                placeholder="Your Phone Number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerLocation">Location</label>
+                            <input type="text" class="form-control" id="customerLocation" name="customerLocation"
+                                placeholder="Your Apartment name and location" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cartTotal">Cart Total</label>
+                            <input type="number" class="form-control" id="cartTotal" name="cartTotal"
+                                value="<%= total.toFixed(2) %>" readonly>
+                        </div>
+                        <div id="umsPayContainer"></div> <!-- Placeholder for UMS Pay form -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="button" class="btn btn-checkout" id="confirmCheckout">
+                        <i class="fas fa-check"></i> Confirm Checkout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        function removeItem(itemId) {
+            fetch(`/cart/remove/${itemId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        toastr.error('Failed to remove item. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    toastr.error('An error occurred. Please try again.');
+                });
+        }
+
+        document.getElementById('confirmCheckout').addEventListener('click', function () {
+            document.getElementById('checkoutForm').submit();
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            function updateAmountField() {
+                const amountField = document.getElementById('cartTotal');
+                if (amountField) {
+                    amountField.value = cartTotal;
+                }
+            }
+
+            document.getElementById('checkoutModal').addEventListener('shown.bs.modal', function () {
+                updateAmountField();
+            });
+
+            document.getElementById('confirmCheckout').addEventListener('click', async function () {
+                const form = document.getElementById('checkoutForm');
+                const formData = new FormData(form);
+                const data = {};
+
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                // Basic client-side validation
+                if (!data.customerName || !data.customerEmail || !data.customerPhone || !data.customerLocation || !data.cartTotal) {
+                    toastr.error('Please fill out all required fields.');
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/checkout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        // Redirect to payment URL or display success message
+                        window.location.href = result.paymentUrl;
+                    } else {
+                        // Handle server-side validation errors
+                        toastr.error(result.message || 'An error occurred. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error during checkout:', error);
+                    toastr.error('An error occurred. Please try again later.');
+                }
+            });
+        });
+
+        // Get the button element
+        const button = $('#confirmCheckout');
+
+        // Add an event listener to the button
+        button.on('click', function () {
+            // Change the button text to "Processing"
+            button.html('<i class="fas fa-spinner fa-spin"></i> Processing');
+            // Disable the button to prevent multiple clicks
+            button.prop('disabled', true);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const cartItems = [
+                { id: 1, price: 10.99, quantity: 2 },
+                { id: 2, price: 5.99, quantity: 1 },
+                { id: 3, price: 7.99, quantity: 3 },
+            ];
+
+            function calculateCartTotal() {
+                let total = 0;
+                cartItems.forEach((item) => {
+                    total += item.price * item.quantity;
+                });
+                return total.toFixed(2);
+            }
+
+            const cartTotalElement = document.getElementById('cart-total');
+            cartTotalElement.textContent = `Cart Total: $${calculateCartTotal()}`;
+
+            // Update cart total when items are added or removed
+            cartItems.forEach((item) => {
+                const addItemButton = document.querySelector(`#add-item-${item.id}`);
+                addItemButton.addEventListener('click', () => {
+                    item.quantity++;
+                    cartTotalElement.textContent = `Cart Total: $${calculateCartTotal()}`;
+                });
+
+                const removeItemButton = document.querySelector(`#remove-item-${item.id}`);
+                removeItemButton.addEventListener('click', () => {
+                    item.quantity--;
+                    if (item.quantity <= 0) {
+                        cartItems = cartItems.filter((i) => i.id !== item.id);
+                    }
+                    cartTotalElement.textContent = `Cart Total: $${calculateCartTotal()}`;
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>

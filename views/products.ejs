@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Greenleaf Haven</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- FontAwesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #000000;
+        }
+
+        .navbar-brand img {
+            height: 70px;
+        }
+
+        .navbar-brand,
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+        }
+
+        .navbar-nav .nav-link i {
+            margin-right: 8px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card-img-top {
+            border-radius: 10px 10px 0 0;
+        }
+
+        .card-body {
+            background-color: #1c1c1c;
+            color: #ffffff;
+        }
+
+        .card-footer {
+            background-color: #2d2d2d;
+            border-top: none;
+        }
+
+        .btn-primary {
+            background-color: #035925;
+            border-color: #035925;
+        }
+
+        .btn-primary:hover {
+            background-color: #028e39;
+            border-color: #028e39;
+        }
+
+        .btn-dark {
+            background-color: #1c1c1c;
+            border-color: #1c1c1c;
+        }
+
+        .btn-dark:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('path_to_hero_image.jpg') no-repeat center center/cover;
+            padding: 50px 0;
+            color: #ffffff;
+            text-align: center;
+            margin-top: 70px;
+            /* Adjusted for better visibility on smaller screens */
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            /* Adjusted for smaller screens */
+        }
+
+        .cart-icon {
+            color: #ffffff;
+        }
+
+        .cart-icon:hover {
+            color: #d4edda;
+        }
+
+        .modal-body {
+            color: #000000;
+        }
+
+        @media (min-width: 768px) {
+            .col-md-4 {
+                flex: 0 0 33.33%;
+                max-width: 33.33%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 1.8rem;
+                /* Smaller font size for mobile */
+            }
+
+            .navbar-brand img {
+                height: 50px;
+                /* Smaller logo for mobile */
+            }
+
+            .card-img-top {
+                height: 150px;
+                /* Smaller image height for mobile */
+            }
+
+            .btn-primary,
+            .btn-dark {
+                font-size: 0.875rem;
+                /* Smaller button font size for mobile */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Greenleaf Haven Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+                    </li>
+
+                    <% if (user) { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </li>
+                        <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Signup</a>
+                            </li>
+                            <% } %>
+                                <li class="nav-item">
+                                    <a class="nav-link cart-icon" href="/cart">
+                                        <i class="fas fa-shopping-cart"></i>
+                                    </a>
+                                </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title"><strong>Products</strong></h1>
+    </section>
+
+    <div class="container mt-5">
+        <div class="row">
+            <% products.forEach(product=> { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" data-product-id="<%= product._id %>">
+                        <img src="<%= product.imageUrl %>" class="card-img-top" alt="Product Image"
+                            style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= product.name %>
+                            </h5>
+                            <p class="card-text">
+                                <%= product.shortDescription %>
+                            </p>
+                            <p class="card-text text-success">KES <%= product.price.toFixed(2) %>
+                            </p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button class="btn btn-primary view-details">View Details</button>
+                            <button class="btn btn-dark add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+    </div>
+
+    <!-- Modal for Product Details -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body row">
+                    <div class="col-md-6">
+                        <img id="product-image" src="" alt="Product Image" class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-6">
+                        <h2 id="product-name"></h2>
+                        <p id="product-description"></p>
+                        <p id="product-price"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        .modal-content {
+            background-color: rgb(120, 120, 120);
+        }
+    </style>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add to Cart functionality
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const productId = this.closest('.card').getAttribute('data-product-id');
+    
+                    try {
+                        const response = await fetch(`/cart/add/${productId}`, { method: 'POST' });
+    
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+    
+                        const data = await response.json();
+                        toastr.success('Product added to cart successfully!');
+                        updateCartCount(); // Update cart count after adding a product
+                    } catch (error) {
+                        console.error('Error adding product to cart:', error);
+                        toastr.error('An error occurred while adding the product to the cart.');
+                    }
+                });
+            });
+    
+            // View Details functionality
+            document.querySelectorAll('.view-details').forEach(button => {
+                button.addEventListener('click', function () {
+                    const card = this.closest('.card');
+                    const productId = card.getAttribute('data-product-id');
+    
+                    fetch(`/products/${productId}`)
+                        .then(response => response.json())
+                        .then(product => {
+                            document.getElementById('product-name').textContent = product.name;
+                            document.getElementById('product-description').textContent = product.description;
+                            document.getElementById('product-price').textContent = `KES ${product.price.toFixed(2)}`;
+                            document.getElementById('product-image').src = product.imageUrl;
+                            new bootstrap.Modal(document.getElementById('productModal')).show();
+                        })
+                        .catch(error => {
+                            console.error('Error fetching product details:', error);
+                            toastr.error('An error occurred while fetching product details.');
+                        });
+                });
+            });
+    
+            // Function to fetch cart count from the server
+            function fetchCartCount() {
+                fetch('/cart-count', {
+                    method: 'GET',
+                    credentials: 'same-origin' // Include credentials if authentication is required
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch cart count');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.cartCount !== undefined) {
+                        // Update the correct cart count element with the correct ID
+                        document.getElementById('cart-count').innerText = data.cartCount;
+                    } else {
+                        console.error('Error: Cart count not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching cart count:', error);
+                });
+            }
+    
+            // Call the function to fetch cart count when the page loads
+            document.addEventListener('DOMContentLoaded', fetchCartCount);
+    
+            // Function to update the cart count dynamically when an item is added
+            function updateCartCount() {
+                fetchCartCount();
+            }
+    
+            // Call updateCartCount initially to set the correct count on page load
+            document.addEventListener('DOMContentLoaded', updateCartCount);
+        });
+    </script>
+    
+</body>
+
+</html>

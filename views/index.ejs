@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud 420 Store</title>
+    <!-- Include Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        /* Custom styles */
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #000000;
+            color: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: box-shadow 0.3s;
+            height: 60px;
+        }
+
+        header.scrolled {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-brand img {
+            height: 40px;
+        }
+
+        nav a {
+            color: #ffffff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #035925, #000000);
+            height: 50vh;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: bold;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #000f06;
+            border-color: #003615;
+            border-radius: 5px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #028e39;
+            border-color: #028e39;
+        }
+
+        .features-section {
+            padding: 60px 20px;
+            background-color: #111111;
+        }
+
+        .feature-card {
+            background-color: #222222;
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background-color: #333333;
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #035925;
+            margin-bottom: 15px;
+        }
+
+        .cta-button {
+            background-color: #035925;
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+        }
+
+        .cta-button:hover {
+            background-color: #028e39;
+        }
+
+        .footer {
+            background-color: #000000;
+            color: #ffffff;
+            text-align: center;
+            margin-top: auto;
+            height: 20px;
+            font-size: smaller;
+            
+        }
+
+        .testimonial-card {
+            background-color: #222222;
+            padding: 20px;
+            border-radius: 10px;
+            color: #ffffff;
+            text-align: center;
+            margin: 0 auto;
+            max-width: 80%;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="#">
+                <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Greenleaf Haven Logo">
+            </a>
+            <button 
+    class="navbar-toggler custom-toggler" 
+    type="button" 
+    data-bs-toggle="collapse" 
+    data-bs-target="#navbarNav" 
+    aria-controls="navbarNav" 
+    aria-expanded="false" 
+    aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+</button>
+<style>
+    .custom-toggler {
+    border: none;
+    background-color: transparent;
+    margin-right: 20px;
+}
+
+.custom-toggler .navbar-toggler-icon {
+    
+    width: 30px;
+    height: 30px;
+    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%280, 255, 0, 0.8%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+}
+
+.custom-toggler:focus {
+    outline: none; /* Removes focus outline */
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.8); /* Adds a glowing effect */
+}
+
+</style>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Signup</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Welcome to Cloud 420 Store</h1>
+            <p class="hero-subtitle">Premium products delivered to your doorstep!</p>
+            <a href="/products" class="btn btn-primary btn-lg">Shop Now</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Choose Us?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-leaf"></i>
+                        <h5>Organic Products</h5>
+                        <p>All-natural, chemical-free cannabis for a healthy experience.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-shipping-fast"></i>
+                        <h5>Fast Delivery</h5>
+                        <p>Get your orders delivered quickly and safely to your doorstep.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-star"></i>
+                        <h5>Top Quality</h5>
+                        <p>Premium products curated from the best growers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5 bg-dark text-center text-white">
+        <div class="container">
+            <h3>Testimonials</h3>
+            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="testimonial-card">
+                            <p>"Greenleaf Haven offers the best products. Fast delivery and excellent quality!"</p>
+                            <strong>- Happy Customer</strong>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="testimonial-card">
+                            <p>"The organic selection is top-notch. Highly recommend to everyone!"</p>
+                            <strong>- Satisfied Client</strong>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="testimonial-card">
+                            <p>"Exceptional service and reliable delivery every time."</p>
+                            <strong>- Loyal Customer</strong>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <div class="container-fluid py-5 bg-dark text-white text-center">
+        <h3>Get the Best Cannabis Products Online</h3>
+        <p>Order now and experience premium quality with fast delivery!</p>
+        <a href="/products" class="cta-button">Shop Our Collection</a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Greenleaf Haven. All rights reserved.</p>
+    </footer>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add shadow to navbar on scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            header.classList.toggle('scrolled', window.scrollY > 0);
+        });
+    </script>
+</body>
+
+</html>
