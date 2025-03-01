@@ -8,22 +8,17 @@ const rateLimit = require('express-rate-limit');
 const cors = require('cors');
 const compression = require('compression');
 const winston = require('winston');
-require('dotenv').config({ path: '/home/ubuntu/.env' });
+require('dotenv').config();
 const MongoStore = require('connect-mongo');
+const os = require('os');
 
 const app = express();
 app.set('view engine', 'ejs');
-
 app.set('trust proxy', 1);
-app.use(helmet());
 
 // Security middleware
 app.use(helmet());
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-app.use(limiter);
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
 app.use(cors({
   origin: ['https://cloud420.store', 'https://www.cloud420.store'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -33,8 +28,8 @@ app.use(compression());
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx')
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // Logging setup
 const logger = winston.createLogger({
@@ -44,8 +39,8 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   transports: [
-    new winston.transports.File({ filename: '/var/log/cloud420/error.log', level: 'error' }),
-    new winston.transports.File({ filename: '/var/log/cloud420/combined.log' }),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' }),
   ],
 });
 if (process.env.NODE_ENV !== 'production') {
@@ -57,17 +52,13 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'weed-secret',
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    secure: true, // Requires HTTPS
-    httpOnly: true,
-    sameSite: 'strict',
-  },
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx',
-    ttl: 24 * 60 * 60, // 1 day
+  cookie: { secure: process.env.NODE_ENV === 'production', httpOnly: true, sameSite: 'strict' },
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx',
+    ttl: 24 * 60 * 60,
   }),
 }));
 
-// Middleware
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -79,15 +70,7 @@ app.use(express.static('public', { maxAge: '1d' }));
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
-  res.locals.user = req.user; // Make user available in views
-  next();
-});
-
-// Block sensitive paths
-app.use((req, res, next) => {
-  if (/^\/(laravel|xampp|node_modules|main|docker)/.test(req.path)) {
-    return res.status(403).send('Forbidden');
-  }
+  res.locals.user = req.user;
   next();
 });
 
@@ -103,12 +86,15 @@ const checkoutRoutes = require('./routes/checkout');
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
-app.use('/api', orderRoutes);
 app.use('/payment', paymentRouter);
-app.use('/api', trackOrderRoute);
+app.use('/api/orders', orderRoutes);
+app.use('/api/track', trackOrderRoute);
 app.use('/', checkoutRoutes);
 
-// Routes remain the same (e.g., /initialize-order, /home, etc.)
+// Default route using index.ejs
+app.get('/', (req, res) => {
+  res.render('index', { title: 'Cloud420 Store' });
+});
 
 // Global error handler
 app.use((err, req, res, next) => {
@@ -116,11 +102,28 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something broke!');
 });
 
+// Handle unhandled errors
+process.on('uncaughtException', (err) => {
+  logger.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection:', reason);
+});
+
 // Start server
 const PORT = process.env.PORT || 4200;
+const getLocalIP = () => {
+  const interfaces = os.networkInterfaces();
+  for (const iface of Object.values(interfaces)) {
+    for (const details of iface) {
+      if (details.family === 'IPv4' && !details.internal) return details.address;
+    }
+  }
+  return '127.0.0.1';
+};
+
 app.listen(PORT, '0.0.0.0', () => {
-  const localIP = require('os').networkInterfaces()['eth0']?.[0]?.address || '127.0.0.1';
-  logger.info(`Weed Store is running at:
-    - Local: http://localhost:${PORT}
-    - Network: http://${localIP}:${PORT}`);
+  logger.info(`🚀 Cloud420 Store is running at:
+  - Local: http://localhost:${PORT}
+  - Network: http://${getLocalIP()}:${PORT}`);
 });
