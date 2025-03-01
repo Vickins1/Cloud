@@ -26,8 +26,7 @@ app.use(cors({
 }));
 app.use(compression());
 
-const uri = "mongodb://cloudUser:zCViAwgWa3E2px5Z@cluster0-shard-00-00.ryokh.mongodb.net:27017,cluster0-shard-00-01.ryokh.mongodb.net:27017,cluster0-shard-00-02.ryokh.mongodb.net:27017/Cloud-DB?ssl=true&replicaSet=atlas-67tjyi-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0";
-
+const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";
 
 async function createDatabaseAndCollections() {
     try {
