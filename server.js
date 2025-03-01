@@ -9,6 +9,7 @@ const cors = require('cors'); // Added for CORS
 const compression = require('compression'); // Added for compression
 const winston = require('winston'); // Added for logging
 require('dotenv').config({ path: '/home/ubuntu/.env' }); // Load from secure location
+const MongoStore = require('connect-mongo');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -28,10 +29,7 @@ app.use(cors({
 app.use(compression());
 
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
@@ -61,8 +59,7 @@ app.use(session({
     httpOnly: true,
     sameSite: 'strict',
   },
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx',
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx',
     ttl: 24 * 60 * 60, // 1 day
   }),
 }));
