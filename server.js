@@ -27,7 +27,26 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
 
+<<<<<<< HEAD
 // MongoDB connection URI
+=======
+// Security middleware
+app.use(helmet());
+app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+app.use(cors({
+  origin: ['https://cloud420.store', 'https://www.cloud420.store'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
+app.use(compression());
+
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "script-src 'self' https://cdn.jsdelivr.net;");
+  next();
+});
+
+
+>>>>>>> f26352d (code)
 const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";
 
 async function connectToDatabase() {
