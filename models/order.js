@@ -9,10 +9,10 @@ const orderSchema = new mongoose.Schema({
     }],
     status: { type: String, default: 'Pending' },
     estimatedDelivery: { type: Date }
-}, { timestamps: true }); // Automatically includes createdAt and updatedAt fields
+}, { timestamps: true });
 
-// Add indexes if you frequently query by certain fields
-orderSchema.index({ customerEmail: 1 }); // Index for fast lookups by customer email
+
+orderSchema.index({ customerEmail: 1 }); 
 
 const Order = mongoose.model('Order', orderSchema);
 

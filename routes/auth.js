@@ -23,7 +23,7 @@ router.post('/signup', async (req, res) => {
                 return res.redirect('/auth/signup?error=' + encodeURIComponent(err.message));
             }
             passport.authenticate('local')(req, res, () => {
-                res.redirect('/home');
+                res.redirect('/login');
             });
         });
     } catch (error) {

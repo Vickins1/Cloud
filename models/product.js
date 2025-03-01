@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
         required: true, 
         trim: true 
     },
-    stockQuantity: { type: Number, default: 0 } // <--- added stockQuantity field
+    stockQuantity: { type: Number, default: 0 } 
 }, {
     timestamps: true 
 });
