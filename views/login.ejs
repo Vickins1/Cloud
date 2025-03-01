@@ -124,5 +124,9 @@
 
         <a href="/auth/signup">Don't have an account? Sign up</a>
     </div>
+    <script nonce="<%= nonce %>">
+        console.log("This inline script is allowed with a nonce.");
+    </script>
+    
 </body>
 </html>

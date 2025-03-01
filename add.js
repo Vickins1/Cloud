@@ -1,26 +1,41 @@
-// seed.js
 const mongoose = require('mongoose');
 const Product = require('./models/product');
 
-mongoose.connect('mongodb://localhost:27017/Sphinx',)
+const MONGO_URI = 'mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0';
 
-const products = [
- 
-    {
-        name: 'Weed-cookie',
-        description: 'A calming indica strain for relaxation.',
-        price: 100.00,
-        imageUrl: '/images/cookie.png'
+// Connect to MongoDB
+async function connectDB() {
+    try {
+        await mongoose.connect(MONGO_URI);
+    } catch (err) {
+        console.error('MongoDB Connection Error:', err);
+        process.exit(1);
     }
-    // Add more products as needed
-];
+}
 
-Product.insertMany(products)
-    .then(() => {
+// Seed Products
+async function seedProducts() {
+    const products = [
+        {
+            name: 'Weed-Cake',
+            description: 'A delicious cake infused with cannabis.',
+            price: 1000.00,
+            imageUrl: '/images/cake.png'
+        }
+    ];
+
+    try {
+        await Product.insertMany(products);
         console.log('Products added successfully!');
-        mongoose.disconnect();
-    })
-    .catch(err => {
+    } catch (err) {
         console.error('Error adding products:', err);
+    } finally {
         mongoose.disconnect();
-    });
+    }
+}
+
+// Run the script
+(async () => {
+    await connectDB();
+    await seedProducts();
+})();

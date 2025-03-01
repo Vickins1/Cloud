@@ -5,12 +5,12 @@ const router = express.Router();
 
 // Render login page
 router.get('/login', (req, res) => {
-    res.render('login', { error: req.query.error }); // Pass error messages to the login page
+    res.render('login', { error: req.query.error });
 });
 
 // Render signup page
 router.get('/signup', (req, res) => {
-    res.render('signup', { error: req.query.error }); // Pass error messages to the signup page
+    res.render('signup', { error: req.query.error });
 });
 
 // Handle user sign-up
@@ -23,7 +23,7 @@ router.post('/signup', async (req, res) => {
                 return res.redirect('/auth/signup?error=' + encodeURIComponent(err.message));
             }
             passport.authenticate('local')(req, res, () => {
-                res.redirect('/login');
+                res.redirect('auth/login');
             });
         });
     } catch (error) {

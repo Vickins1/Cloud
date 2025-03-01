@@ -57,7 +57,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
   }
 });
 
-// Fetch a specific product by ID (used for the modal view)
+// Fetch a specific product by ID 
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);

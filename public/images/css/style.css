@@ -1,0 +1,115 @@
+body {
+       background-color: #000000;
+       color: #ffffff;
+       font-family: Arial, sans-serif;
+   }
+   
+   .navbar {
+       background-color: #000000;
+   }
+   
+   .navbar-brand img {
+       height: 70px;
+   }
+   
+   .navbar-brand,
+   .navbar-nav .nav-link {
+       color: #ffffff !important;
+   }
+   
+   .navbar-nav .nav-link i {
+       margin-right: 8px;
+   }
+   
+   .card {
+       border: none;
+       border-radius: 10px;
+   }
+   
+   .card-img-top {
+       border-radius: 10px 10px 0 0;
+   }
+   
+   .card-body {
+       background-color: #1c1c1c;
+       color: #ffffff;
+   }
+   
+   .card-footer {
+       background-color: #2d2d2d;
+       border-top: none;
+   }
+   
+   .btn-primary {
+       background-color: #035925;
+       border-color: #035925;
+   }
+   
+   .btn-primary:hover {
+       background-color: #028e39;
+       border-color: #028e39;
+   }
+   
+   .btn-dark {
+       background-color: #1c1c1c;
+       border-color: #1c1c1c;
+   }
+   
+   .btn-dark:hover {
+       background-color: #333;
+       border-color: #333;
+   }
+   
+   .hero-section {
+       background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/hero.jpg') no-repeat center center/cover;
+       padding: 50px 0;
+       color: #ffffff;
+       text-align: center;
+       margin-top: 70px;
+   }
+   
+   .hero-title {
+       font-size: 2.5rem;
+   }
+   
+   .cart-icon {
+       color: #ffffff;
+   }
+   
+   .cart-icon:hover {
+       color: #d4edda;
+   }
+   
+   .modal-body {
+       color: #000000;
+   }
+   
+   .modal-content {
+       background-color: rgb(120, 120, 120);
+   }
+   
+   @media (min-width: 768px) {
+       .col-md-4 {
+           flex: 0 0 33.33%;
+           max-width: 33.33%;
+       }
+   }
+   
+   @media (max-width: 768px) {
+       .hero-title {
+           font-size: 1.8rem;
+       }
+   
+       .navbar-brand img {
+           height: 50px;
+       }
+   
+       .card-img-top {
+           height: 150px;
+       }
+   
+       .btn-primary,
+       .btn-dark {
+           font-size: 0.875rem;
+       }
+   }
