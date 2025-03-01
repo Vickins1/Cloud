@@ -26,10 +26,42 @@ app.use(cors({
 }));
 app.use(compression());
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/Sphinx')
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
+const uri = "mongodb://cloudUser:zCViAwgWa3E2px5Z@cluster0-shard-00-00.ryokh.mongodb.net:27017,cluster0-shard-00-01.ryokh.mongodb.net:27017,cluster0-shard-00-02.ryokh.mongodb.net:27017/Cloud-DB?ssl=true&replicaSet=atlas-67tjyi-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0";
+
+
+async function createDatabaseAndCollections() {
+    try {
+        await mongoose.connect(uri);
+        console.log("Connected to MongoDB!");
+
+        const modelNames = mongoose.modelNames();
+
+        if (modelNames.length === 0) {
+            return;
+        }
+
+        const db = mongoose.connection.db;
+
+        for (const modelName of modelNames) {
+            const model = mongoose.model(modelName);
+
+            const collectionName = model.collection.collectionName;
+            const existingCollections = await db.listCollections({ name: collectionName }).toArray();
+
+            if (existingCollections.length > 0) {
+            } else {
+                await model.init();
+            }
+        }
+
+        console.log("Database and collections checked successfully!");
+    } catch (error) {
+        console.error("Error creating database and collections:", error);
+    }
+}
+
+createDatabaseAndCollections().catch(console.dir);
+
 
 // Logging setup
 const logger = winston.createLogger({
