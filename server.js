@@ -3,22 +3,25 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const flash = require('connect-flash');
 const passport = require('passport');
-const helmet = require('helmet'); // Added for security
-const rateLimit = require('express-rate-limit'); // Added for rate limiting
-const cors = require('cors'); // Added for CORS
-const compression = require('compression'); // Added for compression
-const winston = require('winston'); // Added for logging
-require('dotenv').config({ path: '/home/ubuntu/.env' }); // Load from secure location
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const cors = require('cors');
+const compression = require('compression');
+const winston = require('winston');
+require('dotenv').config({ path: '/home/ubuntu/.env' });
 const MongoStore = require('connect-mongo');
 
 const app = express();
 app.set('view engine', 'ejs');
 
+app.set('trust proxy', 1);
+app.use(helmet());
+
 // Security middleware
 app.use(helmet());
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP
+  windowMs: 15 * 60 * 1000,
+  max: 100,
 });
 app.use(limiter);
 app.use(cors({
