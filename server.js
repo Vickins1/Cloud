@@ -41,15 +41,7 @@ async function connectToDatabase() {
 }
 connectToDatabase();
 
-const getUser = async (userId) => {
-  try {
-      const user = await User.findById(userId);
-      return user;
-  } catch (error) {
-      console.error("Error fetching user:", error);
-      return null;
-  }
-};
+
 
 // Session setup with MongoStore
 app.use(session({
@@ -66,12 +58,6 @@ app.use(session({
 // Middleware for flash messages
 app.use(flash());
 
-// Removed the global flash middleware
-// app.use((req, res, next) => {
-//   res.locals.success_msg = req.flash('success_msg');
-//   res.locals.error_msg = req.flash('error_msg');
-//   next();
-// });
 
 // Passport setup
 passport.use(new LocalStrategy(User.authenticate()));
