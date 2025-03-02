@@ -12,24 +12,38 @@ function isLoggedIn(req, res, next) {
     res.redirect('/auth/login');
 }
 
-// Route to display cart
 router.get('/', isLoggedIn, async (req, res) => {
     try {
+        if (!req.user || !req.user._id) {
+            return res.redirect('/login'); // Redirect if not authenticated
+        }
+
         const userId = req.user._id;
         const cart = await Cart.findOne({ userId }).populate('products.productId');
-        
-        if (!cart || cart.products.length === 0) {
-            return res.render('cart', { cart: [], total: 0 });
-        }
-        
-        let total = cart.products.reduce((acc, item) => acc + item.productId.price * item.quantity, 0);
 
-        res.render('cart', { cart: cart.products, total });
+        let cartItems = 0;
+        let total = 0;
+        let products = [];
+
+        if (cart && cart.products.length > 0) {
+            products = cart.products;
+            cartItems = cart.products.reduce((sum, item) => sum + item.quantity, 0);
+            total = cart.products.reduce((sum, item) => sum + ((item.productId?.price || 0) * (item.quantity || 1)), 0);
+        }
+
+        res.render('cart', {
+            cart: products,
+            total,
+            cartItems, // ✅ Now passed to EJS
+            isAuthenticated: true
+        });
     } catch (error) {
         console.error('Error retrieving cart:', error);
         res.status(500).render('error', { error: 'An error occurred while retrieving the cart' });
     }
 });
+
+
 
 // Add item to cart
 router.post('/add/:productId', isLoggedIn, async (req, res) => {
@@ -45,9 +59,9 @@ router.post('/add/:productId', isLoggedIn, async (req, res) => {
         // Check if the product is already in the cart
         const productIndex = cart.products.findIndex(p => p.productId.toString() === productId);
         if (productIndex >= 0) {
-            cart.products[productIndex].quantity += 1; // Increase quantity if product exists
+            cart.products[productIndex].quantity += 1;
         } else {
-            cart.products.push({ productId, quantity: 1 }); // Add new product to cart
+            cart.products.push({ productId, quantity: 1 });
         }
 
         await cart.save();

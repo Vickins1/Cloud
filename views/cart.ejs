@@ -181,7 +181,7 @@
     <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-custom mb-4">
         <a class="navbar-brand" href="/">
-            <img src="/images/Cloud.png" alt="Logo" style="height: 70px; width: 250px;">
+            <img src="/images/Cloud.png" alt="Logo" style="height: 50px; width: 250px;">
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -354,6 +354,65 @@
                 }
             });
         });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    console.log("Global Cart Count Script Loaded");
+
+    // Update cart count immediately on page load
+    updateCartCount();
+
+    // Periodic update every 30 seconds
+    setInterval(() => updateCartCount(), 30000);
+
+    // Listen for cart updates from other pages
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'cartCount') {
+            updateCartBadge(parseInt(event.newValue, 10));
+        }
+    });
+
+    // Function to update cart count from server
+    async function updateCartCount(forceUpdate = false) {
+        try {
+            const response = await fetch('/cart-count');
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+            const data = await response.json();
+            const newCount = data.cartCount || 0;
+            const currentCount = parseInt(localStorage.getItem('cartCount') || '0', 10);
+
+            // Update only if count has changed or force update is triggered
+            if (newCount !== currentCount || forceUpdate) {
+                localStorage.setItem('cartCount', newCount);
+                updateCartBadge(newCount);
+                
+                // 🔥 Broadcast update to all tabs/pages
+                window.dispatchEvent(new StorageEvent('storage', { key: 'cartCount', newValue: String(newCount) }));
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+        }
+    }
+
+    // Function to update cart badge
+    function updateCartBadge(count) {
+        const cartCountEl = document.getElementById('cart-count');
+        const cartLink = document.querySelector('a[href="/cart"]');
+
+        if (count > 0) {
+            if (!cartCountEl) {
+                cartLink.insertAdjacentHTML('beforeend', 
+                    `<span class="badge bg-success" id="cart-count">${count}</span>`);
+            } else {
+                cartCountEl.textContent = count;
+            }
+        } else if (cartCountEl) {
+            cartCountEl.remove();
+        }
+    }
+});
+
     </script>
 </body>
 </html>

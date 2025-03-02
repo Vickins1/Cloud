@@ -4,308 +4,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - Greenleaf Haven</title>
-    <!-- Bootstrap CSS -->
+    <title>Products - Cloud 420</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <!-- FontAwesome CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icon.png">
     <style>
         body {
-            background-color: #000000;
+            background: linear-gradient(135deg, #000000 0%, #1a2a2a 100%);
             color: #ffffff;
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
         }
 
         .navbar {
-            background-color: #000000;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 255, 100, 0.1);
         }
 
         .navbar-brand img {
-            height: 70px;
+            height: 50px;
+            transition: transform 0.3s ease;
         }
 
-        .navbar-brand,
-        .navbar-nav .nav-link {
-            color: #ffffff !important;
+        .navbar-brand img:hover {
+            transform: scale(1.1);
         }
 
-        .navbar-nav .nav-link i {
-            margin-right: 8px;
+        .nav-link {
+            position: relative;
+            overflow: hidden;
         }
 
-        .card {
-            border: none;
-            border-radius: 10px;
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: #00ff73;
+            transition: left 0.3s ease;
         }
 
-        .card-img-top {
-            border-radius: 10px 10px 0 0;
-        }
-
-        .card-body {
-            background-color: #1c1c1c;
-            color: #ffffff;
-        }
-
-        .card-footer {
-            background-color: #2d2d2d;
-            border-top: none;
-        }
-
-        .btn-primary {
-            background-color: #035925;
-            border-color: #035925;
-        }
-
-        .btn-primary:hover {
-            background-color: #028e39;
-            border-color: #028e39;
-        }
-
-        .btn-dark {
-            background-color: #1c1c1c;
-            border-color: #1c1c1c;
-        }
-
-        .btn-dark:hover {
-            background-color: #333;
-            border-color: #333;
+        .nav-link:hover::after {
+            left: 0;
         }
 
         .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), no-repeat center center/cover;
-            padding: 30px 0;
-            color: #ffffff;
-            text-align: center;
+            background: linear-gradient(45deg, rgba(0, 100, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/leaf-pattern.jpg');
+            background-size: cover;
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
             margin-top: 50px;
-            /* Adjusted for better visibility on smaller screens */
         }
 
         .hero-title {
-            font-size: 2.5rem;
-            /* Adjusted for smaller screens */
+            font-size: 3rem;
+            text-shadow: 0 0 20px rgba(0, 255, 100, 0.3);
+            animation: glow 2s infinite alternate;
+            margin-left: 80px;
         }
 
-        .cart-icon {
+        .card {
+            background: rgba(28, 28, 28, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 100, 0.2);
+        }
+
+        .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+
+        .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 255, 100, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #035925, #00ff73);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.4s ease;
+        }
+
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+
+        .btn-dark {
+            background: linear-gradient(45deg, #01671c, #000e03);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-dark:hover {
+            background: #001304;
             color: #ffffff;
         }
 
-        .cart-icon:hover {
-            color: #d4edda;
+        .floating-leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
         }
 
-        .modal-body {
-            color: #000000;
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 255, 100, 0.3);
+            border-radius: 50% 0 50% 50%;
+            animation: float 8s infinite ease-in-out;
         }
 
-        @media (min-width: 768px) {
-            .col-md-4 {
-                flex: 0 0 33.33%;
-                max-width: 33.33%;
-            }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-50vh) rotate(180deg); }
+            100% { transform: translateY(0) rotate(360deg); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(0, 255, 100, 0.2); }
+            to { text-shadow: 0 0 20px rgba(0, 255, 100, 0.4); }
         }
 
         @media (max-width: 768px) {
-            .hero-title {
-                font-size: 1.8rem;
-                /* Smaller font size for mobile */
-            }
-
-            .navbar-brand img {
-                height: 50px;
-                /* Smaller logo for mobile */
-            }
-
-            .card-img-top {
-                height: 150px;
-                /* Smaller image height for mobile */
-            }
-
-            .btn-primary,
-            .btn-dark {
-                font-size: 0.875rem;
-                /* Smaller button font size for mobile */
-            }
+            .hero-title { font-size: 2rem; }
+            .card-img-top { height: 180px; }
+            .navbar-brand img { height: 50px; }
         }
     </style>
 </head>
 
 <body>
-    <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand" href="/">
                 <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Greenleaf Haven Logo">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+                        <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
                     </li>
-
-                    <% if (user) { %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                        </li>
-                        <% } else { %>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Signup</a>
-                            </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart 
+                            <% if (cartItems > 0) { %>
+                                <span class="badge bg-success" id="cart-count"><%= cartItems %></span>
                             <% } %>
-                                <li class="nav-item">
-                                    <a class="nav-link cart-icon" href="/cart">
-                                        <i class="fas fa-shopping-cart"></i>
-                                    </a>
-                                </li>
-
+                        </a>
+                    </li>
+                    <% if (isAuthenticated) { %>
+                        <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <% } else { %>
+                        <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+                    <% } %>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero-section">
-        <h1 class="hero-title"><strong>Products</strong></h1>
+        <div class="floating-leaves">
+            <div class="leaf" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+            <div class="leaf" style="left: 70%; top: 40%; animation-delay: 2s;"></div>
+            <div class="leaf" style="left: 40%; top: 60%; animation-delay: 4s;"></div>
+        </div>
+        <h1 class="hero-title"><strong>Explore Our Cloud Treasures</strong></h1>
     </section>
 
     <div class="container mt-5">
         <div class="row">
-            <% products.forEach(product=> { %>
+            <% products.forEach(product => { %>
                 <div class="col-md-4 mb-4">
                     <div class="card h-100" data-product-id="<%= product._id %>">
-                        <img src="<%= product.imageUrl %>" class="card-img-top" alt="Product Image"
-                            style="height: 200px; object-fit: cover;">
+                        <img src="<%= product.imageUrl %>" class="card-img-top" alt="Product Image">
                         <div class="card-body">
-                            <h5 class="card-title">
-                                <%= product.name %>
-                            </h5>
-                            <p class="card-text">
-                                <%= product.shortDescription %>
-                            </p>
-                            <p class="card-text text-success">KES <%= product.price.toFixed(2) %>
-                            </p>
+                            <h5 class="card-title"><%= product.name %></h5>
+                            <p class="card-text"><%= product.shortDescription %></p>
+                            <p class="card-text text-success">KES <%= product.price.toFixed(2) %></p>
                         </div>
                         <div class="card-footer text-center">
-                            <button class="btn btn-primary view-details">Buy Now!</button>
-                            <button class="btn btn-dark add-to-cart">Add to Cart</button>
+                            <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy Now!</button>
+                            <button class="btn btn-dark add-to-cart" >Add to Cart</button>
                         </div>
                     </div>
                 </div>
-                <% }) %>
+            <% }) %>
         </div>
     </div>
 
+  <!-- Replace only the script section at the bottom of your HTML with this -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
 
-    <style>
-        .modal-content {
-            background-color: rgb(120, 120, 120);
-        }
-    </style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM fully loaded");
 
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Toastr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add to Cart functionality
-            document.querySelectorAll('.add-to-cart').forEach(button => {
-                button.addEventListener('click', async function () {
-                    const productId = this.closest('.card').getAttribute('data-product-id');
-    
-                    try {
-                        const response = await fetch(`/cart/add/${productId}`, { method: 'POST' });
-    
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-    
-                        const data = await response.json();
-                        toastr.success('Product added to cart successfully!');
-                        updateCartCount(); // Update cart count after adding a product
-                    } catch (error) {
-                        console.error('Error adding product to cart:', error);
-                        toastr.error('An error occurred while adding the product to the cart.');
-                    }
-                });
-            });
-    
-            // View Details functionality
-            document.querySelectorAll('.view-details').forEach(button => {
-                button.addEventListener('click', function () {
-                    const card = this.closest('.card');
-                    const productId = card.getAttribute('data-product-id');
-    
-                    fetch(`/products/${productId}`)
-                        .then(response => response.json())
-                        .then(product => {
-                            document.getElementById('product-name').textContent = product.name;
-                            document.getElementById('product-description').textContent = product.description;
-                            document.getElementById('product-price').textContent = `KES ${product.price.toFixed(2)}`;
-                            document.getElementById('product-image').src = product.imageUrl;
-                            new bootstrap.Modal(document.getElementById('productModal')).show();
-                        })
-                        .catch(error => {
-                            console.error('Error fetching product details:', error);
-                            toastr.error('An error occurred while fetching product details.');
-                        });
-                });
-            });
-    
-            // Function to fetch cart count from the server
-            function fetchCartCount() {
-                fetch('/cart-count', {
-                    method: 'GET',
-                    credentials: 'same-origin' // Include credentials if authentication is required
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch cart count');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.cartCount !== undefined) {
-                        // Update the correct cart count element with the correct ID
-                        document.getElementById('cart-count').innerText = data.cartCount;
-                    } else {
-                        console.error('Error: Cart count not found');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching cart count:', error);
-                });
+    // Attach event listeners to "Add to Cart" buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', async function () {
+            const card = this.closest('.card');
+            if (!card) {
+                showNotification('Error', 'Product card not found!', 'danger');
+                return;
             }
-    
-            // Call the function to fetch cart count when the page loads
-            document.addEventListener('DOMContentLoaded', fetchCartCount);
-    
-            // Function to update the cart count dynamically when an item is added
-            function updateCartCount() {
-                fetchCartCount();
+
+            const productId = card.getAttribute('data-product-id');
+            if (!productId) {
+                showNotification('Error', 'Product ID is missing!', 'danger');
+                return;
             }
-    
-            // Call updateCartCount initially to set the correct count on page load
-            document.addEventListener('DOMContentLoaded', updateCartCount);
+
+            try {
+                const response = await fetch(`/cart/add/${productId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                if (!response.ok) {
+                    showNotification('Error', `Failed to add to cart: ${response.status}`, 'danger');
+                    return;
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    showNotification('Error', data.message || 'Server error', 'danger');
+                    return;
+                }
+
+                showNotification('Success', 'Product added to cart!', 'success');
+                
+                // 🔥 Instantly update cart count
+                updateCartCount(true);
+
+            } catch (error) {
+                showNotification('Error', 'Couldn’t add product to cart.', 'danger');
+                console.error('Error:', error);
+            }
         });
-    </script>
-    
-</body>
+    });
 
+    // Function to update cart count
+    async function updateCartCount(forceUpdate = false) {
+        try {
+            const response = await fetch('/cart-count');
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+            const data = await response.json();
+            const cartCountEl = document.getElementById('cart-count');
+            const cartLink = document.querySelector('a[href="/cart"]');
+
+            if (data.cartCount > 0) {
+                if (!cartCountEl) {
+                    cartLink.insertAdjacentHTML('beforeend', 
+                        `<span class="badge bg-success" id="cart-count">${data.cartCount}</span>`);
+                } else if (forceUpdate || cartCountEl.textContent !== String(data.cartCount)) {
+                    cartCountEl.textContent = data.cartCount;
+                }
+            } else if (cartCountEl) {
+                cartCountEl.remove();
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+        }
+    }
+
+    // Initial cart count update on page load
+    updateCartCount();
+
+    // Periodic refresh every 30 seconds
+    setInterval(() => updateCartCount(), 30000);
+});
+
+// 🔥 Notification function
+function showNotification(title, message, type) {
+    const container = document.querySelector('.notification-container') || createNotificationContainer();
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `<strong class="notification-title">${title}</strong><br>${message}`;
+    
+    container.appendChild(notification);
+
+    setTimeout(() => { notification.remove(); }, 3000);
+}
+
+// 🔹 Create notification container if it doesn't exist
+function createNotificationContainer() {
+    const container = document.createElement('div');
+    container.className = 'notification-container';
+    document.body.appendChild(container);
+    return container;
+}
+
+</script>
+<script>
+    // Buy Now functionality
+    document.querySelectorAll('.buy-now').forEach(button => {
+            button.addEventListener('click', async function () {
+                const productId = this.getAttribute('data-product-id');
+                if (!productId) {
+                    showNotification('Error', 'Invalid product ID.', 'danger');
+                    return;
+                }
+                try {
+                    const response = await fetch(`/cart/add/${productId}`, { method: 'POST' });
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    
+                    // Redirect to cart page after adding the item
+                    setTimeout(() => {
+                        window.location.href = '/cart';
+                    }, 500);
+                } catch (error) {
+                    console.error('Error processing buy now:', error);
+                    showNotification('Error', 'An error occurred while processing your request.', 'danger');
+                }
+            });
+        });
+</script>
+<style>
+    .notification-container {
+        position: fixed;
+        top: 15%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+
+    .notification {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        margin-bottom: 8px;
+        width: 200px;
+        height: auto;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .notification-success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+
+    .notification-danger {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+
+    .notification-title {
+        font-weight: bold;
+    }
+</style>
+
+
+</body>
 </html>

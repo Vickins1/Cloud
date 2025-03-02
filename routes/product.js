@@ -38,7 +38,20 @@ function ensureAuthenticated(req, res, next) {
   res.redirect('/auth/login');
 }
 
-router.get('/', ensureAuthenticated, fetchProducts);
+// Get all products
+router.get("/", async (req, res) => {
+  try {
+      const products = await Product.find();
+      res.render("products", { 
+          products, 
+          cartItems: req.session.cartItems || 0, 
+          isAuthenticated: req.isAuthenticated || false 
+      });
+  } catch (error) {
+      console.error("Error fetching products:", error);
+      res.status(500).send("Server Error");
+  }
+});
 
 
 router.post('/add', upload.single('image'), async (req, res) => {

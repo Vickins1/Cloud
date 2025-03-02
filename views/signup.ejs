@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="icon" href="/images/icon.png">
     <style>
         body {
             background: linear-gradient(145deg, #000, #035925);
@@ -12,10 +13,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh; /* Changed to min-height for better mobile fit */
             margin: 0;
             font-family: Arial, sans-serif;
-            overflow: hidden;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
         .signup-box {
             width: 100%;
@@ -25,6 +26,7 @@
             border-radius: 10px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
             animation: fadeIn 1s ease-in-out;
+            margin: 1rem; /* Added margin for small screens */
         }
         h2 {
             text-align: center;
@@ -50,6 +52,7 @@
             color: #fff;
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box; /* Ensures padding doesn't affect width */
         }
         input:focus {
             border-color: #56cfe1;
@@ -81,6 +84,16 @@
         a:hover {
             color: #29a3d1;
         }
+        .error {
+            color: #a94442;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .success {
+            color: #28a745;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -91,15 +104,70 @@
                 transform: translateY(0);
             }
         }
-        @media (max-width: 576px) {
-            body {
-                padding: 1rem;
-            }
+        /* Enhanced Media Queries */
+        @media (max-width: 768px) {
             .signup-box {
+                max-width: 90%; /* Reduce width on tablets */
                 padding: 1.5rem;
             }
             h2 {
-                font-size: 1.5rem;
+                font-size: 1.6rem; /* Slightly smaller heading */
+            }
+            input, button {
+                padding: 0.7rem; /* Slightly smaller padding */
+                font-size: 0.95rem;
+            }
+            label {
+                font-size: 0.95rem;
+            }
+        }
+        @media (max-width: 576px) {
+            body {
+                padding: 1rem;
+                align-items: flex-start; /* Align to top on very small screens */
+            }
+            .signup-box {
+                max-width: 100%; /* Full width on small screens */
+                padding: 1.2rem;
+                margin: 0.5rem;
+            }
+            h2 {
+                font-size: 1.4rem; /* Smaller heading */
+                margin-bottom: 1rem;
+            }
+            label {
+                font-size: 0.9rem;
+            }
+            input {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+                margin-bottom: 0.8rem;
+            }
+            button {
+                padding: 0.6rem;
+                font-size: 0.9rem;
+            }
+            a {
+                font-size: 0.9rem;
+                margin-top: 0.8rem;
+            }
+            .error, .success {
+                font-size: 0.8rem;
+            }
+        }
+        @media (max-width: 400px) {
+            .signup-box {
+                padding: 1rem;
+            }
+            h2 {
+                font-size: 1.2rem;
+            }
+            input, button {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+            label {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -121,15 +189,37 @@
 
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            
             <label for="confirm-password">Confirm Password</label>
-        <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+            <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+            <div id="passwordError" class="error"></div>
 
             <button type="submit">Signup</button>
         </form>
         <a href="/auth/login">Already have an account? Login</a>
     </div>
+
+    <script>
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm-password');
+        const passwordError = document.getElementById('passwordError');
+
+        function checkPasswords() {
+            if (password.value !== confirmPassword.value) {
+                passwordError.textContent = 'Passwords do not match.';
+                passwordError.classList.add('error');
+                passwordError.classList.remove('success');
+            } else if (password.value) {
+                passwordError.textContent = 'Passwords match.';
+                passwordError.classList.add('success');
+                passwordError.classList.remove('error');
+            } else {
+                passwordError.textContent = '';
+            }
+        }
+
+        password.addEventListener('input', checkPasswords);
+        confirmPassword.addEventListener('input', checkPasswords);
+    </script>
 </body>
 </html>
-
-
-
