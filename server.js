@@ -28,7 +28,7 @@ app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
 
 // MongoDB connection URI
-const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";  
+const uri = "mongodb://localhost:27017/Sphinx";  
 
 async function connectToDatabase() {
   try {
@@ -66,12 +66,12 @@ app.use(session({
 // Middleware for flash messages
 app.use(flash());
 
-// Global variables for flash messages
-app.use((req, res, next) => {
-  res.locals.success_msg = req.flash('success_msg');
-  res.locals.error_msg = req.flash('error_msg');
-  next();
-});
+// Removed the global flash middleware
+// app.use((req, res, next) => {
+//   res.locals.success_msg = req.flash('success_msg');
+//   res.locals.error_msg = req.flash('error_msg');
+//   next();
+// });
 
 // Passport setup
 passport.use(new LocalStrategy(User.authenticate()));
@@ -103,7 +103,17 @@ app.use('/', checkoutRoutes);
 app.get('/home', isLoggedIn, async (req, res) => {
   try {
     const products = await Product.find();
-    res.render('home', { products, user: req.user, featuredProducts: products, cartItems: req.session.cartItems || 0, isAuthenticated: req.isAuthenticated });
+    const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
+    const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
+    res.render('home', { 
+      products, 
+      user: req.user, 
+      featuredProducts: products, 
+      cartItems: req.session.cartItems || 0, 
+      isAuthenticated: req.isAuthenticated(),
+      success,
+      error
+    });
   } catch (err) {
     console.error('Error fetching products:', err);
     res.status(500).send('Server Error');
@@ -118,7 +128,14 @@ app.get("/", async (req, res) => {
       const cart = await Cart.findOne({ userId });
       cartItems = cart ? cart.products.length : 0;
     }
-    res.render("index", { cartItems, isAuthenticated: req.isAuthenticated() });
+    const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
+    const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
+    res.render("index", { 
+      cartItems, 
+      isAuthenticated: req.isAuthenticated(),
+      success,
+      error
+    });
   } catch (error) {
     console.error("Error fetching cart:", error);
     res.status(500).send("Internal Server Error");
@@ -147,24 +164,30 @@ app.get("/cart-count", async (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-  res.render('about', { title: 'About - Cloud 420', currentDate: new Date().toLocaleDateString(), cartItems: req.session.cartItems || 0, isAuthenticated: req.isAuthenticated });
+  const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
+  const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
+  res.render('about', { 
+    title: 'About - Cloud 420', 
+    currentDate: new Date().toLocaleDateString(), 
+    cartItems: req.session.cartItems || 0, 
+    isAuthenticated: req.isAuthenticated(),
+    success,
+    error
+  });
 });
 
 // Profile Route (GET)
 app.get('/profile', isLoggedIn, async (req, res) => {
   try {
-    // Use req.user from Passport instead of req.session.userId
     const user = req.user;
     if (!user) {
       req.flash('error_msg', 'User not found');
       return res.redirect('/auth/login');
     }
 
-    // Fetch flash messages once and store them
+    // Fetch flash messages directly in the route
     const errorMessages = req.flash('error_msg');
     const successMessages = req.flash('success_msg');
-
-    // Use the first message if available, otherwise null
     const error = errorMessages.length > 0 ? errorMessages[0] : null;
     const success = successMessages.length > 0 ? successMessages[0] : null;
 
@@ -177,8 +200,8 @@ app.get('/profile', isLoggedIn, async (req, res) => {
       currentDate: new Date().toLocaleString(),
       isAuthenticated: true,
       cartItems: 0,
-      error: error,
-      success: success
+      error,
+      success
     });
   } catch (err) {
     console.error(err);
@@ -192,7 +215,6 @@ app.post('/profile/change-password', isLoggedIn, async (req, res) => {
   const { currentPassword, newPassword, confirmPassword } = req.body;
 
   try {
-    // Use req.user from Passport
     const user = req.user;
     if (!user) {
       console.log('Error: User not found');
@@ -200,7 +222,6 @@ app.post('/profile/change-password', isLoggedIn, async (req, res) => {
       return res.redirect('/profile');
     }
 
-    // Verify current password
     const isMatch = await user.authenticate(currentPassword).user !== false;
     if (!isMatch) {
       console.log('Error: Current password is incorrect');
@@ -208,21 +229,18 @@ app.post('/profile/change-password', isLoggedIn, async (req, res) => {
       return res.redirect('/profile');
     }
 
-    // Check if new passwords match
     if (newPassword !== confirmPassword) {
       console.log('Error: New passwords do not match');
       req.flash('error_msg', 'New passwords do not match');
       return res.redirect('/profile');
     }
 
-    // Validate new password
     if (newPassword.length < 6) {
       console.log('Error: New password must be at least 6 characters');
       req.flash('error_msg', 'New password must be at least 6 characters');
       return res.redirect('/profile');
     }
 
-    // Update password using Passport-Local-Mongoose setPassword
     await new Promise((resolve, reject) => {
       user.setPassword(newPassword, (err) => {
         if (err) {
@@ -247,13 +265,27 @@ app.post('/profile/change-password', isLoggedIn, async (req, res) => {
 
 // 404 Error Handling - Catch all unmatched routes
 app.use((req, res, next) => {
-  res.status(404).render('404', { title: '404 - Not Found', url: req.originalUrl });
+  const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
+  const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
+  res.status(404).render('404', { 
+    title: '404 - Not Found', 
+    url: req.originalUrl,
+    success,
+    error
+  });
 });
 
 // 500 Error Handling - Catch server errors
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render('500', { title: '500 - Server Error', error: err.message });
+  const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
+  const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
+  res.status(500).render('500', { 
+    title: '500 - Server Error', 
+    error: err.message,
+    success,
+    error: error || 'Server Error' // Ensure an error message is always shown
+  });
 });
 
 // Get local IP for logging
