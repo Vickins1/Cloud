@@ -28,7 +28,7 @@ app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
 
 // MongoDB connection URI
-const uri = "mongodb://localhost:27017/Sphinx";  
+const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";  
 
 async function connectToDatabase() {
   try {
