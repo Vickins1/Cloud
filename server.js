@@ -2,24 +2,21 @@ const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const flash = require('connect-flash');
-const crypto = require('crypto');
+const path = require('path');
 const passport = require('passport');
 const Product = require('./models/product');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/product');
 const LocalStrategy = require('passport-local').Strategy;
 const MongoStore = require('connect-mongo');
-const { ObjectId } = require('mongoose').Types;
 const User = require('./models/user');
 const { isLoggedIn } = require('./middleware/auth');
 const cartRoutes = require('./routes/cart');
-const paymentRouter = require('./routes/payment');
-const trackOrderRoute = require('./routes/trackOrder');
-const orderRoutes = require('./routes/order');
+const fs = require('fs');
+const multer = require('multer');
 const checkoutRoutes = require('./routes/checkout');
-const Order = require('./models/order');
+const adminRouter = require('./routes/admin');
 const Cart = require('./models/cart');
-const axios = require('axios');
 require('dotenv').config();
 const os = require('os');
 
@@ -28,7 +25,7 @@ app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
 
 // MongoDB connection URI
-const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";  
+const uri = "mongodb://localhost:27017/Sphinx";  
 
 async function connectToDatabase() {
   try {
@@ -41,6 +38,19 @@ async function connectToDatabase() {
 }
 connectToDatabase();
 
+// Multer configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'public/uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+const upload = multer({ storage: storage });
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+module.exports = { app, upload };
 
 
 // Session setup with MongoStore
@@ -58,6 +68,9 @@ app.use(session({
 // Middleware for flash messages
 app.use(flash());
 
+// Set view engine and views path explicitly
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 // Passport setup
 passport.use(new LocalStrategy(User.authenticate()));
@@ -68,7 +81,20 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('public')); // Serve static files from 'public'
+app.use(express.static('public'))
+
+// Pass flash messages to all views
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated();
+  res.locals.isAdmin = req.user && req.user.isAdmin;
+  res.locals.currentUser = req.user;
+  res.locals.error_msg = req.flash('error_msg');
+  res.locals.success_msg = req.flash('success_msg');
+  next();
+});
+
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware to make user available in views
 app.use((req, res, next) => {
@@ -80,10 +106,8 @@ app.use((req, res, next) => {
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
-app.use('/api', orderRoutes);
-app.use('/payment', paymentRouter);
-app.use('/api', trackOrderRoute);
 app.use('/', checkoutRoutes);
+app.use('/admin', adminRouter);
 
 // Home page route
 app.get('/home', isLoggedIn, async (req, res) => {
@@ -127,6 +151,8 @@ app.get("/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+
 
 // Get cart data
 app.get('/cart/data', isLoggedIn, async (req, res) => {

@@ -418,32 +418,6 @@
         <p>Order now and experience the highest quality with fast delivery!</p>
         <a href="/products" class="cta-button">Shop Our Collection</a>
     </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = document.querySelector('.order-tracking form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-    
-                const orderId = form.querySelector('input[name="orderId"]').value;
-                try {
-                    const response = await fetch(`/track-order?id=${orderId}`);
-                    const data = await response.json();
-                    if (data.success) {
-                        document.querySelector('#orderDetails').innerHTML = `
-                            <p>Your order is currently <strong>${data.status}</strong>.</p>
-                        `;
-                    } else {
-                        document.querySelector('#orderDetails').innerHTML = `
-                            <p>Order not found. Please check the Order ID and try again.</p>
-                        `;
-                    }
-                } catch (error) {
-                    console.error('Error tracking order:', error);
-                }
-            });
-        });
-    </script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>

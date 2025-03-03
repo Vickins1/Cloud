@@ -1,65 +1,114 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const Order = require('../models/order');
+const Order = require('../models/order'); 
 
-// POST route for checkout
+// UMS Pay API configuration
+const UMS_API_KEY = 'VE5MTlkzRk06MTlwNjlkZWM=';
+const UMS_EMAIL = 'vickinstechnologies@gmail.com';
+const UMS_ACCOUNT_ID = 'UMPAY772831690'; 
+const UMS_BASE_URL = 'https://api.umeskiasoftwares.com/api/v1';
+
+// Checkout endpoint
 router.post('/checkout', async (req, res) => {
+    const { customerName, customerEmail, customerPhone, customerLocation, cartTotal, cart } = req.body;
+
     try {
-        const { customerName, customerEmail, customerPhone, customerLocation, cartTotal } = req.body;
-
-        // Validate all required fields
-        if (!customerName || !customerEmail || !customerPhone || !customerLocation || !cartTotal) {
-            return res.status(400).json({ success: false, message: 'All fields are required.' });
-        }
-
-        // Process checkout
-        const newOrder = new Order({
+        const order = new Order({
             customerName,
             customerEmail,
             customerPhone,
             customerLocation,
-            totalAmount: parseFloat(cartTotal),
+            total: cartTotal,
+            items: cart.map(item => ({
+                productId: item.productId._id || item.productId,
+                quantity: item.quantity
+            })),
+            status: 'Pending',
+            createdAt: new Date()
+        });
+        await order.save();
+
+        const stkPayload = {
+            api_key: UMS_API_KEY,
+            email: UMS_EMAIL,
+            account_id: UMS_ACCOUNT_ID,
+            amount: cartTotal,
+            msisdn: customerPhone.startsWith('0') ? `254${customerPhone.slice(1)}` : customerPhone,
+            reference: order._id.toString()
+        };
+
+        const stkResponse = await axios.post(`${UMS_BASE_URL}/intiatestk`, stkPayload, {
+            headers: { 'Content-Type': 'application/json' }
         });
 
-        // Save the order
-        await newOrder.save();
+        const stkData = stkResponse.data;
+        if (stkData.success === '200') {
+            order.transactionRequestId = stkData.tranasaction_request_id;
+            await order.save();
 
-        // Define UMS Pay API endpoint
-        const umsPayEndpoint = 'https://api.umeskiasoftwares.com/api/v1/initiatestk';
-
-        // Make a request to UMS Pay to initiate the STK push
-        try {
-            const response = await axios.post(umsPayEndpoint, {
-                api_key: process.env.UMS_API_KEY,
-                email: process.env.UMS_EMAIL,
-                account_id: process.env.UMS_ACCOUNT_ID,
-                totalAmount: parseFloat(cartTotal),
-                msisdn: customerPhone,
-                reference: newOrder._id.toString()
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+            req.session.cart = []; // Clear cart
+            return res.json({
+                success: true,
+                transaction_request_id: stkData.tranasaction_request_id,
+                message: 'Order created and STK Push initiated.'
             });
-        
-            console.log('Response from UMS Pay:', response.data);
-        
-            if (response.data.success === '200') {
-                const { transaction_request_id } = response.data;
-                const paymentUrl = `https://api.umeskiasoftwares.com/api/v1/transactionstatus?api_key=${process.env.UMS_API_KEY}&email=${process.env.UMS_EMAIL}&transaction_request_id=${transaction_request_id}`;
-                res.json({ success: true, paymentUrl });
-            } else {
-                res.status(500).json({ success: false, message: `Failed to initiate payment: ${response.data.message || 'Please try again.'}` });
-            }
-        } catch (error) {
-            console.error('Error during payment initiation:', error.response ? error.response.data : error.message);
-            res.status(500).json({ success: false, message: 'An error occurred while initiating payment. Please try again later.' });
+        } else {
+            return res.json({
+                success: false,
+                message: 'STK Push initiation failed.'
+            });
         }
-        
     } catch (error) {
-        console.error('Error during checkout:', error.message);
-        res.status(500).json({ success: false, message: 'An error occurred during checkout. Please try again later.' });
+        console.error('Checkout error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'An error occurred during checkout.'
+        });
+    }
+});
+
+// Transaction status endpoint
+router.post('/transaction-status', async (req, res) => {
+    const { transaction_request_id } = req.body;
+
+    try {
+        const statusPayload = {
+            api_key: UMS_API_KEY,
+            email: UMS_EMAIL,
+            tranasaction_request_id: transaction_request_id
+        };
+
+        const statusResponse = await axios.post(`${UMS_BASE_URL}/transactionstatus`, statusPayload, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const statusData = statusResponse.data;
+        if (statusData.ResultCode === '200') {
+            const order = await Order.findOne({ transactionRequestId: transaction_request_id });
+            if (order) {
+                if (statusData.TransactionStatus === 'Completed') {
+                    order.status = 'Paid';
+                    order.paymentDetails = statusData;
+                    await order.save();
+                    return res.json({ success: true, status: 'Completed', details: statusData });
+                } else if (statusData.TransactionCode !== '0') {
+                    order.status = 'Failed';
+                    order.paymentDetails = statusData;
+                    await order.save();
+                    return res.json({ success: false, status: statusData.TransactionStatus, details: statusData });
+                } else {
+                    return res.json({ success: true, status: 'Pending', details: statusData });
+                }
+            } else {
+                return res.status(404).json({ success: false, message: 'Order not found.' });
+            }
+        } else {
+            return res.json({ success: false, status: 'Unknown', details: statusData });
+        }
+    } catch (error) {
+        console.error('Transaction status error:', error);
+        return res.status(500).json({ success: false, message: 'Error checking transaction status.' });
     }
 });
 

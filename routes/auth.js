@@ -29,19 +29,32 @@ router.get('/signup', (req, res) => {
 
 // Handle user sign-up
 router.post('/signup', async (req, res) => {
+  const { username, email, password } = req.body;
+
   try {
-    const newUser = new User({ username: req.body.username, email: req.body.email });
-    User.register(newUser, req.body.password, (err, user) => {
-      if (err) {
-        return res.redirect('/auth/signup?error=' + encodeURIComponent(err.message));
+      // Validate input (optional enhancement)
+      if (!username || !email || !password) {
+          req.flash('error_msg', 'All fields are required.');
+          return res.redirect('/auth/signup');
       }
-      passport.authenticate('local')(req, res, () => {
-        res.redirect('/auth/login');
-      });
-    });
+
+      // Create and register new user
+      const newUser = new User({ username, email });
+      await User.register(newUser, password);
+
+      // Success message and redirect
+      req.flash('success_msg', 'Registration successful! Please log in.');
+      res.redirect('/auth/login');
   } catch (error) {
-    console.error('Signup error:', error);
-    res.redirect('/auth/signup?error=' + encodeURIComponent('An error occurred during sign-up.'));
+      console.error('Signup error:', error);
+      let errorMessage = 'An error occurred during sign-up.';
+      if (error.name === 'UserExistsError') {
+          errorMessage = 'A user with this username or email already exists.';
+      } else if (error.name === 'ValidationError') {
+          errorMessage = error.message;
+      }
+      req.flash('error_msg', errorMessage);
+      res.redirect('/auth/signup');
   }
 });
 
@@ -60,8 +73,10 @@ router.post('/login', (req, res, next) => {
         console.error('Login error:', err);
         return res.redirect('/auth/login?error=' + encodeURIComponent('An error occurred during login.'));
       }
-      res.redirect('/home');
-    });
+      req.flash('success_msg', 'Logged in successfully!');
+      const redirectTo = user.isAdmin ? '/admin/dashboard' : '/home';
+      res.redirect(redirectTo);
+  });
   })(req, res, next);
 });
 

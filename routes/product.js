@@ -1,5 +1,6 @@
 const express = require('express');
 const multer = require('multer');
+const mongoose = require('mongoose'); 
 const Product = require('../models/product');
 const Cart = require('../models/cart'); 
 const router = express.Router();
@@ -15,45 +16,43 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-const fetchProducts = async (req, res) => {
-  try {
-    const products = await Product.find();
-    const user = req.user ? req.user : null;
-    res.render('products', { products, user });
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    if (error instanceof mongoose.Error) {
-      res.status(404).send('Products not found');
-    } else {
-      res.status(500).send('Internal Server Error');
-    }
-  }
-};
-
+// Middleware to ensure authentication
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-      return next();
+    return next();
   }
   req.flash('error_msg', 'Please log in to view that resource');
   res.redirect('/auth/login');
 }
 
-// Get all products
+// Get all products (existing route)
 router.get("/", async (req, res) => {
   try {
-      const products = await Product.find();
-      res.render("products", { 
-          products, 
-          cartItems: req.session.cartItems || 0, 
-          isAuthenticated: req.isAuthenticated || false 
-      });
+    const products = await Product.find();
+    res.render("products", { 
+      products, 
+      cartItems: req.session.cartItems || 0, 
+      isAuthenticated: req.isAuthenticated || false 
+    });
   } catch (error) {
-      console.error("Error fetching products:", error);
-      res.status(500).send("Server Error");
+    console.error("Error fetching products:", error);
+    res.status(500).send("Server Error");
   }
 });
 
+// Fetch a specific product by ID (JSON response)
+router.get('/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
+  } catch (err) {
+    console.error('Error fetching product:', err);
+    res.status(500).json({ error: 'Unable to fetch product' });
+  }
+});
 
+// Add a new product
 router.post('/add', upload.single('image'), async (req, res) => {
   try {
     const newProduct = new Product({
@@ -70,7 +69,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
   }
 });
 
-// Fetch a specific product by ID 
+// Fetch a specific product by ID (alternative route)
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -87,14 +86,39 @@ router.get('/cart-count', async (req, res) => {
     if (!req.user || !req.user._id) {
       return res.status(401).json({ error: 'User not authenticated' });
     }
-
     const cart = await Cart.findOne({ userId: req.user._id });
     const cartCount = cart ? cart.products.reduce((total, item) => total + item.quantity, 0) : 0;
-
     res.json({ cartCount });
   } catch (error) {
     console.error('Error fetching cart count:', error);
     res.status(500).json({ error: 'Error fetching cart count' });
+  }
+});
+
+// New route for filtering products
+router.post('/filter', async (req, res) => {
+  try {
+    const { search, category } = req.body;
+
+    // Build the query object
+    let query = {};
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
+    if (category && category !== '') {
+      query.category = category; // Exact match on category
+    }
+
+    // Fetch filtered products from the database
+    const products = await Product.find(query);
+    res.json(products); // Send JSON response to frontend
+  } catch (error) {
+    console.error('Error filtering products:', error);
+    if (error instanceof mongoose.Error) {
+      res.status(400).json({ error: 'Invalid query' });
+    } else {
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   }
 });
 
