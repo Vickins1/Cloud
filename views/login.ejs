@@ -43,7 +43,7 @@
         .form-control {
             background-color: #ffffff;
             border: none;
-            color: #000; /* Changed text color for visibility on white background */
+            color: #000;
             border-radius: 6px;
             padding: 0.75rem;
         }
@@ -103,6 +103,12 @@
         }
         .btn-close {
             filter: invert(1) hue-rotate(100deg);
+        }
+        .alert {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
         }
         @media (max-width: 768px) {
             .login-box {
@@ -190,11 +196,11 @@
 <body>
     <div class="login-box">
         <h2>Login</h2>
-        <% if (error) { %>
-            <div class="alert alert-danger text-center"><%= error %></div>
+        <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+            <div class="alert alert-danger text-center"><%= error_msg %></div>
         <% } %>
-        <% if (success) { %>
-            <div class="alert alert-success text-center"><%= success %></div>
+        <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+            <div class="alert alert-success text-center"><%= success_msg %></div>
         <% } %>
         <form action="/auth/login" method="POST">
             <div class="form-group">
@@ -211,16 +217,18 @@
             </div>
             <button type="submit">Login</button>
         </form>
-        <a href="/auth/signup">Don't have an account? Sign up</a>
+        <a href="/auth/signup">Don't have an account? Signwelt up</a>
         <a href="#" data-toggle="modal" data-target="#forgotPasswordModal">Forgot Password?</a>
 
         <!-- Forgot Password Modal -->
-        <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
-                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="close btn-close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body">
                         <form action="/auth/forgot-password" method="POST">

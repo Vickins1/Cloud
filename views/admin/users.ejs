@@ -42,66 +42,7 @@
 
                      <!-- Right navbar links -->
                      <ul class="navbar-nav ml-auto">
-                            <!-- Messages Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-comments"></i>
-                                          <span class="badge badge-danger navbar-badge">
-                                                 <%= user.messageCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <% if (user && user.messages && Array.isArray(user.messages)) { %>
-                                                 <% user.messages.forEach(message=> { %>
-                                                        <a href="#" class="dropdown-item">
-                                                               <div class="media">
-                                                                      <img src="<%= message.avatar %>" alt="User Avatar"
-                                                                             class="img-size-50 mr-3 img-circle">
-                                                                      <div class="media-body">
-                                                                             <h3 class="dropdown-item-title">
-                                                                                    <%= message.sender %>
-                                                                             </h3>
-                                                                             <p class="text-sm">
-                                                                                    <%= message.content %>
-                                                                             </p>
-                                                                      </div>
-                                                               </div>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No messages available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
-
-                            <!-- Notifications Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-bell"></i>
-                                          <span class="badge badge-warning navbar-badge">
-                                                 <%= user.notificationCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <span class="dropdown-item dropdown-header">
-                                                 <%= user.notificationCount %> Notifications
-                                          </span>
-                                          <% if (user && user.notifications && Array.isArray(user.notifications)) { %>
-                                                 <span class="dropdown-item dropdown-header">
-                                                        <%= user.notificationCount %> Notifications
-                                                 </span>
-                                                 <% user.notifications.forEach(notification=> { %>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item">
-                                                               <i class="<%= notification.icon %> mr-2"></i>
-                                                               <%= notification.content %>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No notifications available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
+                            
                             <li class="nav-item">
                                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                                           <i class="fas fa-expand-arrows-alt"></i>
@@ -217,7 +158,7 @@
                                                 <table class="table table-dark">
                                                     <thead>
                                                         <tr>
-                                                            <th>#</th> <!-- Count column -->
+                                                            <th>#</th>
                                                             <th>ID</th>
                                                             <th>Username</th>
                                                             <th>Email</th>
@@ -225,27 +166,59 @@
                                                             <th>Actions</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody>
+                                                    <tbody id="userTableBody">
                                                         <% users.forEach((user, index) => { %>
                                                             <tr>
-                                                                <td><%= index + 1 %></td> <!-- Auto-increment count -->
+                                                                <td><%= index + 1 %></td>
                                                                 <td><%= user._id %></td>
                                                                 <td><%= user.username %></td>
                                                                 <td><%= user.email %></td>
                                                                 <td><%= user.isAdmin ? 'Yes' : 'No' %></td>
                                                                 <td>
-                                                                    <button class="btn btn-sm btn-danger" onclick="deleteUser('<%= user._id %>')">Delete</button>
+                                                                    <form action="/admin/users/delete/<%= user._id %>" method="POST" onsubmit="return confirmDelete()">
+                                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                                            <i class="fas fa-trash-alt"></i> Delete
+                                                                        </button>
+                                                                    </form>
                                                                 </td>
                                                             </tr>
                                                         <% }); %>
                                                     </tbody>
                                                 </table>
                                             </div>
+                                            
+                                            <!-- Pagination Controls -->
+                                            <nav>
+                                                <ul class="pagination justify-content-center">
+                                                    <% if (currentPage > 1) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                                                        </li>
+                                                    <% } %>
+                                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                                        </li>
+                                                    <% } %>
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                                                        </li>
+                                                    <% } %>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
                             </section>
                         </div>
+                        
+                        <script>
+                            function confirmDelete() {
+                                return confirm("Are you sure you want to delete this user?");
+                            }
+                        </script>
+                        
                         <style>
                             /* Make table responsive */
 .table-responsive {

@@ -42,67 +42,9 @@
 
                      <!-- Right navbar links -->
                      <ul class="navbar-nav ml-auto">
-                            <!-- Messages Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-comments"></i>
-                                          <span class="badge badge-danger navbar-badge">
-                                                 <%= user && user.messageCount ? user.messageCount : 0 %>
-                                             </span>
-                                             
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <% if (user && user.messages && Array.isArray(user.messages)) { %>
-                                                 <% user.messages.forEach(message=> { %>
-                                                        <a href="#" class="dropdown-item">
-                                                               <div class="media">
-                                                                      <img src="<%= message.avatar %>" alt="User Avatar"
-                                                                             class="img-size-50 mr-3 img-circle">
-                                                                      <div class="media-body">
-                                                                             <h3 class="dropdown-item-title">
-                                                                                    <%= message.sender %>
-                                                                             </h3>
-                                                                             <p class="text-sm">
-                                                                                    <%= message.content %>
-                                                                             </p>
-                                                                      </div>
-                                                               </div>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No messages available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
+                           
 
-                            <!-- Notifications Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-bell"></i>
-                                          <span class="badge badge-warning navbar-badge">
-                                                 <%= user.notificationCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <span class="dropdown-item dropdown-header">
-                                                 <%= user.notificationCount %> Notifications
-                                          </span>
-                                          <% if (user && user.notifications && Array.isArray(user.notifications)) { %>
-                                                 <span class="dropdown-item dropdown-header">
-                                                        <%= user.notificationCount %> Notifications
-                                                 </span>
-                                                 <% user.notifications.forEach(notification=> { %>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item">
-                                                               <i class="<%= notification.icon %> mr-2"></i>
-                                                               <%= notification.content %>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No notifications available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
+                           
                             <li class="nav-item">
                                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                                           <i class="fas fa-expand-arrows-alt"></i>
@@ -206,6 +148,18 @@
                         </div>
                  </aside>
 
+                 <div class="card-body">
+                    <% if (success_msg) { %>
+                        <div class="alert alert-success"><%= success_msg %></div>
+                    <% } %>
+                    <% if (error_msg) { %>
+                        <div class="alert alert-danger"><%= error_msg %></div>
+                    <% } %>
+                    <div class="table-responsive">
+                        <!-- Existing table -->
+                    </div>
+                </div>
+
               <div class="wrapper">
                      <div class="content-wrapper">
                             <section class="content">
@@ -215,7 +169,7 @@
                                             <h3 class="card-title">Manage Orders</h3>
                                         </div>
                                         <div class="card-body">
-                                            <div class="table-responsive"> <!-- Makes the table scrollable on small screens -->
+                                            <div class="table-responsive"> 
                                                 <table class="table table-dark table-hover">
                                                     <thead>
                                                         <tr>
@@ -292,42 +246,91 @@
                                                     </tbody>
                                                 </table>
                                             </div> <!-- End of .table-responsive -->
+                                            <ul class="pagination">
+                                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                                    </li>
+                                                <% } %>
+                                            </ul>
+                                            
                                         </div>
                                     </div>
                                 </div>
                             </section>
                         </div>
-
                         <style>
-                           /* Responsive table styling */
-@media (max-width: 768px) {
-    .table-responsive {
-        overflow-x: auto; /* Enable horizontal scrolling */
-    }
-
-    .table th, 
-    .table td {
-        font-size: 12px; /* Reduce font size */
-        padding: 6px; /* Reduce padding */
-        white-space: nowrap; /* Prevent text wrapping */
-    }
-
-    .table .btn-sm {
-        font-size: 10px; /* Smaller button text */
-        padding: 4px 6px; /* Compact button */
-    }
-
-    .form-control-sm {
-        font-size: 12px; /* Reduce font size for form elements */
-        padding: 4px; /* Compact form fields */
-    }
-
-    .badge {
-        font-size: 10px; /* Smaller badge text */
-        padding: 3px 6px; /* Reduce badge size */
-    }
-}
-                            </style>
+                            .container-fluid {
+                                padding: 0 10px;
+                            }
+                
+                            .card {
+                                margin: 10px 0;
+                            }
+                
+                            .table-sm {
+                                font-size: 0.85rem;
+                            }
+                
+                            .table th, .table td {
+                                padding: 0.5rem 0.75rem;
+                                vertical-align: middle;
+                            }
+                
+                            .btn-xs {
+                                padding: 0.2rem 0.4rem;
+                                font-size: 0.75rem;
+                            }
+                
+                            .card-header {
+                                padding: 0.5rem 1rem;
+                            }
+                
+                            @media (max-width: 768px) {
+                                .table-responsive {
+                                    font-size: 0.8rem;
+                                }
+                                
+                                .table th, .table td {
+                                    padding: 0.4rem 0.5rem;
+                                }
+                
+                                .card-title {
+                                    font-size: 1.1rem;
+                                }
+                
+                                .btn-sm {
+                                    padding: 0.25rem 0.5rem;
+                                    font-size: 0.8rem;
+                                }
+                            }
+                
+                            @media (max-width: 576px) {
+                                .table {
+                                    display: block;
+                                    overflow-x: auto;
+                                    white-space: nowrap;
+                                }
+                
+                                .table th, .table td {
+                                    padding: 0.3rem 0.4rem;
+                                    font-size: 0.75rem;
+                                }
+                
+                                .card-title {
+                                    font-size: 1rem;
+                                }
+                
+                                .btn-xs {
+                                    padding: 0.15rem 0.3rem;
+                                    font-size: 0.7rem;
+                                }
+                
+                                .card-tools {
+                                    margin-left: 0.5rem;
+                                }
+                            }
+                        </style>
 
                <!-- Control Sidebar -->
                <aside class="control-sidebar control-sidebar-dark">

@@ -1,400 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloud 420 - Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- 
-    <!-- Include Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="icon" href="/images/icon.png" >
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
     <style>
-        .cta-button {
-            background-color: #035925;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s;
+        /* General Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .cta-button:hover {
-            background-color: #028e39;
-        }
-
-        /* Animation for the hero section */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .nav-link {
-            color: #00913a;
-            transition: color 0.3s;
-        }
-
-        .nav-link:hover {
-            color: #6fffa9;
-        }
-
-        .cta-section {
-            background-color: #000;
-            color: #fff;
-            padding: 3rem 2rem;
-            text-align: center;
-            animation: slideUp 1s ease-out;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* Styles for order tracking form */
-        .order-tracking {
-            background-color: #f8f9fa;
-            padding: 3rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-        .order-tracking input,
-        .order-tracking button {
-            border-radius: 5px;
-        }
-
-        .order-tracking h3 {
-            color: #035925;
-        }
-
-        .order-tracking .btn-track {
-            background-color: #035925;
-            color: white;
-        }
-
-        .order-tracking .btn-track:hover {
-            background-color: #028e39;
-        }
-
-        /* Header styles */
+        /* Navbar */
         .navbar {
-            background-color: #000;
+            background: #1a1a1a;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease;
         }
 
         .navbar-brand img {
-            height: 70px;
+            height: 60px;
+            transition: transform 0.3s ease;
         }
 
-        .navbar-nav {
-            margin-left: auto;
+        .navbar-brand:hover img { transform: scale(1.05); }
+
+        .navbar-nav .nav-link {
+            color: #fff !important;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            transition: color 0.3s ease, background 0.3s ease;
         }
 
-        @media (max-width: 767px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-
-            .cta-button {
-                padding: 10px 20px;
-            }
-
-            .cta-section {
-                padding: 2rem 1rem;
-            }
-
-            .order-tracking {
-                padding: 2rem 1rem;
-            }
+        .navbar-nav .nav-link:hover {
+            color: #1eff47 !important;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
         }
 
-        /* Modal enhancement */
+        .badge.bg-success {
+            position: relative;
+            top: -5px;
+            font-size: 0.8rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            margin-top: 76px; /* Adjusted for fixed navbar */
+            position: relative;
+            background: linear-gradient(135deg, rgba(3, 89, 37, 0.85), rgba(0, 0, 0, 0.9)), 
+                        url('/images/420.png') no-repeat center/cover;
+            height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero-content {
+            z-index: 2;
+            text-align: center;
+            color: #fff;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: fadeInDown 1.5s ease-out;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .highlight { color: #1eff47; }
+        .spin-text { 
+            display: inline-block; 
+            color: #fff; 
+            animation: spin 10s infinite linear; 
+            font-size: 1.8rem; 
+        }
+
+        .hero-subtitle {
+            font-size: 1.6rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeIn 2s ease-in forwards 0.8s;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button {
+            background: #035925;
+            color: #fff;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+        }
+
+        .cta-button:hover {
+            background: #028e39;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            color: #fff;
+        }
+
+        .cta-icon { font-size: 1.2rem; transition: transform 0.3s ease; }
+        .cta-button:hover .cta-icon { transform: translateX(8px); }
+
+        .particle-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        /* Order Tracking Section */
+        .order-tracking-section {
+            background: linear-gradient(135deg, #ffffff 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 3.5rem 2rem;
+            margin: 3rem auto;
+            max-width: 900px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .order-tracking-section:hover { transform: translateY(-5px); }
+
+        .order-tracking-section h2 {
+            color: #035925;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .order-tracking-section p { font-size: 1.1rem; color: #666; }
+
+        .form-control {
+            border: 2px solid #035925;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #028e39;
+            box-shadow: 0 0 10px rgba(2, 142, 57, 0.3);
+            outline: none;
+        }
+
+        .btn-track {
+            background: #035925;
+            border: none;
+            padding: 0.75rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-track:hover {
+            background: #028e39;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Modal */
         .modal-content {
-            border-radius: 10px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
-        .modal-footer button {
-            background-color: #035925;
+        .modal-header {
+            background: #035925;
+            color: #fff;
+            border-bottom: none;
+        }
+
+        .modal-body { padding: 2rem; }
+        .progress-tracker::before { background: #e0e0e0; height: 6px; top: 22px; }
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 1.2rem;
+            background: #e0e0e0;
+        }
+
+        .step.completed .step-circle { background: #035925; }
+        .step-label { font-size: 1rem; font-weight: 500; }
+        .step.completed .step-label { color: #035925; }
+
+        /* CTA Section */
+        .cta-section {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 4rem 2rem;
+            text-align: center;
+            animation: slideUp 1s ease-out;
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-section h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p { font-size: 1.2rem; color: #ccc; }
+
+        /* Back to Top Button */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #035925;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        #backToTop.visible { opacity: 1; }
+        #backToTop:hover { transform: scale(1.1); background: #028e39; }
+
+        /* Live Chat Widget */
+        #chatWidget {
+            position: fixed;
+            bottom: 90px;
+            right: 30px;
+            background: #035925;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        #chatToggle {
+            position: fixed;
+            bottom: 30px;
+            right: 90px;
+            background: #035925;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        #chatToggle:hover { transform: scale(1.1); background: #028e39; }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Responsive Design */
+        @media (max-width: 767px) {
+            .navbar { padding: 1rem; }
+            .navbar-brand img { height: 50px; }
+            .hero-section { height: 60vh; }
+            .hero-title { font-size: 2.8rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .cta-button { padding: 0.8rem 2rem; font-size: 1.2rem; }
+            .order-tracking-section { padding: 2rem 1rem; margin: 2rem 1rem; }
+            .cta-section { padding: 2.5rem 1rem; }
+            .cta-section h3 { font-size: 1.6rem; }
         }
     </style>
 </head>
-
 <body>
+    <!-- Navbar (unchanged) -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Store Logo">
+                    <img src="/images/Cloud.png" alt="Cloud 420 Store Logo">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-               
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart <% if (cartItems > 0) { %><span class="badge bg-success"><%= cartItems %></span><% } %></a>
+                            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                                <% if (cartItems > 0) { %>
+                                    <span class="badge bg-success" id="cart-count"><%= cartItems %></span>
+                                <% } %>
+                            </a>
                         </li>
                         <% if (isAuthenticated) { %>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         <% } else { %>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
                         <% } %>
                     </ul>
                 </div>
-                
             </div>
         </nav>
     </header>
 
-   <!-- Hero Section -->
-<section class="hero-section" id="hero">
-    <div class="hero-content">
-        <h1 class="hero-title">
-            <span class="highlight">Cloud 420</span> 
-            <span class="spin-text">Vibes</span> Store
-        </h1>
-        <p class="hero-subtitle" id="rotating-subtitle">
-            <!-- Rotating text will be inserted via JS -->
-        </p>
-        <a href="/products" class="btn cta-button" id="cta-pulse">
-            <span class="cta-text">Your Order Awaits!</span>
-            <i class="fas fa-cloud cta-icon"></i>
-        </a>
-    </div>
-    <canvas id="particle-canvas" class="particle-bg"></canvas>
-</section>
+    <!-- Hero Section (unchanged structurally) -->
+    <section class="hero-section" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title"><span class="highlight">Cloud 420</span> <span class="spin-text">Vibes</span> Store</h1>
+            <p class="hero-subtitle" id="rotating-subtitle"></p>
+            <a href="/products" class="btn cta-button"><span class="cta-text">Your Order Awaits!</span><i class="fas fa-cloud cta-icon"></i></a>
+        </div>
+        <canvas id="particle-canvas" class="particle-bg"></canvas>
+    </section>
 
-<style>
-    .hero-section {
-        margin-top: 50px;
-        position: relative;
-        background: linear-gradient(135deg, rgba(3, 89, 37, 0.729), rgba(0, 0, 0, 0.85)), 
-                    url('/images/420.png') no-repeat center/cover;
-        height: 60vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-    }
-
-    .hero-content {
-        z-index: 2;
-        text-align: center;
-        color: white;
-        padding: 20px;
-    }
-
-    .hero-title {
-        font-size: 5rem;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 3px;
-        animation: fadeInDown 1.5s ease-out;
-    }
-
-    .highlight {
-        color: #1eff47;
-        text-shadow: 0 0 10px rgba(0, 42, 17, 0.7);
-    }
-
-    .spin-text {
-        display: inline-block;
-        color: #fff;
-        animation: spin 8s infinite linear;
-        font-size: 1.5rem;
-    }
-
-    .hero-subtitle {
-        font-size: 1.8rem;
-        margin: 20px 0;
-        font-style: italic;
-        opacity: 0;
-        animation: fadeIn 2s ease-in forwards;
-        animation-delay: 0.8s;
-    }
-
-    .cta-button {
-        background: #035925;
-        color: white;
-        padding: 15px 35px;
-        border-radius: 50px;
-        font-size: 1.5rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        transition: all 0.4s ease;
-    }
-
-    .cta-button:hover {
-        background: #008e39ac;
-        transform: scale(1.1);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-    }
-
-    #cta-pulse {
-        animation: pulse 2s infinite;
-    }
-
-    .cta-icon {
-        font-size: 1.2rem;
-        transition: transform 0.3s;
-    }
-
-    .cta-button:hover .cta-icon {
-        transform: translateX(10px);
-    }
-
-    .particle-bg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
-
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-50px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(111, 255, 169, 0.7); }
-        70% { box-shadow: 0 0 0 20px rgba(111, 255, 169, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(111, 255, 169, 0); }
-    }
-
-    @media (max-width: 767px) {
-        .hero-section { height: 60vh; }
-        .hero-title { font-size: 3rem; }
-        .hero-subtitle { font-size: 1.2rem; }
-        .cta-button { padding: 12px 25px; font-size: 1.2rem; }
-    }
-</style>
-
-<script>
-    // Rotating subtitle text
-    const subtitles = [
-        "We deliver in minutes to your doorstep!",
-        "Premium vibes, haraka-faster service!",
-        "Your chill spot, just a click away!",
-        "Elevate your day with Cloud 420!"
-    ];
-    let subtitleIndex = 0;
-    const subtitleElement = document.getElementById('rotating-subtitle');
-
-    function rotateSubtitle() {
-        subtitleElement.style.opacity = 0;
-        setTimeout(() => {
-            subtitleElement.textContent = subtitles[subtitleIndex];
-            subtitleElement.style.opacity = 1;
-            subtitleIndex = (subtitleIndex + 1) % subtitles.length;
-        }, 500);
-    }
-    setInterval(rotateSubtitle, 3000);
-    rotateSubtitle(); // Initial call
-
-    // Particle effect
-    const canvas = document.getElementById('particle-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particles = [];
-    for (let i = 0; i < 50; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            radius: Math.random() * 3 + 1,
-            speedX: Math.random() * 0.5 - 0.25,
-            speedY: Math.random() * 0.5 - 0.25
-        });
-    }
-
-    function animateParticles() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = 'rgba(111, 255, 169, 0.5)';
-        particles.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fill();
-            p.x += p.speedX;
-            p.y += p.speedY;
-            if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-            if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-        });
-        requestAnimationFrame(animateParticles);
-    }
-    animateParticles();
-</script>
     <!-- Order Tracking Section -->
-    <div class="container order-tracking">
-        <h3 class="text-center">Track Your Order</h3>
-        <form action="/track-order" method="POST" class="text-center">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <input type="text" name="orderId" class="form-control mb-3" placeholder="Enter your Order ID" required>
-                </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-track">Track Order</button>
-                </div>
+    <div class="container order-tracking-section">
+        <h2 class="text-center mb-4">Track Your Order</h2>
+        <p class="text-center mb-4">Enter your Order ID to see the status of your delivery.</p>
+        <form id="trackOrderForm" class="d-flex justify-content-center align-items-center flex-column flex-md-row gap-3">
+            <div class="col-md-6">
+                <input type="text" name="orderId" id="orderIdInput" class="form-control" placeholder="Enter Order ID (e.g., CLOUD654321)" required>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-track" id="trackOrderBtn">
+                    <span class="button-text">Track Now</span>
+                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
             </div>
         </form>
     </div>
 
     <!-- Order Tracking Modal -->
     <div class="modal fade" id="orderTrackingModal" tabindex="-1" aria-labelledby="orderTrackingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="orderTrackingModalLabel">Order Tracking</h5>
@@ -402,26 +382,206 @@
                 </div>
                 <div class="modal-body">
                     <div id="orderDetails">
-                        <!-- Dynamic order details will be displayed here -->
+                        <div id="loadingSpinner" class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div id="trackingContent" class="d-none">
+                            <h4 class="mb-3">Order #<span id="orderIdDisplay"></span></h4>
+                            <p class="text-muted mb-4">Status: <strong id="orderStatus"></strong></p>
+                            <div class="progress-tracker">
+                                <ul class="list-unstyled d-flex justify-content-between position-relative">
+                                    <li class="step" data-step="Ordered"><span class="step-circle">1</span><span class="step-label">Ordered</span></li>
+                                    <li class="step" data-step="Processing"><span class="step-circle">2</span><span class="step-label">Processing</span></li>
+                                    <li class="step" data-step="Shipped"><span class="step-circle">3</span><span class="step-label">Shipped</span></li>
+                                    <li class="step" data-step="Delivered"><span class="step-circle">4</span><span class="step-label">Delivered</span></li>
+                                </ul>
+                            </div>
+                            <p class="mt-3 text-muted" id="orderDetailsText"></p>
+                            <div class="mt-4" id="additionalInfo">
+                                <p><strong>Payment Status:</strong> <span id="paymentStatus"></span></p>
+                                <p><strong>Location:</strong> <span id="customerLocation"></span></p>
+                            </div>
+                        </div>
+                        <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Call to Action Section -->
+    <!-- CTA Section -->
     <div class="cta-section">
         <h3>Get the Best Weed Products Online</h3>
         <p>Order now and experience the highest quality with fast delivery!</p>
         <a href="/products" class="cta-button">Shop Our Collection</a>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-</body>
+    <!-- Back to Top Button -->
+    <button id="backToTop" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
 
+    <!-- Live Chat Widget -->
+    <div id="chatWidget">
+        <h6 class="mb-2">Live Chat</h6>
+        <p class="mb-2">Need help? Chat with us!</p>
+        <textarea id="chatInput" rows="3" class="form-control mb-2" placeholder="Type your message..."></textarea>
+        <button id="sendChat" class="btn btn-light btn-sm">Send</button>
+    </div>
+    <div id="chatToggle" title="Chat with Us"><i class="fas fa-comment-dots"></i></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Rotating subtitle
+        const subtitles = [
+            "We deliver in minutes to your doorstep!",
+            "Premium vibes, haraka-faster service!",
+            "Your chill spot, just a click away!",
+            "Elevate your day with Cloud 420!"
+        ];
+        let subtitleIndex = 0;
+        const subtitleElement = document.getElementById('rotating-subtitle');
+        function rotateSubtitle() {
+            subtitleElement.style.opacity = 0;
+            setTimeout(() => {
+                subtitleElement.textContent = subtitles[subtitleIndex];
+                subtitleElement.style.opacity = 1;
+                subtitleIndex = (subtitleIndex + 1) % subtitles.length;
+            }, 500);
+        }
+        setInterval(rotateSubtitle, 3000);
+        rotateSubtitle();
+
+        // Particle effect
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 3 + 1,
+                speedX: Math.random() * 0.5 - 0.25,
+                speedY: Math.random() * 0.5 - 0.25
+            });
+        }
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(111, 255, 169, 0.5)';
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Order Tracking
+        document.addEventListener('DOMContentLoaded', () => {
+            const trackOrderForm = document.getElementById('trackOrderForm');
+            const trackOrderBtn = document.getElementById('trackOrderBtn');
+            const orderIdInput = document.getElementById('orderIdInput');
+            const modal = new bootstrap.Modal(document.getElementById('orderTrackingModal'));
+            const orderDetails = document.getElementById('orderDetails');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const trackingContent = document.getElementById('trackingContent');
+            const errorMessage = document.getElementById('errorMessage');
+            const orderIdDisplay = document.getElementById('orderIdDisplay');
+            const orderStatus = document.getElementById('orderStatus');
+            const orderDetailsText = document.getElementById('orderDetailsText');
+            const paymentStatus = document.getElementById('paymentStatus');
+            const customerLocation = document.getElementById('customerLocation');
+
+            trackOrderForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                trackOrderBtn.querySelector('.button-text').classList.add('d-none');
+                trackOrderBtn.querySelector('.spinner-border').classList.remove('d-none');
+                trackOrderBtn.disabled = true;
+
+                const orderId = orderIdInput.value.trim();
+
+                try {
+                    const response = await fetch('/track-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderId }),
+                    });
+
+                    const data = await response.json();
+
+                    loadingSpinner.classList.remove('d-none');
+                    trackingContent.classList.add('d-none');
+                    errorMessage.classList.add('d-none');
+                    modal.show();
+
+                    if (data.success) {
+                        orderIdDisplay.textContent = data.order.cloudOrderId || orderId;
+                        orderStatus.textContent = data.order.shippingStatus;
+                        orderDetailsText.textContent = `Estimated Delivery: ${data.order.estimatedDelivery || 'N/A'}`;
+                        paymentStatus.textContent = data.order.paymentStatus;
+                        customerLocation.textContent = data.order.customerLocation;
+
+                        const steps = document.querySelectorAll('.step');
+                        steps.forEach(step => {
+                            step.classList.remove('completed');
+                            const statusOrder = ['Ordered', 'Processing', 'Shipped', 'Delivered'];
+                            if (statusOrder.indexOf(step.dataset.step) <= statusOrder.indexOf(data.order.shippingStatus)) {
+                                step.classList.add('completed');
+                            }
+                        });
+
+                        loadingSpinner.classList.add('d-none');
+                        trackingContent.classList.remove('d-none');
+                    } else {
+                        errorMessage.textContent = data.message || 'Order not found.';
+                        errorMessage.classList.remove('d-none');
+                        loadingSpinner.classList.add('d-none');
+                    }
+                } catch (error) {
+                    console.error('Tracking error:', error);
+                    errorMessage.textContent = 'An error occurred while tracking your order.';
+                    errorMessage.classList.remove('d-none');
+                    loadingSpinner.classList.add('d-none');
+                } finally {
+                    trackOrderBtn.querySelector('.button-text').classList.remove('d-none');
+                    trackOrderBtn.querySelector('.spinner-border').classList.add('d-none');
+                    trackOrderBtn.disabled = false;
+                }
+            });
+        });
+
+        // Back to Top Button
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) backToTop.classList.add('visible');
+            else backToTop.classList.remove('visible');
+        });
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Live Chat Widget (Basic Demo)
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWidget = document.getElementById('chatWidget');
+        const sendChat = document.getElementById('sendChat');
+        const chatInput = document.getElementById('chatInput');
+        chatToggle.addEventListener('click', () => {
+            chatWidget.style.display = chatWidget.style.display === 'block' ? 'none' : 'block';
+        });
+        sendChat.addEventListener('click', () => {
+            const message = chatInput.value.trim();
+            if (message) {
+                console.log('Chat message:', message); // Replace with actual chat logic
+                chatInput.value = '';
+            }
+        });
+    </script>
+</body>
 </html>

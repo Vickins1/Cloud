@@ -26,7 +26,7 @@ function ensureAuthenticated(req, res, next) {
 }
 
 // Get all products (existing route)
-router.get("/", async (req, res) => {
+router.get("/",ensureAuthenticated, async (req, res) => {
   try {
     const products = await Product.find();
     res.render("products", { 

@@ -42,66 +42,8 @@
 
                      <!-- Right navbar links -->
                      <ul class="navbar-nav ml-auto">
-                            <!-- Messages Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-comments"></i>
-                                          <span class="badge badge-danger navbar-badge">
-                                                 <%= user.messageCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <% if (user && user.messages && Array.isArray(user.messages)) { %>
-                                                 <% user.messages.forEach(message=> { %>
-                                                        <a href="#" class="dropdown-item">
-                                                               <div class="media">
-                                                                      <img src="<%= message.avatar %>" alt="User Avatar"
-                                                                             class="img-size-50 mr-3 img-circle">
-                                                                      <div class="media-body">
-                                                                             <h3 class="dropdown-item-title">
-                                                                                    <%= message.sender %>
-                                                                             </h3>
-                                                                             <p class="text-sm">
-                                                                                    <%= message.content %>
-                                                                             </p>
-                                                                      </div>
-                                                               </div>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No messages available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
+                           
 
-                            <!-- Notifications Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-bell"></i>
-                                          <span class="badge badge-warning navbar-badge">
-                                                 <%= user.notificationCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <span class="dropdown-item dropdown-header">
-                                                 <%= user.notificationCount %> Notifications
-                                          </span>
-                                          <% if (user && user.notifications && Array.isArray(user.notifications)) { %>
-                                                 <span class="dropdown-item dropdown-header">
-                                                        <%= user.notificationCount %> Notifications
-                                                 </span>
-                                                 <% user.notifications.forEach(notification=> { %>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item">
-                                                               <i class="<%= notification.icon %> mr-2"></i>
-                                                               <%= notification.content %>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No notifications available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
                             <li class="nav-item">
                                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                                           <i class="fas fa-expand-arrows-alt"></i>

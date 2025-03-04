@@ -190,6 +190,7 @@
             }
         }
     </style>
+
     <style>
         /* Style modal images */
 .modal-img {
@@ -324,19 +325,24 @@
                                 <% } %>
                         </a>
                     </li>
-                    <% if (isAuthenticated) { %>
-                        <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i>
-                                Logout</a></li>
+                     <% if (isAuthenticated) { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </li>
                         <% } else { %>
-                            <li class="nav-item"><a class="nav-link" href="/auth/login"><i
-                                        class="fas fa-sign-in-alt"></i> Login</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/auth/signup"><i
-                                        class="fas fa-user-plus"></i> Sign Up</a></li>
-                            <% } %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                            </li>
+                        <% } %>
                 </ul>
             </div>
         </div>
@@ -418,7 +424,7 @@
                 border-radius: 10px;
                 backdrop-filter: blur(5px);
                 margin-top: 20px; /* Default margin */
-                max-width: 620px; /* Default max-width */
+                max-width: 490px; /* Default max-width */
                 margin-left: auto;
                 margin-right: auto;
             }

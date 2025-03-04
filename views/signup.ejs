@@ -175,10 +175,11 @@
 <body>
     <div class="signup-box">
         <h2>Signup</h2>
-        <% if (error) { %>
-            <div style="background-color: #a94442; padding: 0.8rem; border-radius: 4px; margin-bottom: 1rem; color: #fff;">
-                <%= error %>
-            </div>
+        <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+            <div class="alert alert-danger text-center"><%= error_msg %></div>
+        <% } %>
+        <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+            <div class="alert alert-success text-center"><%= success_msg %></div>
         <% } %>
         <form action="/auth/signup" method="POST">
             <label for="username">Username</label>

@@ -41,66 +41,8 @@
 
                      <!-- Right navbar links -->
                      <ul class="navbar-nav ml-auto">
-                            <!-- Messages Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-comments"></i>
-                                          <span class="badge badge-danger navbar-badge">
-                                                 <%= user.messageCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <% if (user && user.messages && Array.isArray(user.messages)) { %>
-                                                 <% user.messages.forEach(message=> { %>
-                                                        <a href="#" class="dropdown-item">
-                                                               <div class="media">
-                                                                      <img src="<%= message.avatar %>" alt="User Avatar"
-                                                                             class="img-size-50 mr-3 img-circle">
-                                                                      <div class="media-body">
-                                                                             <h3 class="dropdown-item-title">
-                                                                                    <%= message.sender %>
-                                                                             </h3>
-                                                                             <p class="text-sm">
-                                                                                    <%= message.content %>
-                                                                             </p>
-                                                                      </div>
-                                                               </div>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No messages available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
+                           
 
-                            <!-- Notifications Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-bell"></i>
-                                          <span class="badge badge-warning navbar-badge">
-                                                 <%= user.notificationCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <span class="dropdown-item dropdown-header">
-                                                 <%= user.notificationCount %> Notifications
-                                          </span>
-                                          <% if (user && user.notifications && Array.isArray(user.notifications)) { %>
-                                                 <span class="dropdown-item dropdown-header">
-                                                        <%= user.notificationCount %> Notifications
-                                                 </span>
-                                                 <% user.notifications.forEach(notification=> { %>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item">
-                                                               <i class="<%= notification.icon %> mr-2"></i>
-                                                               <%= notification.content %>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No notifications available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
                             <li class="nav-item">
                                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                                           <i class="fas fa-expand-arrows-alt"></i>
@@ -124,204 +66,211 @@
                             <span class="brand-text font-weight-light"></span>
                      </a>
 
-                                   <!-- Sidebar --> <!-- Sidebar -->
-              <div class="sidebar">
-                     <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                         <div class="image">
-                             <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                         </div>
-                         <div class="info">
-                             <a href="#" class="d-block"><strong><%= currentUser.username %></strong></a>
-                         </div>
-                     </div>
-     
-                     <nav class="mt-2">
-                            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                                <!-- Dashboard -->
-                                <li class="nav-item menu-open">
-                                    <a href="/admin/dashboard" class="nav-link active">
-                                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                                        <p>Dashboard</p>
-                                    </a>
-                                </li>
-        
-                                
-        
-                                <!-- Products -->
-                                <li class="nav-item">
-                                    <a href="/admin/products" class="nav-link">
-                                        <i class="nav-icon fas fa-cube"></i>
-                                        <p>Products</p>
-                                    </a>
-                                </li>
-        
-                                <!-- Orders -->
-                                <li class="nav-item">
-                                    <a href="/admin/orders" class="nav-link">
-                                        <i class="nav-icon fas fa-shopping-bag"></i>
-                                        <p>Orders</p>
-                                    </a>
-                                </li>
-        
-                                <!-- Carts (optional) -->
-                                <li class="nav-item">
-                                    <a href="/admin/carts" class="nav-link">
-                                        <i class="nav-icon fas fa-shopping-cart"></i>
-                                        <p>Carts</p>
-                                    </a>
-                                </li>
-      
-                                <li class="nav-item">
-                                  <a href="/admin/transactions" class="nav-link">
-                                      <i class="nav-icon fas fa-exchange-alt"></i>
-                                      <p>Transactions</p>
-                                  </a>
-                              </li>
-                                   <!-- Users -->
-                                <li class="nav-item">
-                                  <a href="/admin/users" class="nav-link">
-                                      <i class="nav-icon fas fa-users"></i>
-                                      <p>Users</p>
-                                  </a>
-                              </li>  
-                                  <!-- Settings -->
-                                  <li class="nav-item">
-                                         <a href="/admin/settings" class="nav-link">
-                                         <i class="nav-icon fas fa-cogs"></i>
-                                         <p>Settings</p>
-                                         </a>
-                                  </li>
-             
-                                  <!-- Logout -->
-                                  <li class="nav-item">
-                                         <a href="/admin/logout" class="nav-link">
-                                         <i class="nav-icon fas fa-sign-out-alt"></i>
-                                         <p>Logout</p>
-                                         </a>
-                                  </li>
-      
-                            </ul>
-                        </nav>
-                        </div>
-                 </aside>
-              <div class="content-wrapper">
-                     <section class="content">
-                            <div class="container-fluid">
-                                   <div class="card shadow-lg border-0">
-                                          <div class="card-header border-0 d-flex justify-content-between align-items-center py-3" ">
-                                     <h3 class=" card-title text-white font-weight-bold m-0"
-                                                 style="font-size: 1.5rem;">Manage Products</h3>
-                                                 <div class="card-tools">
-                                                        <button type="button" class="btn btn-sm btn-success shadow-sm"
-                                                               data-toggle="modal" data-target="#addProductModal">
-                                                               <i class="fas fa-plus mr-2"></i> Add Product
-                                                        </button>
-                                                 </div>
-                                          </div>
-                                          <div class="card-body p-0">
-                                                 <% if (typeof error_msg !=='undefined' && error_msg.length> 0) { %>
-                                                        <div class="alert alert-danger alert-dismissible fade show mx-3 mt-3"
-                                                               role="alert">
-                                                               <%= error_msg[0] %>
-                                                                      <button type="button" class="close"
-                                                                             data-dismiss="alert" aria-label="Close">
-                                                                             <span aria-hidden="true">&times;</span>
-                                                                      </button>
-                                                        </div>
-                                                        <% } %>
-                                                               <% if (typeof success_msg !=='undefined' &&
-                                                                      success_msg.length> 0) { %>
-                                                                      <div class="alert alert-success alert-dismissible fade show mx-3 mt-3"
-                                                                             role="alert">
-                                                                             <%= success_msg[0] %>
-                                                                                    <button type="button" class="close"
-                                                                                           data-dismiss="alert"
-                                                                                           aria-label="Close">
-                                                                                           <span
-                                                                                                  aria-hidden="true">&times;</span>
-                                                                                    </button>
-                                                                      </div>
-                                                                      <% } %>
-
-                                                                      
-                                                                      <div class="table-responsive">
-                                                                             <table class="table table-dark table-hover m-0 rounded-table">
-                                                                                 <thead>
-                                                                                     <tr>
-                                                                                         <th class="py-3 pl-4">Name</th>
-                                                                                         <th class="py-3">Price (KES)</th>
-                                                                                         <th class="py-3">Stock</th>
-                                                                                         <th class="py-3">Category</th>
-                                                                                         <th class="py-3 pr-4">Actions</th>
-                                                                                     </tr>
-                                                                                 </thead>
-                                                                                 <tbody>
-                                                                                     <% products.forEach(product => { %>
-                                                                                         <tr>
-                                                                                             <td class="py-3 pl-4"><%= product.name %></td>
-                                                                                             <td class="py-3"><%= product.price.toFixed(2) %></td>
-                                                                                             <td class="py-3"><%= product.stockQuantity %></td>
-                                                                                             <td class="py-3"><%= product.category || 'N/A' %></td>
-                                                                                             <td class="py-3 pr-4">
-                                                                                                 <button class="btn btn-sm btn-warning edit-btn"
-                                                                                                     data-id="<%= product._id %>"
-                                                                                                     data-name="<%= product.name %>"
-                                                                                                     data-price="<%= product.price %>"
-                                                                                                     data-description="<%= product.description || '' %>"
-                                                                                                     data-stock="<%= product.stockQuantity %>"
-                                                                                                     data-category="<%= product.category || '' %>"
-                                                                                                     data-toggle="modal"
-                                                                                                     data-target="#editProductModal">
-                                                                                                     <i class="fas fa-edit"></i>
-                                                                                                 </button>
-                                                                         
-                                                                                                 <button class="btn btn-sm btn-danger delete-btn"
-                                                                                                     onclick="deleteProduct('<%= product._id %>')">
-                                                                                                     <i class="fas fa-trash-alt"></i>
-                                                                                                 </button>
-                                                                                             </td>
-                                                                                         </tr>
-                                                                                     <% }); %>
-                                                                                 </tbody>
-                                                                             </table>
-                                                                         </div>
-                                                                         
-                                          </div>
+                     <!-- Sidebar --> <!-- Sidebar -->
+                     <div class="sidebar">
+                            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                                   <div class="image">
+                                          <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+                                                 alt="User Image">
                                    </div>
+                                   <div class="info">
+                                          <a href="#" class="d-block"><strong>
+                                                        <%= currentUser.username %>
+                                                 </strong></a>
+                                   </div>
+                            </div>
+
+                            <nav class="mt-2">
+                                   <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                                          data-accordion="false">
+                                          <!-- Dashboard -->
+                                          <li class="nav-item menu-open">
+                                                 <a href="/admin/dashboard" class="nav-link active">
+                                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                                        <p>Dashboard</p>
+                                                 </a>
+                                          </li>
 
 
-                                   <!-- Edit Product Modal -->
+
+                                          <!-- Products -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/products" class="nav-link">
+                                                        <i class="nav-icon fas fa-cube"></i>
+                                                        <p>Products</p>
+                                                 </a>
+                                          </li>
+
+                                          <!-- Orders -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/orders" class="nav-link">
+                                                        <i class="nav-icon fas fa-shopping-bag"></i>
+                                                        <p>Orders</p>
+                                                 </a>
+                                          </li>
+
+                                          <!-- Carts (optional) -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/carts" class="nav-link">
+                                                        <i class="nav-icon fas fa-shopping-cart"></i>
+                                                        <p>Carts</p>
+                                                 </a>
+                                          </li>
+
+                                          <li class="nav-item">
+                                                 <a href="/admin/transactions" class="nav-link">
+                                                        <i class="nav-icon fas fa-exchange-alt"></i>
+                                                        <p>Transactions</p>
+                                                 </a>
+                                          </li>
+                                          <!-- Users -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/users" class="nav-link">
+                                                        <i class="nav-icon fas fa-users"></i>
+                                                        <p>Users</p>
+                                                 </a>
+                                          </li>
+                                          <!-- Settings -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/settings" class="nav-link">
+                                                        <i class="nav-icon fas fa-cogs"></i>
+                                                        <p>Settings</p>
+                                                 </a>
+                                          </li>
+
+                                          <!-- Logout -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/logout" class="nav-link">
+                                                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                                                        <p>Logout</p>
+                                                 </a>
+                                          </li>
+
+                                   </ul>
+                            </nav>
+                     </div>
+              </aside>
+
+              <div class="content-wrapper">
+
+                     <section class="content">
+    <div class="container-fluid">
+        <div class="card shadow-lg border-0">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center py-2">
+                <h3 class="card-title text-white font-weight-bold m-0" style="font-size: 1.25rem;">Manage Products</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-sm btn-success shadow-sm" data-toggle="modal" data-target="#addProductModal">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+                    <div class="alert alert-danger alert-dismissible fade show mx-2 mt-2" role="alert">
+                        <%= error_msg[0] %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                <% } %>
+                <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+                    <div class="alert alert-success alert-dismissible fade show mx-2 mt-2" role="alert">
+                        <%= success_msg[0] %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                <% } %>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-sm m-0">
+                        <thead>
+                            <tr>
+                                <th class="py-2 pl-2">Name</th>
+                                <th class="py-2">Price</th>
+                                <th class="py-2">Stock</th>
+                                <th class="py-2">Category</th>
+                                <th class="py-2 pr-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% products.forEach(product => { %>
+                                <tr>
+                                    <td class="py-2 pl-2"><%= product.name %></td>
+                                    <td class="py-2"><%= product.price.toFixed(2) %></td>
+                                    <td class="py-2"><%= product.stockQuantity %></td>
+                                    <td class="py-2"><%= product.category || 'N/A' %></td>
+                                    <td class="py-2 pr-2">
+                                        <button class="btn btn-xs btn-warning edit-btn"
+                                            data-id="<%= product._id %>"
+                                            data-name="<%= product.name %>"
+                                            data-price="<%= product.price %>"
+                                            data-description="<%= product.description || '' %>"
+                                            data-stock="<%= product.stockQuantity %>"
+                                            data-category="<%= product.category || '' %>"
+                                            data-toggle="modal"
+                                            data-target="#editProductModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="/admin/products/delete/<%= product._id %>" method="POST" class="delete-form d-inline"
+                                            onsubmit="return confirmDelete()">
+                                            <button type="submit" class="btn btn-xs btn-danger delete-btn">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <nav>
+              <ul class="pagination">
+                     <% for (let i = 1; i <= totalPages; i++) { %>
+                         <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                             <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                         </li>
+                     <% } %>
+                 </ul>
+                 
+          </nav>
+
+
+<!-- Edit Product Modal -->
 <div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
-       <div class="modal-dialog modal-lg" role="document">
-           <div class="modal-content bg-dark text-white shadow-lg" style="border-radius: 15px; border: 1px solid #ffc107;">
-               <div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #1a1a1a, #856404);">
-                   <h5 class="modal-title font-weight-bold" id="editProductModalLabel" style="font-size: 1.75rem; color: #fff3cd;">Edit Product</h5>
+       <div class="modal-dialog modal-md" role="document"> <!-- Changed from modal-lg to modal-md -->
+           <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #ffc107;">
+               <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #856404);">
+                   <h5 class="modal-title font-weight-bold" id="editProductModalLabel" style="font-size: 1.25rem; color: #fff3cd;">Edit Product</h5>
                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                       <span aria-hidden="true" style="font-size: 1.5rem;">×</span>
+                       <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
                    </button>
                </div>
-               <div class="modal-body p-4">
+               <div class="modal-body p-3">
                    <form id="editProductForm" action="/admin/products/edit" method="POST" enctype="multipart/form-data">
                        <input type="hidden" id="editProductId" name="id">
-                       <div class="form-group mb-4">
-                           <label for="editName" class="text-muted font-weight-bold">Product Name</label>
-                           <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="editName" name="name" required style="border-radius: 10px; padding: 12px;">
+                       <div class="form-group mb-3">
+                           <label for="editName" class="text-muted font-weight-bold small">Product Name</label>
+                           <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="editName" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
                        </div>
-                       <div class="form-group mb-4">
-                           <label for="editPrice" class="text-muted font-weight-bold">Price (KES)</label>
-                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="editPrice" name="price" step="0.01" required style="border-radius: 10px; padding: 12px;">
+                       <div class="form-group mb-3">
+                           <label for="editPrice" class="text-muted font-weight-bold small">Price (KES)</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="editPrice" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
                        </div>
-                       <div class="form-group mb-4">
-                           <label for="editDescription" class="text-muted font-weight-bold">Description</label>
-                           <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="editDescription" name="description" rows="3" style="border-radius: 10px; padding: 12px;"></textarea>
+                       <div class="form-group mb-3">
+                           <label for="editDescription" class="text-muted font-weight-bold small">Description</label>
+                           <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="editDescription" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
                        </div>
-                       <div class="form-group mb-4">
-                           <label for="editStockQuantity" class="text-muted font-weight-bold">Stock Quantity</label>
-                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="editStockQuantity" name="stockQuantity" required style="border-radius: 10px; padding: 12px;">
+                       <div class="form-group mb-3">
+                           <label for="editStockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="editStockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
                        </div>
-                       <div class="form-group mb-4">
-                           <label for="editCategory" class="text-muted font-weight-bold">Category</label>
-                           <select class="form-control bg-secondary text-white border-0 shadow-sm" id="editCategory" name="category" style="border-radius: 10px; padding: 12px;">
+                       <div class="form-group mb-3">
+                           <label for="editCategory" class="text-muted font-weight-bold small">Category</label>
+                           <select class="form-control bg-secondary text-white border-0 shadow-sm" id="editCategory" name="category" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
                                <option value="Flower">Flower</option>
                                <option value="Edibles">Edibles</option>
                                <option value="Vapes">Vapes</option>
@@ -330,242 +279,303 @@
                                <option value="CBD">CBD</option>
                            </select>
                        </div>
-                       <div class="form-group mb-4">
-                           <label for="editImages" class="text-muted font-weight-bold">Images (Select multiple to replace existing)</label>
-                           <input type="file" class="form-control-file" id="editImages" name="images" accept="image/*" multiple style="padding: 10px; border: 1px dashed #ffc107; border-radius: 10px; background: #1a1a1a;">
-                           <small class="text-muted d-block mt-1">Leave empty to keep current images.</small>
+                       <div class="form-group mb-3">
+                           <label for="editImages" class="text-muted font-weight-bold small">Images (Replace Existing)</label>
+                           <input type="file" class="form-control-file" id="editImages" name="images" accept="image/*" multiple style="padding: 6px; border: 1px dashed #ffc107; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;">
+                           <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Leave empty to keep current images</small>
                        </div>
-                       <button type="submit" class="btn btn-warning btn-block shadow-sm" style="border-radius: 25px; padding: 12px; font-weight: bold; background: #ffc107; color: #212529;">Update Product</button>
+                       <button type="submit" class="btn btn-warning btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold; background: #ffc107; color: #212529;">Update Product</button>
                    </form>
                </div>
            </div>
        </div>
    </div>
-   <script>
-       document.addEventListener("DOMContentLoaded", function () {
-           document.querySelectorAll(".edit-btn").forEach(button => {
-               button.addEventListener("click", function () {
-                   document.getElementById("editProductId").value = this.dataset.id;
-                   document.getElementById("editName").value = this.dataset.name;
-                   document.getElementById("editPrice").value = this.dataset.price;
-                   document.getElementById("editDescription").value = this.dataset.description;
-                   document.getElementById("editStockQuantity").value = this.dataset.stock;
-                   document.getElementById("editCategory").value = this.dataset.category;
-               });
-           });
-       });
-       </script>
-       
-                                      
+   
+   <style>
+       .modal-content {
+           transition: all 0.3s ease;
+       }
+   
+       .form-control,
+       .form-control-file {
+           background: #2d2d2d;
+           color: #fff;
+           border: none;
+           border-radius: 8px;
+           padding: 8px;
+       }
+   
+       .form-control:focus {
+           box-shadow: 0 0 5px rgba(255, 193, 7, 0.5); /* Adjusted to match warning theme */
+           background: #333;
+       }
+   
+       .btn-warning {
+           background: #ffc107;
+           border: none;
+           transition: transform 0.2s, background 0.3s;
+       }
+   
+       .btn-warning:hover {
+           background: #e0a800;
+           transform: translateY(-2px);
+       }
+   
+       @media (max-width: 768px) {
+           .modal-dialog {
+               margin: 8px auto;
+               max-width: 85%;
+           }
+   
+           .modal-content {
+               border-radius: 8px;
+           }
+   
+           .modal-header {
+               padding: 10px 15px;
+           }
+   
+           .modal-title {
+               font-size: 1.1rem;
+           }
+   
+           .modal-body {
+               padding: 15px;
+           }
+   
+           .form-group {
+               margin-bottom: 12px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .btn-warning {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .close span {
+               font-size: 1rem;
+           }
+       }
+   
+       @media (max-width: 576px) {
+           .modal-dialog {
+               max-width: 90%;
+           }
+   
+           .modal-title {
+               font-size: 1rem;
+           }
+   
+           .modal-body {
+               padding: 10px;
+           }
+   
+           .form-group {
+               margin-bottom: 10px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           .btn-warning {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           label {
+               font-size: 0.85rem;
+           }
+   
+           small {
+               font-size: 0.7rem;
+           }
+       }
+   </style>
+                                   <script>
+                                          document.addEventListener("DOMContentLoaded", function () {
+                                                 document.querySelectorAll(".edit-btn").forEach(button => {
+                                                        button.addEventListener("click", function () {
+                                                               document.getElementById("editProductId").value = this.dataset.id;
+                                                               document.getElementById("editName").value = this.dataset.name;
+                                                               document.getElementById("editPrice").value = this.dataset.price;
+                                                               document.getElementById("editDescription").value = this.dataset.description;
+                                                               document.getElementById("editStockQuantity").value = this.dataset.stock;
+                                                               document.getElementById("editCategory").value = this.dataset.category;
+                                                        });
+                                                 });
+                                          });
+                                   </script>
+
+
                                    <!-- Add Product Modal -->
-                                   <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog"
-                                          aria-labelledby="addProductModalLabel" aria-hidden="true">
-                                          <div class="modal-dialog modal-lg" role="document">
-                                                 <div class="modal-content bg-dark text-white shadow-lg"
-                                                        style="border-radius: 15px; border: 1px solid #035925;">
-                                                        <div class="modal-header border-0 pb-0"
-                                                               style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
-                                                               <h5 class="modal-title font-weight-bold"
-                                                                      id="addProductModalLabel"
-                                                                      style="font-size: 1.75rem; color: #d4edda;">Add
-                                                                      New Product</h5>
-                                                               <button type="button" class="close text-white"
-                                                                      data-dismiss="modal" aria-label="Close">
-                                                                      <span aria-hidden="true"
-                                                                             style="font-size: 1.5rem;">×</span>
-                                                               </button>
-                                                        </div>
-                                                        <div class="modal-body p-4">
-                                                               <form id="addProductForm" action="/admin/products/add"
-                                                                      method="POST" enctype="multipart/form-data">
-                                                                      <div class="form-group mb-4">
-                                                                             <label for="name"
-                                                                                    class="text-muted font-weight-bold">Product
-                                                                                    Name</label>
-                                                                             <input type="text"
-                                                                                    class="form-control bg-secondary text-white border-0 shadow-sm"
-                                                                                    id="name" name="name" required
-                                                                                    style="border-radius: 10px; padding: 12px;">
-                                                                      </div>
-                                                                      <div class="form-group mb-4">
-                                                                             <label for="price"
-                                                                                    class="text-muted font-weight-bold">Price
-                                                                                    (KES)</label>
-                                                                             <input type="number"
-                                                                                    class="form-control bg-secondary text-white border-0 shadow-sm"
-                                                                                    id="price" name="price" step="0.01"
-                                                                                    required
-                                                                                    style="border-radius: 10px; padding: 12px;">
-                                                                      </div>
-                                                                      <div class="form-group mb-4">
-                                                                             <label for="description"
-                                                                                    class="text-muted font-weight-bold">Description</label>
-                                                                             <textarea
-                                                                                    class="form-control bg-secondary text-white border-0 shadow-sm"
-                                                                                    id="description" name="description"
-                                                                                    rows="3"
-                                                                                    style="border-radius: 10px; padding: 12px;"></textarea>
-                                                                      </div>
-                                                                      <div class="form-group mb-4">
-                                                                             <label for="stockQuantity"
-                                                                                    class="text-muted font-weight-bold">Stock
-                                                                                    Quantity</label>
-                                                                             <input type="number"
-                                                                                    class="form-control bg-secondary text-white border-0 shadow-sm"
-                                                                                    id="stockQuantity"
-                                                                                    name="stockQuantity" required
-                                                                                    style="border-radius: 10px; padding: 12px;">
-                                                                      </div>
-                                                                      <div class="form-group mb-4">
-                                                                             <label for="category"
-                                                                                    class="text-muted font-weight-bold">Category</label>
-                                                                             <select class="form-control bg-secondary text-white border-0 shadow-sm"
-                                                                                    id="category" name="category"
-                                                                                    style="border-radius: 10px; padding: 12px;">
-                                                                                    <option value="Flower">Flower
-                                                                                    </option>
-                                                                                    <option value="Edibles">Edibles
-                                                                                    </option>
-                                                                                    <option value="Vapes">Vapes</option>
-                                                                                    <option value="Concentrates">
-                                                                                           Concentrates</option>
-                                                                                    <option value="Accessories">
-                                                                                           Accessories</option>
-                                                                                    <option value="CBD">CBD</option>
-                                                                             </select>
-                                                                      </div>
-                                                                      <div class="form-group mb-4">
-                                                                             <label for="images"
-                                                                                    class="text-muted font-weight-bold">Images
-                                                                                    (Select multiple)</label>
-                                                                             <input type="file"
-                                                                                    class="form-control-file"
-                                                                                    id="images" name="images"
-                                                                                    accept="image/*" multiple required
-                                                                                    style="padding: 10px; border: 1px dashed #035925; border-radius: 10px; background: #1a1a1a;">
-                                                                             <small class="text-muted d-block mt-1">Hold
-                                                                                    Ctrl (Windows) or Cmd (Mac) to
-                                                                                    select multiple images.</small>
-                                                                      </div>
-                                                                      <button type="submit"
-                                                                             class="btn btn-success btn-block shadow-sm"
-                                                                             style="border-radius: 25px; padding: 12px; font-weight: bold;">Add
-                                                                             Product</button>
-                                                               </form>
-                                                        </div>
-                                                 </div>
-                                          </div>
-                                   </div>
-
-                                   <style>
-                                          .modal-content {
-                                                 transition: all 0.3s ease;
-                                          }
-
-                                          .form-control,
-                                          .form-control-file {
-                                                 background: #2d2d2d;
-                                                 color: #fff;
-                                                 border: none;
-                                                 border-radius: 10px;
-                                                 padding: 12px;
-                                          }
-
-                                          .form-control:focus {
-                                                 box-shadow: 0 0 5px rgba(3, 89, 37, 0.5);
-                                                 background: #333;
-                                          }
-
-                                          .btn-success {
-                                                 background: #035925;
-                                                 border: none;
-                                                 transition: transform 0.2s, background 0.3s;
-                                          }
-
-                                          .btn-success:hover {
-                                                 background: #028a1b;
-                                                 transform: translateY(-2px);
-                                          }
-
-                                          @media (max-width: 768px) {
-                                                 .modal-dialog {
-                                                        margin: 10px auto;
-                                                        max-width: 90%;
-                                                 }
-
-                                                 .modal-content {
-                                                        border-radius: 10px;
-                                                 }
-
-                                                 .modal-header {
-                                                        padding: 15px 20px;
-                                                 }
-
-                                                 .modal-title {
-                                                        font-size: 1.5rem;
-                                                 }
-
-                                                 .modal-body {
-                                                        padding: 20px;
-                                                 }
-
-                                                 .form-group {
-                                                        margin-bottom: 15px;
-                                                 }
-
-                                                 .form-control,
-                                                 .form-control-file {
-                                                        padding: 10px;
-                                                        font-size: 14px;
-                                                 }
-
-                                                 .btn-success {
-                                                        padding: 10px;
-                                                        font-size: 14px;
-                                                 }
-
-                                                 .close span {
-                                                        font-size: 1.25rem;
-                                                 }
-                                          }
-
-                                          @media (max-width: 576px) {
-                                                 .modal-dialog {
-                                                        max-width: 95%;
-                                                 }
-
-                                                 .modal-title {
-                                                        font-size: 1.25rem;
-                                                 }
-
-                                                 .modal-body {
-                                                        padding: 15px;
-                                                 }
-
-                                                 .form-group {
-                                                        margin-bottom: 12px;
-                                                 }
-
-                                                 .form-control,
-                                                 .form-control-file {
-                                                        padding: 8px;
-                                                        font-size: 12px;
-                                                 }
-
-                                                 .btn-success {
-                                                        padding: 8px;
-                                                        font-size: 12px;
-                                                 }
-
-                                                 label {
-                                                        font-size: 14px;
-                                                 }
-
-                                                 small {
-                                                        font-size: 10px;
-                                                 }
-                                          }
-                                   </style>
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-md" role="document"> <!-- Changed from modal-lg to modal-md -->
+           <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #035925;">
+               <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
+                   <h5 class="modal-title font-weight-bold" id="addProductModalLabel" style="font-size: 1.25rem; color: #d4edda;">Add New Product</h5>
+                   <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                       <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                   </button>
+               </div>
+               <div class="modal-body p-3">
+                   <form id="addProductForm" action="/admin/products/add" method="POST" enctype="multipart/form-data">
+                       <div class="form-group mb-3">
+                           <label for="name" class="text-muted font-weight-bold small">Product Name</label>
+                           <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="name" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="price" class="text-muted font-weight-bold small">Price (KES)</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="price" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="description" class="text-muted font-weight-bold small">Description</label>
+                           <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="description" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="stockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="stockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="category" class="text-muted font-weight-bold small">Category</label>
+                           <select class="form-control bg-secondary text-white border-0 shadow-sm" id="category" name="category" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                               <option value="Flower">Flower</option>
+                               <option value="Edibles">Edibles</option>
+                               <option value="Vapes">Vapes</option>
+                               <option value="Concentrates">Concentrates</option>
+                               <option value="Accessories">Accessories</option>
+                               <option value="CBD">CBD</option>
+                           </select>
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="images" class="text-muted font-weight-bold small">Images (Multiple)</label>
+                           <input type="file" class="form-control-file" id="images" name="images" accept="image/*" multiple required style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;">
+                           <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Ctrl (Win) or Cmd (Mac) for multiple</small>
+                       </div>
+                       <button type="submit" class="btn btn-success btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add Product</button>
+                   </form>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <style>
+       .modal-content {
+           transition: all 0.3s ease;
+       }
+   
+       .form-control,
+       .form-control-file {
+           background: #2d2d2d;
+           color: #fff;
+           border: none;
+           border-radius: 8px;
+           padding: 8px;
+       }
+   
+       .form-control:focus {
+           box-shadow: 0 0 5px rgba(3, 89, 37, 0.5);
+           background: #333;
+       }
+   
+       .btn-success {
+           background: #035925;
+           border: none;
+           transition: transform 0.2s, background 0.3s;
+       }
+   
+       .btn-success:hover {
+           background: #028a1b;
+           transform: translateY(-2px);
+       }
+   
+       @media (max-width: 768px) {
+           .modal-dialog {
+               margin: 8px auto;
+               max-width: 85%;
+           }
+   
+           .modal-content {
+               border-radius: 8px;
+           }
+   
+           .modal-header {
+               padding: 10px 15px;
+           }
+   
+           .modal-title {
+               font-size: 1.1rem;
+           }
+   
+           .modal-body {
+               padding: 15px;
+           }
+   
+           .form-group {
+               margin-bottom: 12px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .btn-success {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .close span {
+               font-size: 1rem;
+           }
+       }
+   
+       @media (max-width: 576px) {
+           .modal-dialog {
+               max-width: 90%;
+           }
+   
+           .modal-title {
+               font-size: 1rem;
+           }
+   
+           .modal-body {
+               padding: 10px;
+           }
+   
+           .form-group {
+               margin-bottom: 10px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           .btn-success {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           label {
+               font-size: 0.85rem;
+           }
+   
+           small {
+               font-size: 0.7rem;
+           }
+       }
+   </style>
                             </div>
                      </section>
               </div>

@@ -7,16 +7,10 @@ const Cart = require('../models/cart');
 const multer = require('multer');
 const path = require('path');
 const nodemailer = require('nodemailer');
+const Transaction = require('../models/transaction');
+const emailService = require('../services/emailService');
 const fs = require('fs');
 
-// Email transporter configuration
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'your-email@gmail.com',
-        pass: 'your-email-password'
-    }
-});
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'public/uploads/'),
@@ -30,21 +24,130 @@ function isAdmin(req, res, next) {
     res.redirect('/auth/login');
 }
 
-// Products - List
+
+router.get('/dashboard', isAdmin, async (req, res) => {
+    try {
+        const [userCount, productCount, orderCount] = await Promise.all([
+            User.countDocuments(),
+            Product.countDocuments(),
+            Order.countDocuments()
+        ]);
+
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+        const totalSalesResult = await Order.aggregate([
+            { $match: { status: 'Completed' } },
+            { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
+        ]);
+        const totalSales = totalSalesResult[0]?.total || 0;
+
+        const monthlyRevenueResult = await Order.aggregate([
+            { $match: { status: 'Completed', createdAt: { $gte: startOfMonth, $lte: endOfMonth } } },
+            { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
+        ]);
+        const monthlyRevenue = monthlyRevenueResult[0]?.total || 0;
+
+        const [pendingOrders, completedOrders] = await Promise.all([
+            Order.countDocuments({ status: 'Pending' }),
+            Order.countDocuments({ status: 'Completed' })
+        ]);
+
+        const newUsersThisMonth = await User.countDocuments({
+            createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+        });
+
+        const orders = await Order.find()
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .populate('items.productId')
+            .lean();
+
+        const enrichedOrders = orders.map(order => {
+            if (!order.total) {
+                order.total = order.items.reduce((sum, item) => {
+                    const price = item.productId?.price || 0;
+                    return sum + (item.quantity * price);
+                }, 0);
+            }
+            return order;
+        });
+
+        // Fetch the current user's data explicitly if messageCount is a field
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
+        // If messageCount isn’t in the User schema, calculate it (example below assumes a messages collection)
+        // const messageCount = user ? await Message.countDocuments({ recipient: user._id }) : 0;
+
+        const orderAnalyticsResult = await Order.aggregate([
+            { $match: { createdAt: { $gte: new Date(now.setDate(now.getDate() - 6)) } } },
+            { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
+            { $sort: { _id: 1 } }
+        ]);
+
+        const labels = [];
+        const data = [];
+        const dateMap = new Map(orderAnalyticsResult.map(item => [item._id, item.count]));
+        const sevenDaysAgo = new Date(now.setDate(now.getDate() - 6));
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(sevenDaysAgo);
+            date.setDate(sevenDaysAgo.getDate() + i);
+            const dateStr = date.toISOString().split('T')[0];
+            labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            data.push(dateMap.get(dateStr) || 0);
+        }
+
+        const orderAnalytics = { labels, data };
+
+        res.render('admin/dashboard', {
+            userCount,
+            productCount,
+            orderCount,
+            totalSales,
+            pendingOrders,
+            completedOrders,
+            monthlyRevenue,
+            newUsersThisMonth,
+            orders: enrichedOrders,
+            orderAnalytics,
+            currentUser: req.user || null, // Pass currentUser explicitly
+            user: user || {}, // Pass user with fallback
+            messageCount: user?.messageCount || 0 // Default to 0 if undefined
+        });
+    } catch (error) {
+        console.error('Admin dashboard error:', error);
+        res.status(500).render('error', { error: 'Server error occurred while loading the dashboard' });
+    }
+});
+
+
 router.get('/products', isAdmin, async (req, res) => {
     try {
-        const products = await Product.find();
-        res.render('admin/products', { 
-            products, 
-            currentUser: req.user, 
-            activePage: 'products'
+        let perPage = 10;
+        let page = parseInt(req.query.page) || 1;
+
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
+        const totalProducts = await Product.countDocuments();
+        const totalPages = Math.ceil(totalProducts / perPage);
+
+        const products = await Product.find()
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+
+        res.render('admin/products', {
+            products,
+            totalPages,
+            currentPage: page,
+            user: user || {}, // Pass user with fallback
+            messageCount: user?.messageCount || 0
         });
     } catch (error) {
         console.error('Error fetching products:', error);
-        req.flash('error_msg', 'Server error fetching products.');
-        res.status(500).render('error', { error: 'Server error' });
+        req.flash('error_msg', 'Server error');
+        res.redirect('/admin');
     }
 });
+
 
 // Products - Add
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
@@ -113,83 +216,44 @@ router.delete('/products/delete/:id', isAdmin, async (req, res) => {
 });
 
 
-// Dashboard
-router.get('/dashboard', isAdmin, async (req, res) => {
-    try {
-        const userCount = await User.countDocuments();
-        const productCount = await Product.countDocuments();
-        const orderCount = await Order.countDocuments();
-        const totalSales = await Order.aggregate([
-            { $match: { status: 'Completed' } },
-            { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
-        ]);
-        const orders = await Order.find()
-            .sort({ createdAt: -1 })
-            .limit(5)
-            .populate('items.productId');
 
-        const enrichedOrders = orders.map(order => {
-            if (!order.total) {
-                order.total = order.items.reduce((sum, item) => sum + (item.quantity * (item.productId?.price || 0)), 0);
-            }
-            return order;
-        });
 
-        res.render('admin/dashboard', {
-            userCount,
-            productCount,
-            orderCount,
-            totalSales: totalSales[0]?.total || 0,
-            orders: enrichedOrders,
-            currentUser: req.user
-        });
-    } catch (error) {
-        console.error('Admin dashboard error:', error);
-        res.status(500).render('error', { error: 'Server error' });
-    }
-});
-
-// Users - List
 router.get('/users', isAdmin, async (req, res) => {
     try {
-        const users = await User.find();
-        res.render('admin/users', { users, currentUser: req.user });
+        let page = parseInt(req.query.page) || 1;
+        let limit = 10;
+        let skip = (page - 1) * limit;
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
+        let totalUsers = await User.countDocuments();
+        let users = await User.find().skip(skip).limit(limit);
+
+        res.render('admin/users', {
+            users,
+            currentPage: page,
+            totalPages: Math.ceil(totalUsers / limit),
+            user: user || {}, // Pass user with fallback
+            messageCount: user?.messageCount || 0 // Default to 0 if undefined
+        });
     } catch (error) {
-        console.error('Error fetching users:', error);
-        res.status(500).render('error', { error: 'Server error' });
+        console.error("Error fetching users:", error);
+        res.redirect('/admin/dashboard');
     }
 });
 
-// Users - Delete
-router.delete('/users/delete/:id', isAdmin, async (req, res) => {
+
+router.post('/users/delete/:id', isAdmin, async (req, res) => {
     try {
-        await User.findByIdAndDelete(req.params.id);
-        res.status(200).json({ success: true, message: 'User deleted' });
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) {
+            req.flash('error_msg', 'User not found');
+            return res.redirect('/admin/users');
+        }
+        req.flash('success_msg', 'User deleted successfully');
+        res.redirect('/admin/users');
     } catch (error) {
         console.error('Error deleting user:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
-
-// Products - List
-router.get('/products', isAdmin, async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.render('admin/products', { products, currentUser: req.user });
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        res.status(500).render('error', { error: 'Server error' });
-    }
-});
-
-// Products - List
-router.get('/products', isAdmin, async (req, res) => {
-    try {
-        const products = await Product.find();
-        res.render('admin/products', { products, currentUser: req.user, activePage: 'products' });
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        res.status(500).render('error', { error: 'Server error' });
+        req.flash('error_msg', 'Server error');
+        res.redirect('/admin/users');
     }
 });
 
@@ -197,8 +261,7 @@ router.get('/products', isAdmin, async (req, res) => {
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
         const { name, price, description, stockQuantity, category } = req.body;
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`); // Array of image URLs
-
+        const imagePaths = req.files.map(file => `/uploads/${file.filename}`); 
         const product = new Product({
             name,
             price,
@@ -206,7 +269,7 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
             stockQuantity,
             category,
             imageUrl: imagePaths[0], 
-            additionalImages: imagePaths.slice(1) // Additional images
+            additionalImages: imagePaths.slice(1) 
         });
         await product.save();
         req.flash('success_msg', 'Product added successfully.');
@@ -218,31 +281,47 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
     }
 });
 
-// Products - Delete
-router.delete('/products/delete/:id', isAdmin, async (req, res) => {
+
+// Products - Delete (using POST)
+router.post('/products/delete/:id', isAdmin, async (req, res) => {
     try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.status(200).json({ success: true, message: 'Product deleted' });
+        if (!req.params.id) {
+            req.flash('error_msg', 'Invalid product ID');
+            return res.redirect('/admin/products');
+        }
+
+        const product = await Product.findByIdAndDelete(req.params.id);
+        if (!product) {
+            req.flash('error_msg', 'Product not found');
+            return res.redirect('/admin/products');
+        }
+
+        req.flash('success_msg', 'Product deleted successfully');
+        res.redirect('/admin/products');
     } catch (error) {
         console.error('Error deleting product:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        req.flash('error_msg', 'Server error');
+        res.redirect('/admin/products');
     }
 });
 
-// Products - Delete
-router.delete('/products/delete/:id', isAdmin, async (req, res) => {
-    try {
-        await Product.findByIdAndDelete(req.params.id);
-        res.status(200).json({ success: true, message: 'Product deleted' });
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-});
 
-router.get('/orders',isAdmin, async (req, res) => {
+router.get('/orders', isAdmin, async (req, res) => {
     try {
-        const orders = await Order.find().populate('items.productId');
+        const perPage = 10; // Orders per page
+        const page = parseInt(req.query.page) || 1; 
+
+        const totalOrders = await Order.countDocuments(); // Total order count
+        const totalPages = Math.ceil(totalOrders / perPage); // Calculate total pages
+
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
+
+        const orders = await Order.find()
+            .populate('items.productId')
+            .skip((page - 1) * perPage)
+            .limit(perPage)
+            .lean(); // Use lean() for performance since we don’t need Mongoose documents
+
         const paymentStatusOptions = [
             { value: 'Pending', label: 'Pending' },
             { value: 'Paid', label: 'Paid' },
@@ -251,51 +330,37 @@ router.get('/orders',isAdmin, async (req, res) => {
         ];
 
         const enhancedOrders = orders.map(order => ({
-            ...order._doc,
+            ...order,
             paymentStatusOptions: paymentStatusOptions.map(option => ({
                 ...option,
                 selected: option.value === order.paymentStatus
             }))
         }));
 
-        res.render('admin/orders', { 
+        // Render the template with fetched data
+        res.render('admin/orders', {
             orders: enhancedOrders,
-            success: req.flash('success'),
-            error: req.flash('error')
+            totalPages,
+            currentPage: page,
+            success: req.flash('success_msg')[0] || null, // Consistent with your app’s convention
+            error: req.flash('error_msg')[0] || null,
+            user: user || {},
+            messageCount: user?.messageCount || 0
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        req.flash('error', 'Failed to load orders');
-        res.render('admin/orders', { orders: [], success: req.flash('success'), error: req.flash('error') });
-    }
-});
+        req.flash('error_msg', 'Failed to load orders'); // Use error_msg for consistency
 
-
-// Confirm payment route
-router.post('/orders/confirm-payment', async (req, res) => {
-    const { orderId, customerEmail, customerName } = req.body;
-    try {
-        await Order.findByIdAndUpdate(orderId, { paymentStatus: 'Paid' });
-
-        const mailOptions = {
-            from: 'your-email@gmail.com',
-            to: customerEmail,
-            subject: 'Order Payment Confirmation',
-            html: `
-                <h2>Payment Confirmed</h2>
-                <p>Dear ${customerName},</p>
-                <p>Your payment for Order #${orderId} has been successfully confirmed.</p>
-                <p>Thank you for your purchase!</p>
-            `
-        };
-
-        await transporter.sendMail(mailOptions);
-        req.flash('success', 'Payment confirmed and email sent');
-        res.redirect('/admin/orders');
-    } catch (error) {
-        console.error('Error confirming payment:', error);
-        req.flash('error', 'Failed to confirm payment');
-        res.redirect('/admin/orders');
+        // Render with fallback data in case of error
+        res.render('admin/orders', {
+            orders: [],
+            totalPages: 1,
+            currentPage: 1,
+            success: req.flash('success_msg')[0] || null,
+            error: req.flash('error_msg')[0] || null,
+            user: req.user ? { ...req.user._doc } : {}, // Use req.user directly if not fetched
+            messageCount: req.user?.messageCount || 0
+        });
     }
 });
 
@@ -327,11 +392,6 @@ router.post('/orders/delete', async (req, res) => {
     }
 });
 
-// Orders - Add (manual order creation)
-router.get('/orders/add', isAdmin, async (req, res) => {
-    const products = await Product.find();
-    res.render('admin/add-order', { products, currentUser: req.user });
-});
 
 router.post('/orders/add', isAdmin, async (req, res) => {
     try {
@@ -364,9 +424,54 @@ router.post('/orders/add', isAdmin, async (req, res) => {
     }
 });
 
+// Update shipping status and send delivery email when shipped
+router.post('/orders/update-shipping-status', isAdmin, async (req, res) => {
+    const { orderId, shippingStatus } = req.body;
+
+    try {
+        const order = await Order.findById(orderId);
+        if (!order) {
+            req.flash('error_msg', 'Order not found');
+            return res.redirect('/admin/orders');
+        }
+
+        // Update shipping status
+        order.shippingStatus = shippingStatus;
+
+        // If status is "Delivered", set deliveredAt
+        if (shippingStatus === 'Delivered') {
+            order.deliveredAt = new Date();
+        }
+
+        await order.save();
+
+        // Send delivery confirmation email when status is "Shipped"
+        if (shippingStatus === 'Shipped') {
+            await emailService.sendDeliveryConfirmation({
+                customerName: order.customerName,
+                customerEmail: order.customerEmail,
+                cloudOrderId: order._id.toString(),
+                total: order.total,
+                items: order.items,
+                deliveredAt: new Date() 
+            });
+            console.log(`Delivery confirmation email sent for order ${order._id}`);
+        }
+
+        req.flash('success_msg', 'Shipping status updated successfully');
+        res.redirect('/admin/orders');
+    } catch (error) {
+        console.error('Error updating shipping status:', error);
+        req.flash('error_msg', 'Failed to update shipping status');
+        res.redirect('/admin/orders');
+    }
+});
+
+
 // Carts - List (optional, for monitoring active carts)
 router.get('/carts', isAdmin, async (req, res) => {
     try {
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
         const carts = await Cart.find().populate('products.productId');
         res.render('admin/carts', { carts, currentUser: req.user });
     } catch (error) {
@@ -415,28 +520,44 @@ router.get('/carts/clear-all', isAdmin, async (req, res) => {
     }
 });
 
-// Transactions - List
 router.get('/transactions', isAdmin, async (req, res) => {
     try {
-        // Fetch completed orders as transactions
-        const transactions = await Order.find({ status: 'Completed' })
-            .populate('items.productId')
-            .sort({ updatedAt: -1 });
-        res.render('admin/transactions', { 
-            transactions, 
-            currentUser: req.user, 
-            activePage: 'transactions' 
+        let perPage = 10;
+        let page = parseInt(req.query.page) || 1;
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
+        const totalTransactions = await Transaction.countDocuments();
+        const totalPages = Math.ceil(totalTransactions / perPage);
+
+        const transactions = await Transaction.find()
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * perPage)
+            .limit(perPage);
+
+        res.render('admin/transactions', {
+            transactions,
+            totalPages,
+            currentPage: page,
+            success_msg: req.flash('success'),
+            error_msg: req.flash('error')
         });
     } catch (error) {
         console.error('Error fetching transactions:', error);
-        req.flash('error_msg', 'Server error fetching transactions.');
-        res.status(500).render('error', { error: 'Server error' });
+        req.flash('error', 'Failed to load transactions');
+        res.render('admin/transactions', {
+            transactions: [],
+            totalPages: 1,
+            currentPage: 1,
+            success_msg: req.flash('success'),
+            error_msg: req.flash('error')
+        });
     }
 });
+
 
 // Settings - Display
 router.get('/settings', isAdmin, async (req, res) => {
     try {
+        const user = req.user ? await User.findById(req.user._id).lean() : null;
         res.render('admin/settings', { currentUser: req.user, activePage: 'settings' });
     } catch (error) {
         console.error('Error loading settings:', error);
@@ -456,7 +577,6 @@ router.post('/settings/update', isAdmin, async (req, res) => {
         user.username = username;
         user.email = email;
         await user.save();
-        // Note: siteName could be stored in a separate config model if needed
         res.status(200).json({ success: true, message: 'Settings updated' });
     } catch (error) {
         console.error('Error updating settings:', error);
@@ -469,19 +589,16 @@ router.post('/logout', isAdmin, (req, res) => {
         if (err) {
             console.error('Logout error:', err);
             req.flash('error_msg', 'Error logging out.');
-            return res.redirect('/admin/dashboard'); // Redirect to admin dashboard on error
+            return res.redirect('/admin/dashboard');
         }
         req.session.destroy((err) => {
             if (err) {
                 console.error('Session destroy error:', err);
-                return res.redirect('/admin/dashboard'); // Redirect to admin dashboard if session cleanup fails
+                return res.redirect('/admin/dashboard');
             }
-            res.redirect('/admin/login'); // Redirect to admin login page after successful logout
+            res.redirect('/admin/login');
         });
     });
 });
-
-
-
 
 module.exports = router;

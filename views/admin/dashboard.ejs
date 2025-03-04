@@ -42,66 +42,8 @@
 
                      <!-- Right navbar links -->
                      <ul class="navbar-nav ml-auto">
-                            <!-- Messages Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-comments"></i>
-                                          <span class="badge badge-danger navbar-badge">
-                                                 <%= user.messageCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <% if (user && user.messages && Array.isArray(user.messages)) { %>
-                                                 <% user.messages.forEach(message=> { %>
-                                                        <a href="#" class="dropdown-item">
-                                                               <div class="media">
-                                                                      <img src="<%= message.avatar %>" alt="User Avatar"
-                                                                             class="img-size-50 mr-3 img-circle">
-                                                                      <div class="media-body">
-                                                                             <h3 class="dropdown-item-title">
-                                                                                    <%= message.sender %>
-                                                                             </h3>
-                                                                             <p class="text-sm">
-                                                                                    <%= message.content %>
-                                                                             </p>
-                                                                      </div>
-                                                               </div>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No messages available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
-
-                            <!-- Notifications Dropdown Menu -->
-                            <li class="nav-item dropdown">
-                                   <a class="nav-link" data-toggle="dropdown" href="#">
-                                          <i class="far fa-bell"></i>
-                                          <span class="badge badge-warning navbar-badge">
-                                                 <%= user.notificationCount %>
-                                          </span>
-                                   </a>
-                                   <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                                          <span class="dropdown-item dropdown-header">
-                                                 <%= user.notificationCount %> Notifications
-                                          </span>
-                                          <% if (user && user.notifications && Array.isArray(user.notifications)) { %>
-                                                 <span class="dropdown-item dropdown-header">
-                                                        <%= user.notificationCount %> Notifications
-                                                 </span>
-                                                 <% user.notifications.forEach(notification=> { %>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item">
-                                                               <i class="<%= notification.icon %> mr-2"></i>
-                                                               <%= notification.content %>
-                                                        </a>
-                                                        <% }); %>
-                                                               <% } else { %>
-                                                                      <p>No notifications available.</p>
-                                                                      <% } %>
-                                   </div>
-                            </li>
+                           
+                                  
                             <li class="nav-item">
                                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
                                           <i class="fas fa-expand-arrows-alt"></i>
@@ -210,52 +152,97 @@
        <!-- Main content -->
        <section class="content">
            <div class="container-fluid">
-               <!-- Info boxes -->
-               <div class="row">
-                   <!-- Users -->
-                   <div class="col-12 col-sm-6 col-md-3 mb-3">
-                       <div class="info-box">
-                           <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
-                           <div class="info-box-content">
-                               <span class="info-box-text">Users</span>
-                               <span class="info-box-number"><%= userCount %></span>
-                           </div>
-                       </div>
-                   </div>
-   
-                   <!-- Products -->
-                   <div class="col-12 col-sm-6 col-md-3 mb-3">
-                       <div class="info-box">
-                           <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cube"></i></span>
-                           <div class="info-box-content">
-                               <span class="info-box-text">Products</span>
-                               <span class="info-box-number"><%= productCount %></span>
-                           </div>
-                       </div>
-                   </div>
-   
-                   <!-- Orders -->
-                   <div class="col-12 col-sm-6 col-md-3 mb-3">
-                       <div class="info-box">
-                           <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-shopping-bag"></i></span>
-                           <div class="info-box-content">
-                               <span class="info-box-text">Orders</span>
-                               <span class="info-box-number"><%= orderCount %></span>
-                           </div>
-                       </div>
-                   </div>
-   
-                   <!-- Total Sales -->
-                   <div class="col-12 col-sm-6 col-md-3 mb-3">
-                       <div class="info-box">
-                           <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-dollar-sign"></i></span>
-                           <div class="info-box-content">
-                               <span class="info-box-text">Total Sales</span>
-                               <span class="info-box-number">KES <%= totalSales.toFixed(2) %></span>
-                           </div>
-                       </div>
-                   </div>
-               </div>
+<!-- Info boxes -->
+<div class="row">
+    <!-- Total Sales -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-dollar-sign"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Sales</span>
+                <span class="info-box-number">KES <%= totalSales.toFixed(2) %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue This Month -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-dark elevation-1"><i class="fas fa-coins"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Revenue This Month</span>
+                <span class="info-box-number">KES <%= monthlyRevenue.toFixed(2) %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-shopping-bag"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Orders</span>
+                <span class="info-box-number"><%= orderCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Orders -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-hourglass-half"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Pending Orders</span>
+                <span class="info-box-number"><%= pendingOrders %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Orders -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-check-circle"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Completed Orders</span>
+                <span class="info-box-number"><%= completedOrders %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cube"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Products</span>
+                <span class="info-box-number"><%= productCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Users</span>
+                <span class="info-box-number"><%= userCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Users This Month (Replacement for Active Subscriptions) -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-teal elevation-1"><i class="fas fa-user-plus"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">New Users This Month</span>
+                <span class="info-box-number"><%= newUsersThisMonth %></span>
+            </div>
+        </div>
+    </div>
+</div>
+
    
                <!-- Latest Orders Table -->
                <div class="card">
@@ -312,7 +299,6 @@
                        </div>
                    </div>
                    <div class="card-footer clearfix">
-                       <a href="/admin/orders/add" class="btn btn-sm btn-info float-left">Add New Order</a>
                        <a href="/admin/orders" class="btn btn-sm btn-secondary float-right">View All Orders</a>
                    </div>
                </div>
@@ -359,6 +345,13 @@
 }
 
    </style>
+<style>
+    /* Optional: Enhance card hover effect */
+    .card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+    }
+</style>
 
               <!-- Control Sidebar -->
               <aside class="control-sidebar control-sidebar-dark">
@@ -373,7 +366,7 @@
                      All rights reserved.
               </footer>
        </div>
-
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
        <!-- REQUIRED SCRIPTS -->
        <script src="/plugins/jquery/jquery.min.js"></script>
        <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
