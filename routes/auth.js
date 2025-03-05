@@ -59,10 +59,10 @@ router.post('/signup', async (req, res) => {
       userEmail: email,
       verificationToken
     });
-    
-    req.flash('success', 'Registration successful! Please check your email to verify your account.');
-    return res.redirect('/auth/login');
-    
+
+req.flash('success', 'Registration successful! Please check your email to verify your account.');
+return res.redirect('/auth/login');
+
 
   } catch (error) {
     console.error('Signup error:', error);
