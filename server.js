@@ -25,7 +25,7 @@ app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
 
 // MongoDB connection URI
-const uri = process.env.MONGODB_URI || "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";
 
 async function connectToDatabase() {
   try {
@@ -74,7 +74,7 @@ app.use(session({
   },
 }));
 
-// Middleware for flash messages (must come after session)
+// Middleware for flash messages
 app.use(flash());
 
 // Middleware setup

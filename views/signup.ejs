@@ -6,6 +6,7 @@
     <title>Signup</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="icon" href="/images/icon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background: linear-gradient(145deg, #000, #035925);
@@ -13,190 +14,221 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Changed to min-height for better mobile fit */
+            min-height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
-            overflow-x: hidden; /* Prevent horizontal scrolling */
+            font-family: 'Poppins', Arial, sans-serif;
+            overflow-x: hidden;
         }
         .signup-box {
             width: 100%;
-            max-width: 550px;
-            padding: 2rem;
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            padding: 2.5rem;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
             animation: fadeIn 1s ease-in-out;
-            margin: 1rem; /* Added margin for small screens */
+            margin: 1rem;
+            position: relative;
+            border: 1px solid rgba(86, 207, 225, 0.2);
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 1.5rem;
+            max-width: 150px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(86, 207, 225, 0.5);
+            transition: transform 0.3s ease;
+        }
+        .logo:hover {
+            transform: scale(1.05);
         }
         h2 {
             text-align: center;
-            margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #56cfe1;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
         label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: bold;
-            font-size: 1rem;
+            font-weight: 500;
+            font-size: 1.1rem;
             color: #ddd;
+            transition: color 0.3s ease;
         }
         input {
             display: block;
             width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            background-color: #222;
+            padding: 0.9rem;
+            margin-bottom: 1.2rem;
+            background-color: #1a1a1a;
             border: 1px solid #444;
-            border-radius: 4px;
+            border-radius: 6px;
             color: #fff;
             font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            box-sizing: border-box; /* Ensures padding doesn't affect width */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            box-sizing: border-box;
         }
         input:focus {
             border-color: #56cfe1;
-            box-shadow: 0 0 8px rgba(86, 207, 225, 0.5);
+            box-shadow: 0 0 10px rgba(86, 207, 225, 0.6);
+            background-color: #222;
             outline: none;
         }
         button {
-            background-color: #035925;
+            background: linear-gradient(135deg, #035925, #02883c);
             color: #fff;
-            padding: 0.8rem;
+            padding: 0.9rem;
             width: 100%;
             border: none;
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
-        button:hover {
-            background-color: #023b1a;
-            box-shadow: 0 4px 10px rgba(0, 255, 0, 0.5);
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #023b1a, #035925);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 255, 0, 0.5);
+        }
+        button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        button .spinner {
+            display: none;
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+        button:disabled .spinner {
+            display: inline-block;
+        }
+        button:disabled .text {
+            display: none;
         }
         a {
             display: block;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
             text-align: center;
             color: #56cfe1;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-size: 1rem;
+            transition: color 0.3s ease, transform 0.3s ease;
         }
         a:hover {
             color: #29a3d1;
+            transform: scale(1.05);
+        }
+        .message {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-align: center;
         }
         .error {
-            color: #a94442;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
         }
         .success {
             color: #28a745;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
+            background: rgba(40, 167, 69, 0.1);
         }
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        /* Enhanced Media Queries */
         @media (max-width: 768px) {
-            .signup-box {
-                max-width: 90%; /* Reduce width on tablets */
-                padding: 1.5rem;
-            }
-            h2 {
-                font-size: 1.6rem; /* Slightly smaller heading */
-            }
-            input, button {
-                padding: 0.7rem; /* Slightly smaller padding */
-                font-size: 0.95rem;
-            }
-            label {
-                font-size: 0.95rem;
-            }
+            .signup-box { max-width: 90%; padding: 2rem; }
+            h2 { font-size: 1.8rem; }
+            .logo { max-width: 120px; }
+            input, button { padding: 0.8rem; font-size: 1rem; }
+            label { font-size: 1rem; }
         }
         @media (max-width: 576px) {
-            body {
-                padding: 1rem;
-                align-items: flex-start; /* Align to top on very small screens */
-            }
-            .signup-box {
-                max-width: 100%; /* Full width on small screens */
-                padding: 1.2rem;
-                margin: 0.5rem;
-            }
-            h2 {
-                font-size: 1.4rem; /* Smaller heading */
-                margin-bottom: 1rem;
-            }
-            label {
-                font-size: 0.9rem;
-            }
-            input {
-                padding: 0.6rem;
-                font-size: 0.9rem;
-                margin-bottom: 0.8rem;
-            }
-            button {
-                padding: 0.6rem;
-                font-size: 0.9rem;
-            }
-            a {
-                font-size: 0.9rem;
-                margin-top: 0.8rem;
-            }
-            .error, .success {
-                font-size: 0.8rem;
-            }
+            body { padding: 1rem; align-items: flex-start; }
+            .signup-box { max-width: 100%; padding: 1.5rem; margin: 0.5rem; }
+            h2 { font-size: 1.6rem; margin-bottom: 1.5rem; }
+            .logo { max-width: 100px; }
+            label { font-size: 0.95rem; }
+            input { padding: 0.7rem; font-size: 0.9rem; margin-bottom: 1rem; }
+            button { padding: 0.7rem; font-size: 0.95rem; }
+            a { font-size: 0.9rem; margin-top: 1rem; }
+            .message { font-size: 0.85rem; }
         }
         @media (max-width: 400px) {
-            .signup-box {
-                padding: 1rem;
-            }
-            h2 {
-                font-size: 1.2rem;
-            }
-            input, button {
-                padding: 0.5rem;
-                font-size: 0.85rem;
-            }
-            label {
-                font-size: 0.85rem;
-            }
+            .signup-box { padding: 1rem; }
+            h2 { font-size: 1.4rem; }
+            .logo { max-width: 80px; }
+            input, button { padding: 0.6rem; font-size: 0.85rem; }
+            label { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
     <div class="signup-box">
-        <h2>Signup</h2>
+        <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="logo">
+        <h2>Join Cloud 420</h2>
         <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
             <div class="alert alert-danger text-center"><%= error_msg %></div>
         <% } %>
         <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
             <div class="alert alert-success text-center"><%= success_msg %></div>
         <% } %>
-        <form action="/auth/signup" method="POST">
+        <form action="/auth/signup" method="POST" id="signupForm">
             <label for="username">Username</label>
             <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
-
+        
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
-
+        
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
             
             <label for="confirm-password">Confirm Password</label>
             <input type="password" class="form-control" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
             <div id="passwordError" class="error"></div>
-
-            <button type="submit">Signup</button>
+        
+            <button type="submit" id="signupButton">
+                <span class="text">Signup</span>
+                <span class="spinner"></span>
+            </button>
+        
+            <style>
+                .spinner {
+                    display: none;
+                    width: 16px;
+                    height: 16px;
+                    border: 2px solid #ccc;
+                    border-top: 2px solid #666;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin-left: 5px;
+                }
+        
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            </style>
+        
+            <script>
+                document.getElementById("signupForm").addEventListener("submit", function(e) {
+                    const button = document.getElementById("signupButton");
+                    button.disabled = true;
+                    button.querySelector('.text').style.display = 'none';
+                    button.querySelector('.spinner').style.display = 'inline-block';
+                });
+            </script>
         </form>
+        
         <a href="/auth/login">Already have an account? Login</a>
     </div>
 

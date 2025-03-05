@@ -3,7 +3,6 @@ const passport = require('passport');
 const User = require('../models/user');
 const router = express.Router();
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
 const emailService = require('../services/emailService');
 
 // Render login page
@@ -24,152 +23,62 @@ router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-      // Validate input
-      if (!username || !email || !password) {
-          req.flash('error_msg', 'All fields (username, email, password) are required.');
-          return res.redirect('/auth/signup');
-      }
-
-      // Additional validation (optional)
-      if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-          req.flash('error_msg', 'Please provide a valid email address.');
-          return res.redirect('/auth/signup');
-      }
-      if (password.length < 6) {
-          req.flash('error_msg', 'Password must be at least 6 characters long.');
-          return res.redirect('/auth/signup');
-      }
-
-      // Check if user already exists (optional, since passport-local-mongoose handles this)
-      const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-      if (existingUser) {
-          req.flash('error_msg', 'Username or email already in use.');
-          return res.redirect('/auth/signup');
-      }
-
-      // Generate verification token
-      const verificationToken = crypto.randomBytes(20).toString('hex');
-
-      // Create and register new user
-      const newUser = new User({
-          username,
-          email,
-          verificationToken,
-          isVerified: false 
-      });
-      await User.register(newUser, password);
-
-      // Send verification email
-      await emailService.sendVerificationEmail({
-          customerName: username,
-          customerEmail: email,
-          verificationToken
-      });
-
-      // Success message and redirect
-      req.flash('success_msg', 'Registration successful! Please check your email to verify your account.');
-      res.redirect('/auth/login');
-  } catch (error) {
-      console.error('Signup error:', error);
-      let errorMessage = 'An error occurred during sign-up.';
-      if (error.name === 'UserExistsError') {
-          errorMessage = 'A user with this username or email already exists.';
-      } else if (error.name === 'ValidationError') {
-          errorMessage = Object.values(error.errors).map(err => err.message).join(', ');
-      } else if (error.code === 11000) {
-          errorMessage = 'Username or email already in use.';
-      }
-      req.flash('error_msg', errorMessage);
-      res.redirect('/auth/signup');
-  }
-});
-
-router.get('/verify-email', async (req, res) => {
-  const { token } = req.query;
-
-  if (!token) {
-    return res.status(400).json({ message: 'Verification token is required' });
-  }
-
-  try {
-    // Find user by verification token and check if it’s still valid
-    const user = await User.findOne({
-      verificationToken: token,
-      verificationTokenExpires: { $gt: Date.now() }, // Ensure token hasn't expired
-    });
-
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid or expired verification token' });
+    // Validate input
+    if (!username || !email || !password) {
+      return res.render('error', { message: 'All fields (username, email, password) are required.' });
     }
 
-    // Mark the user as verified
-    user.isVerified = true;
-    user.verificationToken = undefined; // Clear the token
-    user.verificationTokenExpires = undefined; // Clear the expiration
-    await user.save();
+    // Additional validation
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      return res.render('error', { message: 'Please provide a valid email address.' });
+    }
+    if (password.length < 6) {
+      return res.render('error', { message: 'Password must be at least 6 characters long.' });
+    }
 
-    // Optionally redirect to a success page or send a JSON response
-    res.status(200).json({ message: 'Email verified successfully! You can now log in.' });
-    // Alternatively, redirect to a frontend success page:
-    // res.redirect('https://cloud420.store/verified-success');
+    // Check if user already exists
+    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+    if (existingUser) {
+      return res.render('error', { message: 'Username or email already in use.' });
+    }
+
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(20).toString('hex');
+
+    // Create and register new user
+    const newUser = new User({
+      username,
+      email,
+      verificationToken,
+    });
+    await User.register(newUser, password);
+
+    // Send verification email
+    await emailService.sendVerificationEmail(req, {
+      userName: username,
+      userEmail: email,
+      verificationToken
+    });
+    
+    req.flash('success', 'Registration successful! Please check your email to verify your account.');
+    return res.redirect('/auth/login');
+    
+
   } catch (error) {
-    console.error('Error verifying email:', error);
-    res.status(500).json({ message: 'Server error during email verification' });
+    console.error('Signup error:', error);
+    let errorMessage = 'An error occurred during sign-up.';
+
+    if (error.name === 'UserExistsError') {
+      errorMessage = 'A user with this username or email already exists.';
+    } else if (error.name === 'ValidationError') {
+      errorMessage = Object.values(error.errors).map(err => err.message).join(', ');
+    } else if (error.code === 11000) {
+      errorMessage = 'Username or email already in use.';
+    }
+
+    return res.render('error', { message: errorMessage });
   }
 });
-
-// Render verification page
-router.get('/verify', (req, res) => {
-  res.render('verify', {
-      email: req.session.email || '',
-      success_msg: req.flash('success_msg'),
-      error_msg: req.flash('error_msg')
-  });
-});
-
-// Resend verification email
-router.post('/resend-verification', async (req, res) => {
-  const { email } = req.body;
-
-  try {
-      if (!email) {
-          req.flash('error_msg', 'Please provide your email address.');
-          return res.redirect('/auth/verify');
-      }
-
-      const user = await User.findOne({ email });
-      if (!user) {
-          req.flash('error_msg', 'No account found with this email.');
-          return res.redirect('/auth/verify');
-      }
-
-      if (user.isVerified) {
-          req.flash('error_msg', 'This email is already verified. Please log in.');
-          return res.redirect('/auth/login');
-      }
-
-      // Generate a new verification token
-      const verificationToken = crypto.randomBytes(20).toString('hex');
-      user.verificationToken = verificationToken;
-      await user.save();
-
-      // Send verification email
-      await emailService.sendVerificationEmail({
-          customerName: user.username,
-          customerEmail: user.email,
-          verificationToken
-      });
-
-      req.session.email = email; // Store email in session for display
-      req.flash('success_msg', 'Verification email resent successfully! Check your inbox.');
-      res.redirect('/auth/verify');
-  } catch (error) {
-      console.error('Resend verification error:', error);
-      req.flash('error_msg', 'Failed to resend verification email. Try again later.');
-      res.redirect('/auth/verify');
-  }
-});
-
 
 // Handle user login
 router.post('/login', (req, res, next) => {
@@ -189,15 +98,6 @@ router.post('/login', (req, res, next) => {
               console.error('Login error:', err);
               req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
               return res.redirect('/auth/login');
-          }
-
-          // Check if email is verified
-          if (!user.isVerified) {
-              req.logout((logoutErr) => {
-                  if (logoutErr) console.error('Logout error:', logoutErr);
-              });
-              req.flash('error_msg', 'Please verify your email before logging in.');
-              return res.redirect('/auth/verify');
           }
 
           // Success login

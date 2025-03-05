@@ -263,6 +263,42 @@
                 </div>
             </div>
         </nav>
+        <style>
+            .notification-container {
+                position: fixed;
+                top: 15%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1060;
+            }
+        
+            .notification {
+                background-color: #1c1c1c;
+                border: 1px solid #444;
+                border-radius: 5px;
+                margin-bottom: 8px;
+                width: 300px;
+                padding: 15px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                color: #fff;
+                text-align: center;
+            }
+        
+            .notification-success {
+                background-color: #035925;
+                border: 1px solid #028a1b;
+            }
+        
+            .notification-danger {
+                background-color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+        
+            .btn-checkout:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        </style>
     </header>
 
     <div class="content container mt-5">
@@ -448,26 +484,48 @@
                                 </div>
                                 <select class="custom-dropdown form-control" id="customerLocation" name="customerLocation" required>
                                     <option value="" disabled selected>Select your delivery location</option>
-                                    <option value="Kutus" data-delivery="50">Kutus</option>
-                                    <option value="Kerugoya" data-delivery="50">Kerugoya</option>
-                                    <option value="Kagio" data-delivery="50">Kagio</option>
-                                    <option value="Sagana" data-delivery="80">Sagana</option>
+                                    <option value="Kutus" data-delivery="0">Kutus</option>
+                                    <option value="Kerugoya" data-delivery="100">Kerugoya</option>
+                                    <option value="Kagio" data-delivery="100">Kagio</option>
+                                    <option value="Sagana" data-delivery="100">Sagana</option>
                                     <option value="Karatina" data-delivery="150">Karatina</option>
-                                    <option value="Embu" data-delivery="150">Embu</option>
-                                    <option value="Murang'a" data-delivery="150">Murang'a</option>
-                                    <option value="Nyeri" data-delivery="150">Nyeri</option>
-                                    <option value="Thika" data-delivery="200">Thika</option>
-                                    <option value="Nairobi" data-delivery="200">Nairobi</option>
+                                    <option value="Embu University" data-delivery="200">Embu University</option>
+                                    <option value="Murang'a University" data-delivery="200">Murang'a University</option>
+                                    <option value="Nyeri" data-delivery="250">Nyeri</option>
+                                    <option value="Thika" data-delivery="250">Thika</option>
+                                    <option value="Nairobi" data-delivery="250">Nairobi</option>
                                     <option value="Machakos" data-delivery="350">Machakos</option>
                                     <option value="Meru" data-delivery="350">Meru</option>
                                     <option value="Nanyuki" data-delivery="400">Nanyuki</option>
                                     <option value="Mwea" data-delivery="100">Mwea</option>
+                                    <option value="Kiambu" data-delivery="250">Kiambu</option>
+                                    <option value="Ruiru" data-delivery="250">Ruiru</option>
+                                    <option value="Kikuyu" data-delivery="250">Kikuyu</option>
+                                    <option value="Karatina University" data-delivery="50">Karatina University</option>
+                                    <option value="Mombasa" data-delivery="1000">Mombasa</option>
+                                    <option value="Kisumu" data-delivery="1000">Kisumu</option>
+                                    <option value="Eldoret" data-delivery="1000">Eldoret</option>
+                                    <option value="Nakuru" data-delivery="500">Nakuru</option>
+                                    <option value="Kisii" data-delivery="1000">Kisii</option>
+                                    <option value="Kakamega" data-delivery="1000">Kakamega</option>
+                                    <option value="Kabarnet" data-delivery="1000">Kabarnet</option>
+                                    <option value="Kericho" data-delivery="1000">Kericho</option>
+                                    <option value="Kitale" data-delivery="1000">Kitale</option>
+                                    <option value="Bungoma" data-delivery="1000">Bungoma</option>
+                                    <option value="Busia" data-delivery="1000">Busia</option>
+                                    <option value="Kapsabet" data-delivery="1000">Kapsabet</option>
+                                    <option value="Kisii University" data-delivery="1000">Kisii University</option>
+                                    <option value="Kisumu University" data-delivery="1000">Kisumu University</option>
+                                    <option value="Maseno University" data-delivery="1000">Maseno University</option>
+                                    <option value="Moi University" data-delivery="1000">Moi University</option>
+                                    <option value="Egerton University" data-delivery="1000">Egerton University</option>
+                                    <option value="Masinde Muliro University" data-delivery="1000">Masinde Muliro University</option>
                                     <option value="Kirinyaga University" data-delivery="50">Kirinyaga University</option>
                                     <option value="Kangai" data-delivery="50">Kangai</option>
                                     <option value="Kiamutugu" data-delivery="50">Kiamutugu</option>
-                                    <option value="Baricho" data-delivery="50">Baricho</option>
+                                    <option value="Baricho" data-delivery="100">Baricho</option>
                                     <option value="Wang'uru" data-delivery="100">Wang'uru</option>
-                                    <option value="Makutano" data-delivery="100">Makutano</option>
+                                    <option value="Makutano" data-delivery="150">Makutano</option>
                                 </select>
                             </div>
                         </div>
@@ -501,42 +559,67 @@
     </div>
 </div>
 
-<style>
-    .notification-container {
-        position: fixed;
-        top: 15%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1060;
-    }
 
-    .notification {
-        background-color: #1c1c1c;
-        border: 1px solid #444;
-        border-radius: 5px;
-        margin-bottom: 8px;
-        width: 300px;
-        padding: 15px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        color: #fff;
-        text-align: center;
-    }
+<script>
+    async function initiatePayment(paymentData) {
+    try {
+        const response = await fetch('/initiate-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentData)
+        });
+        const result = await response.json();
 
-    .notification-success {
-        background-color: #035925;
-        border: 1px solid #028a1b;
+        if (result.success) {
+            showSpinner();
+            pollPaymentStatus(result.tranasaction_request_id);
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Payment initiation failed:', error);
+        alert('An error occurred. Please try again.');
     }
+}
 
-    .notification-danger {
-        background-color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
+async function pollPaymentStatus(tranasaction_request_id) {
+    const pollInterval = setInterval(async () => {
+        try {
+            const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
+            const status = await response.json();
 
-    .btn-checkout:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-</style>
+            if (status.status === 'completed') {
+                clearInterval(pollInterval);
+                hideSpinner();
+                alert(status.message);
+                window.location.href = `/order-confirmation/${status.orderId}`;
+            } else if (status.status === 'failed' || status.status === 'not_found') {
+                clearInterval(pollInterval);
+                hideSpinner();
+                alert(status.message);
+            } else if (status.status === 'error') {
+                clearInterval(pollInterval);
+                hideSpinner();
+                alert('Verification error. Please try again later.');
+            }
+            // 'pending' status: keep polling
+        } catch (error) {
+            console.error('Polling error:', error);
+            clearInterval(pollInterval);
+            hideSpinner();
+            alert('An error occurred while verifying payment.');
+        }
+    }, 5000); // Poll every 5 seconds
+}
+
+function showSpinner() {
+    document.getElementById('payment-spinner').style.display = 'block';
+}
+
+function hideSpinner() {
+    document.getElementById('payment-spinner').style.display = 'none';
+}
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {

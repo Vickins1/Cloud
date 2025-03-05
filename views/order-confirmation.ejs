@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; font-size: 20px; font-weight: bold; }
+        .error { color: red; font-size: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <% if (order) { %>
+            <h2 class="success">Thank you for your order!</h2>
+            <p>Order ID: <strong><%= order._id %></strong></p>
+            <p>Payment Status: <strong><%= order.paymentStatus %></strong></p>
+            <p>Total Amount: <strong>$<%= order.totalAmount %></strong></p>
+            <p>Your order has been successfully placed.</p>
+            <a href="/">Return to Home</a>
+        <% } else { %>
+            <h2 class="error">Error: <%= error %></h2>
+            <a href="/">Go Back</a>
+        <% } %>
+    </div>
+</body>
+</html>

@@ -22,6 +22,11 @@ const orderSchema = new mongoose.Schema({
     },
     transactionRequestId: { type: String },
     paymentDetails: { type: Object },
+    estimatedDeliveryDate: { 
+        type: Date,
+        default: () => new Date(+new Date() + 48*60*60*1000),
+        required: false
+    },
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -12,7 +12,7 @@ const pendingOrders = new Map();
 
 const generateOrderId = () => {
     const randomNum = Math.floor(100000 + Math.random() * 900000);
-    return `CLOUD-${randomNum}`;
+    return `CLOUD${randomNum}`;
 };
 
 // Middleware to check if the user is logged in
@@ -40,11 +40,15 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
 
         // Calculate delivery fee
         const deliveryLocations = {
-            'Kutus': 50, 'Kerugoya': 50, 'Kagio': 50, 'Sagana': 80, 'Karatina': 150,
-            'Embu': 150, "Murang'a": 150, 'Nyeri': 150, 'Thika': 200, 'Nairobi': 200,
-            'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100,
-            'Kirinyaga University': 50, 'Kangai': 50, 'Kiamutugu': 50, 'Baricho': 50,
-            "Wang'uru": 100, 'Makutano': 100
+            'Kutus': 0, 'Kerugoya': 100, 'Kagio': 100, 'Sagana': 100, 'Karatina': 150,
+            'Embu University': 200, "Murang'a University": 200, 'Nyeri': 250, 'Thika': 250, 'Nairobi': 250,
+            'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, Kiambu: 250, Ruiru: 250, Kikuyu: 250,
+            'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, Nakuru: 500, 'Kisii': 1000,
+            'Kakamega': 1000, 'Kabarnet': 1000, 'Kericho': 1000, 'Kitale': 1000, 'Bungoma': 1000, 'Busia': 1000,
+            'Kapsabet': 1000, 'Kisii University': 1000, 'Kisumu University': 1000, 'Maseno University': 1000,
+            'Moi University': 1000, 'Egerton University': 1000, 'Masinde Muliro University': 1000,
+            'Kirinyaga University': 50, 'Kangai': 50, 'Kiamutugu': 50, 'Baricho': 100,
+            "Wang'uru": 100, 'Makutano': 150
         };
 
         const calculatedDeliveryFee = deliveryLocations[customerLocation] || 0;
