@@ -458,10 +458,20 @@
                            </select>
                        </div>
                        <div class="form-group mb-3">
-                           <label for="images" class="text-muted font-weight-bold small">Images (Multiple)</label>
-                           <input type="file" class="form-control-file" id="images" name="images" accept="image/*" multiple required style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;">
-                           <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Ctrl (Win) or Cmd (Mac) for multiple</small>
-                       </div>
+                        <label for="images" class="text-muted font-weight-bold small">Images (Multiple)</label>
+                        <input 
+                            type="file" 
+                            class="form-control-file" 
+                            id="images" 
+                            name="images" 
+                            accept="image/*" 
+                            multiple 
+                            required 
+                            capture="environment" 
+                            style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;"
+                        >
+                        <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Ctrl (Win) or Cmd (Mac) for multiple; tap to use camera on phone</small>
+                    </div>
                        <button type="submit" class="btn btn-success btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add Product</button>
                    </form>
                </div>
