@@ -692,7 +692,7 @@
         }
     
         async function pollPaymentStatus(transactionRequestId) {
-            const maxAttempts = 30; // 60 seconds total at 2-second intervals
+            const maxAttempts = 30;
             let attempts = 0;
     
             while (attempts < maxAttempts) {
