@@ -39,27 +39,10 @@ async function connectToDatabase() {
 
 connectToDatabase();
 
-<<<<<<< HEAD
 // Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'public/uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-
-const upload = multer({ storage: storage });
-
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-=======
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'public/uploads/'),
-  filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-      cb(null, `${uniqueSuffix}${path.extname(file.originalname).toLowerCase()}`);
-  }
 });
 
 const upload = multer({
@@ -74,7 +57,6 @@ const upload = multer({
       }
   }
 });
->>>>>>> origin/main
 
 module.exports = { app, upload };
 
@@ -161,11 +143,8 @@ app.post('/track-order', async (req, res) => {
   const { orderId } = req.body;
 
   try {
-<<<<<<< HEAD
-      const order = await Order.findOne({ cloudOrderId: orderId }); // Adjust based on your model
-=======
-      const order = await Order.findOne({ cloudOrderId: orderId }); 
->>>>>>> origin/main
+
+      const order = await Order.findOne({ cloudOrderId: orderId });
       if (!order) {
           return res.status(404).json({ success: false, message: 'Order not found.' });
       }
@@ -174,11 +153,7 @@ app.post('/track-order', async (req, res) => {
           success: true,
           order: {
               cloudOrderId: order.cloudOrderId,
-<<<<<<< HEAD
-              status: order.status, // e.g., 'Ordered', 'Processing', 'Shipped', 'Delivered'
-=======
               status: order.status,
->>>>>>> origin/main
               estimatedDelivery: order.estimatedDelivery || 'N/A',
           },
       });
