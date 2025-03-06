@@ -13,7 +13,6 @@ const User = require('./models/user');
 const { isLoggedIn } = require('./middleware/auth');
 const cartRoutes = require('./routes/cart');
 const Order = require('./models/order');
-const fs = require('fs').promises;
 const fs = require('fs');
 const multer = require('multer');
 const adminRouter = require('./routes/admin');
