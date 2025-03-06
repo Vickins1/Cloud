@@ -882,7 +882,7 @@ function hideSpinner() {
         }
     
         async function pollPaymentStatus(transactionRequestId) {
-            const maxAttempts = 30;
+            const maxAttempts = 30; 
             let attempts = 0;
     
             while (attempts < maxAttempts) {
@@ -890,7 +890,6 @@ function hideSpinner() {
                     const response = await fetch(`/verify-payment/${transactionRequestId}`);
                     const status = await response.json();
     
-                    // Check for final states: completed or failed
                     if (status.status === 'completed' && status.orderId) {
                         // Payment successful, redirect immediately
                         $('#paymentProcessingModal').modal('hide');
@@ -904,10 +903,9 @@ function hideSpinner() {
                     } else {
                         // Still pending, continue polling
                         attempts++;
-                        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+                        await new Promise(resolve => setTimeout(resolve, 2000));
                     }
                 } catch (error) {
-                    // Network or server error treated as failure
                     console.error('Verification error:', error);
                     $('#paymentProcessingModal').modal('hide');
                     window.location.href = `/order-confirmation/null?status=error&message=${encodeURIComponent('Network error while verifying payment')}`;
@@ -915,9 +913,9 @@ function hideSpinner() {
                 }
             }
     
-            // If we reach here, it means we timed out
+            // Timeout case
             $('#paymentProcessingModal').modal('hide');
-            window.location.href = `/order-confirmation/null?status=error&message=${encodeURIComponent('Payment processing took too long and failed. Please check your order status.')}`;
+            window.location.href = `/order-confirmation/null?status=warning&message=${encodeURIComponent('Payment processing took too long. Please check your order status.')}`;
         }
     
         // Notification function (unchanged)
