@@ -5,7 +5,6 @@ const axios = require('axios');
 const Order = require('../models/order');
 const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
-const dotenv = require('dotenv');
 
 // Define pendingOrders at module scope
 const pendingOrders = new Map();
@@ -31,7 +30,6 @@ async function processPaymentVerification(transactionRequestId) {
         }
 
         if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-            // Update order data
             orderData.paymentStatus = 'completed';
             orderData.transactionRequestId = transactionRequestId;
             orderData.paymentDetails = verification;
@@ -39,7 +37,6 @@ async function processPaymentVerification(transactionRequestId) {
             const order = new Order(orderData);
             await order.save();
 
-            // Update transaction data
             transactionData.orderId = order._id;
             transactionData.status = 'Completed';
             transactionData.gatewayResponse = verification;
@@ -47,32 +44,41 @@ async function processPaymentVerification(transactionRequestId) {
             const transaction = new Transaction(transactionData);
             await transaction.save();
 
-            await sendOrderConfirmation({
+            // Use email service for confirmation
+            await emailService.sendOrderConfirmation({
                 customerName: orderData.customerName,
                 customerEmail: orderData.customerEmail,
                 cloudOrderId: order._id,
                 total: orderData.total,
-                items: orderData.items,
-                host: process.env.APP_HOST || 'cloud420.store',
+                items: orderData.items.map(item => ({
+                    productId: { name: item.productId.name || 'Product', _id: item.productId }, // Adjust based on your product data
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                host: process.env.APP_HOST || 'cloud420.store'
             });
 
             pendingOrders.delete(transactionRequestId);
             console.log(`Payment completed for order: ${order._id}`);
-        } 
-        else if (verification.ResultCode === '503' || 
-                 verification.TransactionStatus === 'Failed' || 
-                 ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)) {
+        } else if (verification.ResultCode === '503' || 
+                   verification.TransactionStatus === 'Failed' || 
+                   ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)) {
             transactionData.status = 'Failed';
             transactionData.gatewayResponse = verification;
             const transaction = new Transaction(transactionData);
             await transaction.save();
+
+            // Optional: Send failure notification
+            await emailService.sendPaymentFailureNotification({
+                customerEmail: orderData.customerEmail,
+                transactionRequestId
+            });
+
             pendingOrders.delete(transactionRequestId);
             console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
         }
-        // Pending transactions remain in the Map
     } catch (error) {
         console.error(`Error verifying ${transactionRequestId}:`, error);
-        // Log specific validation errors
         if (error.name === 'ValidationError') {
             console.error('Validation errors:', error.errors);
         }
@@ -84,7 +90,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     const { customerName, customerEmail, customerPhone, customerLocation, cartTotal } = req.body;
 
     try {
-        // Input validation
         if (!customerName || !customerEmail || !customerPhone || !customerLocation || !cartTotal) {
             return res.status(400).json({ success: false, message: 'Missing required fields' });
         }
@@ -94,12 +99,11 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cart is empty' });
         }
 
-        // Delivery fee calculation
         const deliveryLocations = {
             'Kutus': 0, 'Kerugoya': 100, /* ... rest of your locations ... */
         };
         
-        const calculatedDeliveryFee = deliveryLocations[customerLocation] || 250; // Default to 250 if location not found
+        const calculatedDeliveryFee = deliveryLocations[customerLocation] || 250;
         const calculatedSubtotal = cart.reduce((sum, item) => sum + (item.productId.price * item.quantity), 0);
         const calculatedTotal = calculatedSubtotal + calculatedDeliveryFee;
 
@@ -107,7 +111,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Total amount mismatch' });
         }
 
-        // Prepare order data
         const orderData = {
             customerName: customerName.trim(),
             customerEmail: customerEmail.trim(),
@@ -126,7 +129,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             createdAt: new Date()
         };
 
-        // STK Push payload
         const transactionReference = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const stkPayload = {
             api_key: process.env.UMS_API_KEY,
@@ -137,14 +139,10 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             reference: transactionReference
         };
 
-        // Make STK Push request with timeout
         const stkResponse = await axios.post(
-            'https://api.umeskiasoftwares.com/api/v1/intiatestk', 
-            stkPayload, 
-            {
-                headers: { 'Content-Type': 'application/json' },
-                timeout: 10000 // 10 second timeout
-            }
+            'https://api.umeskiasoftwares.com/api/v1/intiatestk',
+            stkPayload,
+            { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
         ).catch(error => {
             throw {
                 message: 'STK Push request failed',
@@ -191,7 +189,7 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     }
 });
 
-// Enhanced payment verification function
+// Verify payment status
 async function verifyPaymentStatus(transactionRequestId) {
     try {
         const verifyPayload = {
@@ -203,10 +201,7 @@ async function verifyPaymentStatus(transactionRequestId) {
         const response = await axios.post(
             'https://api.umeskiasoftwares.com/api/v1/transactionstatus',
             verifyPayload,
-            {
-                headers: { 'Content-Type': 'application/json' },
-                timeout: 10000
-            }
+            { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
         );
 
         return response.data;
@@ -237,7 +232,7 @@ setInterval(async () => {
             console.error('Periodic verification error:', error);
         }
     }
-}, 1000 * 60 * 5); // Every 5 minutes
+}, 1000 * 60 * 5);
 
 // Verify payment endpoint
 router.get('/verify-payment/:transactionId', async (req, res) => {
@@ -257,10 +252,7 @@ router.get('/verify-payment/:transactionId', async (req, res) => {
                 res.json({ status: 'processing', message: 'Payment recorded, order processing' });
             }
         } else if (verification.ResultCode === '503') {
-            res.json({ 
-                status: 'pending', 
-                message: 'Payment service temporarily unavailable, please wait' 
-            });
+            res.json({ status: 'pending', message: 'Payment service unavailable, please wait' });
         } else if (verification.TransactionStatus === 'Failed') {
             res.json({ status: 'failed', message: 'Payment failed' });
         } else {
@@ -415,6 +407,64 @@ router.get('/cart-count', isLoggedIn, async (req, res) => {
     } catch (error) {
         console.error('Error fetching cart count:', error);
         res.status(500).json({ success: false, message: 'Error fetching cart count' });
+    }
+});
+
+// Order Confirmation Route
+router.get('/order-confirmation/:orderId', isLoggedIn, async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+
+        // Fetch order details
+        const order = await Order.findById(orderId)
+            .populate('items.productId', 'name price imageUrl') 
+            .lean();
+
+        if (!order) {
+            req.flash('error_msg', 'Order not found');
+            return res.redirect('/cart');
+        }
+
+        // Ensure the order belongs to the current user
+        if (order.customerEmail !== req.user.email) {
+            req.flash('error_msg', 'Unauthorized access to order');
+            return res.redirect('/cart');
+        }
+
+        // Format order data for display
+        const orderDetails = {
+            orderId: order._id,
+            customerName: order.customerName,
+            customerEmail: order.customerEmail,
+            customerPhone: order.customerPhone,
+            customerLocation: order.customerLocation,
+            total: order.total,
+            paymentStatus: order.paymentStatus,
+            shippingStatus: order.shippingStatus,
+            transactionRequestId: order.transactionRequestId,
+            createdAt: new Date(order.createdAt).toLocaleString(),
+            items: order.items.map(item => ({
+                productName: item.productId.name,
+                quantity: item.quantity,
+                price: item.productId.price,
+                imageUrl: item.productId.imageUrl,
+                subtotal: (item.quantity * item.productId.price).toFixed(2)
+            })),
+            subtotal: order.items.reduce((sum, item) => sum + (item.quantity * item.productId.price), 0).toFixed(2),
+            deliveryFee: (order.total - order.items.reduce((sum, item) => sum + (item.quantity * item.productId.price), 0)).toFixed(2)
+        };
+
+        res.render('order-confirmation', {
+            order: orderDetails,
+            currentUser: req.user,
+            activePage: 'orders',
+            success_msg: req.flash('success_msg'),
+            error_msg: req.flash('error_msg')
+        });
+    } catch (error) {
+        console.error('Error fetching order confirmation:', error);
+        req.flash('error_msg', 'Failed to load order confirmation');
+        res.redirect('/cart');
     }
 });
 
