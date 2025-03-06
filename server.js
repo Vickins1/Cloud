@@ -249,7 +249,7 @@ app.get('/profile', isLoggedIn, async (req, res) => {
   }
 });
 
-// Change Password Route (POST)
+// Change Password Route
 app.post('/profile/change-password', isLoggedIn, async (req, res) => {
   const { currentPassword, newPassword, confirmPassword } = req.body;
 

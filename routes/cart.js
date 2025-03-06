@@ -209,6 +209,26 @@ setInterval(async () => {
     }
 }, 1000 * 60 * 5);
 
+router.get('/verify-payment/:transactionId', async (req, res) => {
+    const { transactionId } = req.params;
+    try {
+        const verification = await verifyPaymentStatus(transactionId);
+        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
+            const order = pendingOrders.get(transactionId)?.orderData;
+            if (order) {
+                res.json({ status: 'completed', message: 'Payment successful!', orderId: order._id });
+            } else {
+                res.json({ status: 'not_found', message: 'Transaction not found' });
+            }
+        } else if (verification.TransactionStatus === 'Failed') {
+            res.json({ status: 'failed', message: 'Payment failed' });
+        } else {
+            res.json({ status: 'pending', message: 'Payment still processing' });
+        }
+    } catch (error) {
+        res.json({ status: 'error', message: 'Verification error' });
+    }
+});
 
 // GET cart page
 router.get('/', isLoggedIn, async (req, res) => {

@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="/images/icon.png">
     <style>
         html,
@@ -484,8 +486,9 @@
                                 </div>
                                 <select class="custom-dropdown form-control" id="customerLocation" name="customerLocation" required>
                                     <option value="" disabled selected>Select your delivery location</option>
+                                    <option value="Juja" data-delivery="250">Juja</option>
+                                    <option value="Mombasa" data-delivery="1000">Mombasa</option>
                                     <option value="Kutus" data-delivery="0">Kutus</option>
-                                    <option value="Kerugoya" data-delivery="100">Kerugoya</option>
                                     <option value="Kagio" data-delivery="100">Kagio</option>
                                     <option value="Sagana" data-delivery="100">Sagana</option>
                                     <option value="Karatina" data-delivery="150">Karatina</option>
@@ -493,6 +496,7 @@
                                     <option value="Murang'a University" data-delivery="200">Murang'a University</option>
                                     <option value="Nyeri" data-delivery="250">Nyeri</option>
                                     <option value="Thika" data-delivery="250">Thika</option>
+                                    <option value="Kerugoya" data-delivery="100">Kerugoya</option>
                                     <option value="Nairobi" data-delivery="250">Nairobi</option>
                                     <option value="Machakos" data-delivery="350">Machakos</option>
                                     <option value="Meru" data-delivery="350">Meru</option>
@@ -518,14 +522,35 @@
                                     <option value="Kisumu University" data-delivery="1000">Kisumu University</option>
                                     <option value="Maseno University" data-delivery="1000">Maseno University</option>
                                     <option value="Moi University" data-delivery="1000">Moi University</option>
+                                    <option value="Kiamutugu" data-delivery="50">Kiamutugu</option>
                                     <option value="Egerton University" data-delivery="1000">Egerton University</option>
                                     <option value="Masinde Muliro University" data-delivery="1000">Masinde Muliro University</option>
                                     <option value="Kirinyaga University" data-delivery="50">Kirinyaga University</option>
-                                    <option value="Kangai" data-delivery="50">Kangai</option>
-                                    <option value="Kiamutugu" data-delivery="50">Kiamutugu</option>
                                     <option value="Baricho" data-delivery="100">Baricho</option>
-                                    <option value="Wang'uru" data-delivery="100">Wang'uru</option>
                                     <option value="Makutano" data-delivery="150">Makutano</option>
+                                    <option value="Kenyatta University" data-delivery="250">Kenyatta University</option>
+                                    <option value="Jomo Kenyatta University (JKUAT)" data-delivery="250">Jomo Kenyatta University (JKUAT)</option>
+                                    <option value="Technical University of Kenya" data-delivery="250">Technical University of Kenya</option>
+                                    <option value="Technical University of Mombasa" data-delivery="1000">Technical University of Mombasa</option>
+                                    <option value="Dedan Kimathi University" data-delivery="250">Dedan Kimathi University</option>
+                                    <option value="Chuka University" data-delivery="200">Chuka University</option>
+                                    <option value="Meru University" data-delivery="350">Meru University</option>
+                                    <option value="Multimedia University" data-delivery="250">Multimedia University</option>
+                                    <option value="South Eastern Kenya University" data-delivery="350">South Eastern Kenya University</option>
+                                    <option value="Pwani University" data-delivery="1000">Pwani University</option>
+                                    <option value="Maasai Mara University" data-delivery="500">Maasai Mara University</option>
+                                    <option value="University of Eldoret" data-delivery="1000">University of Eldoret</option>
+                                    <option value="Kibabii University" data-delivery="1000">Kibabii University</option>
+                                    <option value="Wang'uru" data-delivery="100">Wang'uru</option>
+                                    <option value="Kangai" data-delivery="50">Kangai</option>
+                                    <option value="Rongo University" data-delivery="1000">Rongo University</option>
+                                    <option value="Jaramogi Oginga Odinga University" data-delivery="1000">Jaramogi Oginga Odinga University</option>
+                                    <option value="Laikipia University" data-delivery="400">Laikipia University</option>
+                                    <option value="Garissa University" data-delivery="1000">Garissa University</option>
+                                    <option value="Taita Taveta University" data-delivery="1000">Taita Taveta University</option>
+                                    <option value="Bomet University College" data-delivery="1000">Bomet University College</option>
+                                    <option value="Strathmore University" data-delivery="250">Strathmore University</option>
+                                    <option value="USIU Africa" data-delivery="250">USIU Africa</option>
                                 </select>
                             </div>
                         </div>
@@ -558,7 +583,147 @@
         </div>
     </div>
 </div>
-
+<!-- Payment Processing Modal -->
+<div class="modal fade" id="paymentProcessingModal" tabindex="-1" role="dialog" aria-labelledby="paymentProcessingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%);">
+            <div class="modal-header border-0" style="background: #035925; color: white;">
+                <h5 class="modal-title" id="paymentProcessingModalLabel">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Processing Payment
+                </h5>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="text-white mb-3">Please wait while we process your payment. This may take a few moments.</p>
+                <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="sr-only">Processing...</span>
+                </div>
+                <p class="text-muted mt-3">Do not close this window.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkoutForm = document.getElementById('checkoutForm');
+        const submitButton = document.getElementById('confirmCheckout');
+        const buttonText = submitButton.querySelector('.button-text');
+        const loader = submitButton.querySelector('.loader');
+    
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            // Show loader on submit button
+            submitButton.disabled = true;
+            buttonText.style.display = 'none';
+            loader.style.display = 'inline-flex';
+    
+            const formData = {
+                customerName: document.getElementById('customerName').value,
+                customerEmail: document.getElementById('customerEmail').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerLocation: document.getElementById('customerLocation').value,
+                cartTotal: document.getElementById('cartTotal').value
+            };
+    
+            try {
+                const response = await fetch('/cart/initiate-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+    
+                const result = await response.json();
+    
+                // Hide loader on submit button
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loader.style.display = 'none';
+    
+                if (result.success) {
+                    // Close the checkout modal
+                    $('#checkoutModal').modal('hide');
+    
+                    // Open the payment processing modal immediately
+                    $('#paymentProcessingModal').modal('show');
+    
+                    // Start polling for payment status
+                    pollPaymentStatus(result.tranasaction_request_id);
+                } else {
+                    // Show error notification if STK Push fails
+                    showNotification('Error', result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Frontend payment error:', error);
+                showNotification('Error', 'Failed to connect to the server. Please try again.', 'danger');
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loader.style.display = 'none';
+            }
+        });
+    });
+    
+    // Existing polling function updated to handle modal
+    async function pollPaymentStatus(tranasaction_request_id) {
+        const pollInterval = setInterval(async () => {
+            try {
+                const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
+                const status = await response.json();
+    
+                if (status.status === 'completed') {
+                    clearInterval(pollInterval);
+                    $('#paymentProcessingModal').modal('hide'); // Close processing modal
+                    showNotification('Success', status.message, 'success');
+                    window.location.href = `/order-confirmation/${status.orderId}`;
+                } else if (status.status === 'failed' || status.status === 'not_found') {
+                    clearInterval(pollInterval);
+                    $('#paymentProcessingModal').modal('hide'); // Close processing modal
+                    showNotification('Error', status.message, 'danger');
+                } else if (status.status === 'error') {
+                    clearInterval(pollInterval);
+                    $('#paymentProcessingModal').modal('hide'); // Close processing modal
+                    showNotification('Error', 'Verification error. Please try again later.', 'danger');
+                }
+                // 'pending' status: keep polling, modal stays open
+            } catch (error) {
+                console.error('Polling error:', error);
+                clearInterval(pollInterval);
+                $('#paymentProcessingModal').modal('hide'); // Close processing modal
+                showNotification('Error', 'An error occurred while verifying payment.', 'danger');
+            }
+        }, 5000); // Poll every 5 seconds
+    }
+    
+    // Notification Functions (unchanged)
+    function showNotification(title, message, type, persistent = false) {
+        const container = document.querySelector('.notification-container') || createNotificationContainer();
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
+    
+        container.appendChild(notification);
+    
+        if (!persistent) {
+            setTimeout(() => notification.remove(), 3000);
+        }
+    
+        return {
+            element: notification,
+            update: (newTitle, newMessage, newType) => {
+                notification.querySelector('.notification-title').textContent = newTitle;
+                notification.querySelector('.notification-message').innerHTML = newMessage;
+                notification.className = `notification notification-${newType}`;
+            },
+            remove: () => notification.remove()
+        };
+    }
+    
+    function createNotificationContainer() {
+        const container = document.createElement('div');
+        container.className = 'notification-container';
+        document.body.appendChild(container);
+        return container;
+    }
+    </script>
 
 <script>
     async function initiatePayment(paymentData) {
@@ -775,8 +940,8 @@ function createNotificationContainer() {
             <p>© 2025 Cloud 420 Store. All rights reserved.</p>
         </footer>
 
-        <!-- Scripts -->
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+               <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
