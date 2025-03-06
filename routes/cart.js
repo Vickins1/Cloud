@@ -5,6 +5,7 @@ const axios = require('axios');
 const Order = require('../models/order');
 const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
+const dotenv = require('dotenv');
 
 // Define pendingOrders at module scope
 const pendingOrders = new Map();
@@ -16,178 +17,6 @@ function isLoggedIn(req, res, next) {
     }
     res.redirect('/auth/login');
 }
-
-async function processPaymentVerification(transactionRequestId) {
-    try {
-        const verification = await verifyPaymentStatus(transactionRequestId);
-        console.log(`Verification result for ${transactionRequestId}:`, verification);
-
-        const { orderData, transactionData } = pendingOrders.get(transactionRequestId) || {};
-
-        if (!orderData || !transactionData) {
-            console.log(`No pending order found for ${transactionRequestId}`);
-            return;
-        }
-
-        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-            orderData.paymentStatus = 'completed';
-            orderData.transactionRequestId = transactionRequestId;
-            orderData.paymentDetails = verification;
-
-            const order = new Order(orderData);
-            await order.save();
-
-            transactionData.orderId = order._id;
-            transactionData.status = 'Completed';
-            transactionData.gatewayResponse = verification;
-
-            const transaction = new Transaction(transactionData);
-            await transaction.save();
-
-            // Use email service for confirmation
-            await emailService.sendOrderConfirmation({
-                customerName: orderData.customerName,
-                customerEmail: orderData.customerEmail,
-                cloudOrderId: order._id,
-                total: orderData.total,
-                items: orderData.items.map(item => ({
-                    productId: { name: item.productId.name || 'Product', _id: item.productId }, // Adjust based on your product data
-                    quantity: item.quantity,
-                    price: item.price
-                })),
-                host: process.env.APP_HOST || 'cloud420.store'
-            });
-
-            pendingOrders.delete(transactionRequestId);
-            console.log(`Payment completed for order: ${order._id}`);
-        } else if (verification.ResultCode === '503' || 
-                   verification.TransactionStatus === 'Failed' || 
-                   ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)) {
-            transactionData.status = 'Failed';
-            transactionData.gatewayResponse = verification;
-            const transaction = new Transaction(transactionData);
-            await transaction.save();
-
-            // Optional: Send failure notification
-            await emailService.sendPaymentFailureNotification({
-                customerEmail: orderData.customerEmail,
-                transactionRequestId
-            });
-
-            pendingOrders.delete(transactionRequestId);
-            console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
-        }
-    } catch (error) {
-        console.error(`Error verifying ${transactionRequestId}:`, error);
-        if (error.name === 'ValidationError') {
-            console.error('Validation errors:', error.errors);
-        }
-    }
-}
-
-// Initiate STK Push
-router.post('/initiate-payment', isLoggedIn, async (req, res) => {
-    const { customerName, customerEmail, customerPhone, customerLocation, cartTotal } = req.body;
-
-    try {
-        if (!customerName || !customerEmail || !customerPhone || !customerLocation || !cartTotal) {
-            return res.status(400).json({ success: false, message: 'Missing required fields' });
-        }
-
-        const cart = req.session.cart || [];
-        if (!cart.length) {
-            return res.status(400).json({ success: false, message: 'Cart is empty' });
-        }
-
-        const deliveryLocations = {
-            'Kutus': 0, 'Kerugoya': 100, /* ... rest of your locations ... */
-        };
-        
-        const calculatedDeliveryFee = deliveryLocations[customerLocation] || 250;
-        const calculatedSubtotal = cart.reduce((sum, item) => sum + (item.productId.price * item.quantity), 0);
-        const calculatedTotal = calculatedSubtotal + calculatedDeliveryFee;
-
-        if (Math.abs(parseFloat(cartTotal) - calculatedTotal) > 0.01) {
-            return res.status(400).json({ success: false, message: 'Total amount mismatch' });
-        }
-
-        const orderData = {
-            customerName: customerName.trim(),
-            customerEmail: customerEmail.trim(),
-            customerPhone: customerPhone.trim(),
-            customerLocation: customerLocation.trim(),
-            total: calculatedTotal,
-            items: cart.map(item => ({
-                productId: item.productId._id || item.productId,
-                quantity: item.quantity,
-                price: item.productId.price
-            })),
-            paymentStatus: 'pending',
-            shippingStatus: 'processing',
-            transactionRequestId: null,
-            paymentDetails: {},
-            createdAt: new Date()
-        };
-
-        const transactionReference = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        const stkPayload = {
-            api_key: process.env.UMS_API_KEY,
-            email: process.env.UMS_EMAIL,
-            account_id: process.env.UMS_ACCOUNT_ID,
-            amount: calculatedTotal,
-            msisdn: customerPhone.replace(/^0/, '254'),
-            reference: transactionReference
-        };
-
-        const stkResponse = await axios.post(
-            'https://api.umeskiasoftwares.com/api/v1/intiatestk',
-            stkPayload,
-            { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
-        ).catch(error => {
-            throw {
-                message: 'STK Push request failed',
-                details: error.response?.data || error.message,
-                status: error.response?.status || 500
-            };
-        });
-
-        const stkData = stkResponse.data;
-        if (stkData.success === '200' && stkData.tranasaction_request_id) {
-            const transactionRequestId = stkData.tranasaction_request_id;
-
-            const transactionData = {
-                orderId: null,
-                transactionRequestId,
-                amount: calculatedTotal,
-                status: 'Pending',
-                paymentMethod: 'Mobile',
-                customerPhone: stkPayload.msisdn,
-                paymentReference: transactionReference
-            };
-
-            pendingOrders.set(transactionRequestId, { orderData, transactionData });
-            req.session.cart = [];
-
-            setImmediate(() => processPaymentVerification(transactionRequestId));
-
-            return res.json({
-                success: true,
-                message: 'STK Push initiated. Please check your phone.',
-                transactionRequestId,
-                orderReference: transactionReference
-            });
-        } else {
-            throw { message: 'STK Push initiation failed', details: stkData };
-        }
-    } catch (error) {
-        console.error('Payment initiation error:', error);
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || 'Failed to initiate payment',
-            details: error.details || 'Please try again later'
-        });
-    }
-});
 
 // Verify payment status
 async function verifyPaymentStatus(transactionRequestId) {
@@ -215,20 +44,218 @@ async function verifyPaymentStatus(transactionRequestId) {
     }
 }
 
-// Simplified periodic cleanup (runs every 5 minutes)
+// Process payment verification
+async function processPaymentVerification(transactionRequestId) {
+    try {
+        const verification = await verifyPaymentStatus(transactionRequestId);
+        console.log(`Verification result for ${transactionRequestId}:`, verification);
+
+        const pendingOrder = pendingOrders.get(transactionRequestId);
+        if (!pendingOrder) {
+            console.log(`No pending order found for ${transactionRequestId}`);
+            return;
+        }
+
+        const { orderData, transactionData } = pendingOrder;
+
+        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
+            orderData.paymentStatus = 'completed';
+            orderData.transactionRequestId = transactionRequestId;
+            orderData.paymentDetails = verification;
+
+            const order = new Order(orderData);
+            await order.save();
+
+            transactionData.orderId = order._id;
+            transactionData.status = 'Completed';
+            transactionData.gatewayResponse = verification;
+
+            const transaction = new Transaction(transactionData);
+            await transaction.save();
+
+            await emailService.sendOrderConfirmation({
+                customerName: orderData.customerName,
+                customerEmail: orderData.customerEmail,
+                cloudOrderId: order._id,
+                total: orderData.total,
+                items: orderData.items.map(item => ({
+                    productId: { name: item.productId.name || 'Product', _id: item.productId },
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                host: process.env.APP_HOST || 'cloud420.store'
+            });
+
+            pendingOrders.delete(transactionRequestId);
+            console.log(`Payment completed for order: ${order._id}`);
+        } else if (
+            verification.ResultCode === '503' ||
+            verification.TransactionStatus === 'Failed' ||
+            ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)
+        ) {
+            transactionData.status = 'Failed';
+            transactionData.gatewayResponse = verification;
+            const transaction = new Transaction(transactionData);
+            await transaction.save();
+
+            await emailService.sendPaymentFailureNotification({
+                customerEmail: orderData.customerEmail,
+                transactionRequestId
+            });
+
+            pendingOrders.delete(transactionRequestId);
+            console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
+        }
+        // If still pending, keep in pendingOrders for periodic check
+    } catch (error) {
+        console.error(`Error verifying ${transactionRequestId}:`, error);
+        if (error.name === 'ValidationError') {
+            console.error('Validation errors:', error.errors);
+        }
+    }
+}
+
+// Initiate STK Push
+router.post('/initiate-payment', isLoggedIn, async (req, res) => {
+    const { customerName, customerEmail, customerPhone, customerLocation, cartTotal } = req.body;
+
+    try {
+        if (!customerName || !customerEmail || !customerPhone || !customerLocation || !cartTotal) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' });
+        }
+
+        const cart = req.session.cart || [];
+        if (!cart.length) {
+            return res.status(400).json({ success: false, message: 'Cart is empty' });
+        }
+
+        // Calculate delivery fee
+        const deliveryLocations = {
+            'Kutus': 0, 'Kerugoya': 100, 'Kagio': 100, 'Sagana': 100, 'Karatina': 150,
+            'Embu University': 200, "Murang'a University": 200, 'Nyeri': 250, 'Thika': 250, 'Nairobi': 250,
+            'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, 'Kiambu': 250, 'Ruiru': 250, 'Kikuyu': 250,
+            'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, 'Nakuru': 500, 'Kisii': 1000,
+            'Kakamega': 1000, 'Kabarnet': 1000, 'Kericho': 1000, 'Kitale': 1000, 'Bungoma': 1000, 'Busia': 1000,
+            'Kapsabet': 1000, 'Kisii University': 1000, 'Kisumu University': 1000, 'Maseno University': 1000,
+            'Moi University': 1000, 'Egerton University': 1000, 'Masinde Muliro University': 1000,
+            'Kirinyaga University': 50, 'Kangai': 50, 'Kiamutugu': 50, 'Baricho': 100,
+            "Wang'uru": 100, 'Makutano': 150
+        };
+
+        const calculatedDeliveryFee = deliveryLocations[customerLocation] || 0;
+        const calculatedSubtotal = cart.reduce((sum, item) => sum + (item.productId.price * item.quantity), 0);
+        const calculatedTotal = calculatedSubtotal + calculatedDeliveryFee;
+
+        if (parseFloat(cartTotal) !== calculatedTotal) {
+            return res.status(400).json({ success: false, message: 'Total amount mismatch' });
+        }
+
+        // Create order data (not saved yet)
+        const orderData = {
+            customerName,
+            customerEmail,
+            customerPhone,
+            customerLocation,
+            total: calculatedTotal,
+            items: cart.map(item => ({
+                productId: item.productId._id || item.productId,
+                quantity: item.quantity
+            })),
+            paymentStatus: 'Pending',
+            shippingStatus: 'Processing',
+            transactionRequestId: null,
+            paymentDetails: {},
+            createdAt: new Date()
+        };
+
+        // STK Push payload
+        const stkPayload = {
+            api_key: process.env.UMS_API_KEY,
+            email: process.env.UMS_EMAIL,
+            account_id: process.env.UMS_ACCOUNT_ID,
+            amount: calculatedTotal,
+            msisdn: customerPhone.startsWith('0') ? `254${customerPhone.slice(1)}` : customerPhone,
+            reference: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+        };
+
+        const stkResponse = await axios.post('https://api.umeskiasoftwares.com/api/v1/intiatestk', stkPayload, {
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const stkData = stkResponse.data;
+        if (stkData.success === '200') {
+            const transactionRequestId = stkData.tranasaction_request_id;
+
+            // Create transaction data
+            const transactionData = {
+                orderId: null,
+                transactionRequestId: transactionRequestId,
+                amount: calculatedTotal,
+                status: 'Pending',
+                paymentMethod: 'Mobile',
+                customerPhone: stkPayload.msisdn,
+                paymentReference: stkPayload.reference
+            };
+
+            // Store in pendingOrders for verification
+            pendingOrders.set(transactionRequestId, { orderData, transactionData });
+
+            // Clear session cart
+            req.session.cart = [];
+
+            // Start immediate polling for this transaction
+            setImmediate(() => processPaymentVerification(transactionRequestId));
+
+            return res.json({
+                success: true,
+                message: 'STK Push initiated. Please check your phone to complete payment.',
+                tranasaction_request_id: transactionRequestId,
+                order_id: stkPayload.reference
+            });
+        } else {
+            console.error('STK Push Error:', stkData);
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to initiate STK Push. Please try again later.',
+                details: stkData
+            });
+        }
+    } catch (error) {
+        console.error('Payment initiation error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'An unexpected error occurred. Please try again later.',
+            error: error.message
+        });
+    }
+});
+
+// Periodic cleanup (runs every 5 minutes)
 setInterval(async () => {
     const now = Date.now();
-    for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders) {
+    for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders.entries()) {
         if ((now - orderData.createdAt) > 1000 * 60 * 30) { // 30 minutes timeout
-            transactionData.status = 'Failed';
-            transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
-            pendingOrders.delete(transactionRequestId);
-            console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
+            try {
+                transactionData.status = 'Failed';
+                transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
+                const transaction = new Transaction(transactionData);
+                await transaction.save();
+
+                await emailService.sendPaymentFailureNotification({
+                    customerEmail: orderData.customerEmail,
+                    transactionRequestId
+                });
+
+                pendingOrders.delete(transactionRequestId);
+                console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
+            } catch (error) {
+                console.error(`Error cleaning up ${transactionRequestId}:`, error);
+            }
         }
     }
 }, 1000 * 60 * 5);
 
-// Updated verify payment endpoint
+// Verify payment endpoint
 router.get('/verify-payment/:transactionId', async (req, res) => {
     const { transactionId } = req.params;
     try {
@@ -238,20 +265,20 @@ router.get('/verify-payment/:transactionId', async (req, res) => {
         const response = {
             status: verification.TransactionStatus?.toLowerCase() || 'pending',
             message: verification.message || 'Payment status updated',
-            orderId: pendingOrder?.orderData?._id
+            orderId: pendingOrder?.orderData?._id || null
         };
 
         if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
             response.status = 'completed';
             response.message = 'Payment successful!';
-            pendingOrders.delete(transactionId); // Clean up on success
+            // Cleanup happens in processPaymentVerification
         } else if (verification.ResultCode === '503') {
             response.status = 'pending';
             response.message = 'Payment service unavailable, please wait';
         } else if (verification.TransactionStatus === 'Failed') {
             response.status = 'failed';
             response.message = 'Payment failed';
-            pendingOrders.delete(transactionId); // Clean up on failure
+            // Cleanup happens in processPaymentVerification
         }
 
         res.json(response);
@@ -263,6 +290,7 @@ router.get('/verify-payment/:transactionId', async (req, res) => {
         });
     }
 });
+
 
 // GET cart page
 router.get('/', isLoggedIn, async (req, res) => {
@@ -414,7 +442,7 @@ router.get('/order-confirmation/:orderId', isLoggedIn, async (req, res) => {
 
         // Fetch order details
         const order = await Order.findById(orderId)
-            .populate('items.productId', 'name price imageUrl') 
+            .populate('items.productId', 'name price imageUrl')
             .lean();
 
         if (!order) {

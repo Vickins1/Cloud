@@ -583,7 +583,7 @@
         </div>
     </div>
 </div>
-<!-- Payment Processing Modal (unchanged) -->
+<!-- Payment Processing Modal -->
 <div class="modal fade" id="paymentProcessingModal" tabindex="-1" role="dialog" aria-labelledby="paymentProcessingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%);">
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (result.success) {
                 $('#paymentProcessingModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
-                await verifyAndRedirect(result.transaction_request_id); // Changed from tranasaction_request_id
+                await verifyAndRedirect(result.transaction_request_id);
             } else {
                 showNotification('Payment Error', result.message || 'Failed to initiate payment', 'danger');
             }
@@ -668,38 +668,46 @@ document.addEventListener('DOMContentLoaded', () => {
     async function verifyAndRedirect(transactionRequestId) {
         const maxAttempts = 15; // 30 seconds total at 2-second intervals
         let attempts = 0;
+        let finalStatus = null;
 
-        while (attempts < maxAttempts) {
+        while (attempts < maxAttempts && !finalStatus) {
             try {
                 const response = await fetch(`/verify-payment/${transactionRequestId}`);
                 const status = await response.json();
 
                 if (status.status === 'completed' && status.orderId) {
-                    $('#paymentProcessingModal').modal('hide');
-                    window.location.href = `/order-confirmation/${status.orderId}`;
-                    return;
-                } else if (status.status === 'failed' || status.status === 'error') {
-                    $('#paymentProcessingModal').modal('hide');
-                    showNotification('Payment Failed', status.message || 'Payment processing failed', 'danger');
-                    return;
+                    finalStatus = { type: 'success', message: status.message || 'Payment completed successfully!', orderId: status.orderId };
+                } else if (status.status === 'failed') {
+                    finalStatus = { type: 'danger', message: status.message || 'Payment processing failed' };
+                } else if (status.status === 'error') {
+                    finalStatus = { type: 'danger', message: status.message || 'Verification error occurred' };
+                } else {
+                    // Still pending, continue polling
+                    attempts++;
+                    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
                 }
-
-                attempts++;
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
             } catch (error) {
                 console.error('Verification error:', error);
-                $('#paymentProcessingModal').modal('hide');
-                showNotification('Error', 'Network error while verifying payment', 'danger');
-                return;
+                finalStatus = { type: 'danger', message: 'Network error while verifying payment' };
             }
         }
 
-        // Timeout case
+        // Handle timeout if no final status after max attempts
+        if (!finalStatus) {
+            finalStatus = { type: 'warning', message: 'Payment processing took too long. Please check your order status.' };
+        }
+
+        // Close modal and handle the final state
         $('#paymentProcessingModal').modal('hide');
-        showNotification('Timeout', 'Payment processing took too long. Please check your order status.', 'warning');
+
+        if (finalStatus.type === 'success') {
+            window.location.href = `/order-confirmation/${finalStatus.orderId}`;
+        } else {
+            showNotification(finalStatus.type === 'danger' ? 'Payment Failed' : 'Timeout', finalStatus.message, finalStatus.type);
+        }
     }
 
-    // Notification function (unchanged)
+    // Notification function
     function showNotification(title, message, type, persistent = false) {
         const container = document.querySelector('.notification-container') || createNotificationContainer();
         const notification = document.createElement('div');
