@@ -10,11 +10,14 @@ const dotenv = require('dotenv');
 // Define pendingOrders at module scope
 const pendingOrders = new Map();
 
+<<<<<<< HEAD
 const generateOrderId = () => {
     const randomNum = Math.floor(100000 + Math.random() * 900000);
     return `CLOUD${randomNum}`;
 };
 
+=======
+>>>>>>> origin/main
 // Middleware to check if the user is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
@@ -23,27 +26,140 @@ function isLoggedIn(req, res, next) {
     res.redirect('/auth/login');
 }
 
+<<<<<<< HEAD
 
+=======
+// Verify payment status
+async function verifyPaymentStatus(transactionRequestId) {
+    try {
+        const verifyPayload = {
+            api_key: process.env.UMS_API_KEY,
+            email: process.env.UMS_EMAIL,
+            transaction_request_id: transactionRequestId
+        };
+
+        const response = await axios.post(
+            'https://api.umeskiasoftwares.com/api/v1/transactionstatus',
+            verifyPayload,
+            { headers: { 'Content-Type': 'application/json' }, timeout: 10000 }
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error('Payment verification failed:', error.response?.data || error.message);
+        throw {
+            message: 'Verification request failed',
+            details: error.response?.data || error.message,
+            status: error.response?.status || 500
+        };
+    }
+}
+
+// Process payment verification
+async function processPaymentVerification(transactionRequestId) {
+    try {
+        const verification = await verifyPaymentStatus(transactionRequestId);
+        console.log(`Verification result for ${transactionRequestId}:`, verification);
+
+        const pendingOrder = pendingOrders.get(transactionRequestId);
+        if (!pendingOrder) {
+            console.log(`No pending order found for ${transactionRequestId}`);
+            return;
+        }
+
+        const { orderData, transactionData } = pendingOrder;
+
+        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
+            orderData.paymentStatus = 'completed';
+            orderData.transactionRequestId = transactionRequestId;
+            orderData.paymentDetails = verification;
+
+            const order = new Order(orderData);
+            await order.save();
+
+            transactionData.orderId = order._id;
+            transactionData.status = 'Completed';
+            transactionData.gatewayResponse = verification;
+
+            const transaction = new Transaction(transactionData);
+            await transaction.save();
+
+            await emailService.sendOrderConfirmation({
+                customerName: orderData.customerName,
+                customerEmail: orderData.customerEmail,
+                cloudOrderId: order._id,
+                total: orderData.total,
+                items: orderData.items.map(item => ({
+                    productId: { name: item.productId.name || 'Product', _id: item.productId },
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                host: process.env.APP_HOST || 'cloud420.store'
+            });
+
+            pendingOrders.delete(transactionRequestId);
+            console.log(`Payment completed for order: ${order._id}`);
+        } else if (
+            verification.ResultCode === '503' ||
+            verification.TransactionStatus === 'Failed' ||
+            ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)
+        ) {
+            transactionData.status = 'Failed';
+            transactionData.gatewayResponse = verification;
+            const transaction = new Transaction(transactionData);
+            await transaction.save();
+
+            await emailService.sendPaymentFailureNotification({
+                customerEmail: orderData.customerEmail,
+                transactionRequestId
+            });
+
+            pendingOrders.delete(transactionRequestId);
+            console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
+        }
+        // If still pending, keep in pendingOrders for periodic check
+    } catch (error) {
+        console.error(`Error verifying ${transactionRequestId}:`, error);
+        if (error.name === 'ValidationError') {
+            console.error('Validation errors:', error.errors);
+        }
+    }
+}
+
+// Initiate STK Push
+>>>>>>> origin/main
 router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     const { customerName, customerEmail, customerPhone, customerLocation, cartTotal } = req.body;
 
     try {
+<<<<<<< HEAD
         // Validate input
+=======
+>>>>>>> origin/main
         if (!customerName || !customerEmail || !customerPhone || !customerLocation || !cartTotal) {
             return res.status(400).json({ success: false, message: 'Missing required fields' });
         }
 
         const cart = req.session.cart || [];
         if (!cart.length) {
+<<<<<<< HEAD
             return res.status(400).json({ success: false, message: 'Your cart is empty' });
+=======
+            return res.status(400).json({ success: false, message: 'Cart is empty' });
+>>>>>>> origin/main
         }
 
         // Calculate delivery fee
         const deliveryLocations = {
             'Kutus': 0, 'Kerugoya': 100, 'Kagio': 100, 'Sagana': 100, 'Karatina': 150,
             'Embu University': 200, "Murang'a University": 200, 'Nyeri': 250, 'Thika': 250, 'Nairobi': 250,
+<<<<<<< HEAD
             'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, Kiambu: 250, Ruiru: 250, Kikuyu: 250,
             'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, Nakuru: 500, 'Kisii': 1000,
+=======
+            'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, 'Kiambu': 250, 'Ruiru': 250, 'Kikuyu': 250,
+            'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, 'Nakuru': 500, 'Kisii': 1000,
+>>>>>>> origin/main
             'Kakamega': 1000, 'Kabarnet': 1000, 'Kericho': 1000, 'Kitale': 1000, 'Bungoma': 1000, 'Busia': 1000,
             'Kapsabet': 1000, 'Kisii University': 1000, 'Kisumu University': 1000, 'Maseno University': 1000,
             'Moi University': 1000, 'Egerton University': 1000, 'Masinde Muliro University': 1000,
@@ -84,7 +200,11 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             account_id: process.env.UMS_ACCOUNT_ID,
             amount: calculatedTotal,
             msisdn: customerPhone.startsWith('0') ? `254${customerPhone.slice(1)}` : customerPhone,
+<<<<<<< HEAD
             reference: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}` 
+=======
+            reference: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+>>>>>>> origin/main
         };
 
         const stkResponse = await axios.post('https://api.umeskiasoftwares.com/api/v1/intiatestk', stkPayload, {
@@ -95,7 +215,11 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
         if (stkData.success === '200') {
             const transactionRequestId = stkData.tranasaction_request_id;
 
+<<<<<<< HEAD
             // Create transaction data 
+=======
+            // Create transaction data
+>>>>>>> origin/main
             const transactionData = {
                 orderId: null,
                 transactionRequestId: transactionRequestId,
@@ -112,6 +236,12 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             // Clear session cart
             req.session.cart = [];
 
+<<<<<<< HEAD
+=======
+            // Start immediate polling for this transaction
+            setImmediate(() => processPaymentVerification(transactionRequestId));
+
+>>>>>>> origin/main
             return res.json({
                 success: true,
                 message: 'STK Push initiated. Please check your phone to complete payment.',
@@ -136,6 +266,7 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 // Payment verification function
 async function verifyPaymentStatus(transactionRequestId) {
     try {
@@ -205,14 +336,42 @@ setInterval(async () => {
             }
         } catch (error) {
             console.error(`Error verifying ${transactionRequestId}:`, error);
+=======
+// Periodic cleanup (runs every 5 minutes)
+setInterval(async () => {
+    const now = Date.now();
+    for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders.entries()) {
+        if ((now - orderData.createdAt) > 1000 * 60 * 30) { // 30 minutes timeout
+            try {
+                transactionData.status = 'Failed';
+                transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
+                const transaction = new Transaction(transactionData);
+                await transaction.save();
+
+                await emailService.sendPaymentFailureNotification({
+                    customerEmail: orderData.customerEmail,
+                    transactionRequestId
+                });
+
+                pendingOrders.delete(transactionRequestId);
+                console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
+            } catch (error) {
+                console.error(`Error cleaning up ${transactionRequestId}:`, error);
+            }
+>>>>>>> origin/main
         }
     }
 }, 1000 * 60 * 5);
 
+<<<<<<< HEAD
+=======
+// Verify payment endpoint
+>>>>>>> origin/main
 router.get('/verify-payment/:transactionId', async (req, res) => {
     const { transactionId } = req.params;
     try {
         const verification = await verifyPaymentStatus(transactionId);
+<<<<<<< HEAD
         if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
             const order = pendingOrders.get(transactionId)?.orderData;
             if (order) {
@@ -230,6 +389,40 @@ router.get('/verify-payment/:transactionId', async (req, res) => {
     }
 });
 
+=======
+        const pendingOrder = pendingOrders.get(transactionId);
+
+        const response = {
+            status: verification.TransactionStatus?.toLowerCase() || 'pending',
+            message: verification.message || 'Payment status updated',
+            orderId: pendingOrder?.orderData?._id || null
+        };
+
+        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
+            response.status = 'completed';
+            response.message = 'Payment successful!';
+            // Cleanup happens in processPaymentVerification
+        } else if (verification.ResultCode === '503') {
+            response.status = 'pending';
+            response.message = 'Payment service unavailable, please wait';
+        } else if (verification.TransactionStatus === 'Failed') {
+            response.status = 'failed';
+            response.message = 'Payment failed';
+            // Cleanup happens in processPaymentVerification
+        }
+
+        res.json(response);
+    } catch (error) {
+        res.status(error.status || 500).json({ 
+            status: 'error', 
+            message: 'Verification error',
+            details: error.details
+        });
+    }
+});
+
+
+>>>>>>> origin/main
 // GET cart page
 router.get('/', isLoggedIn, async (req, res) => {
     try {
@@ -373,4 +566,65 @@ router.get('/cart-count', isLoggedIn, async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+=======
+// Order Confirmation Route
+router.get('/order-confirmation/:orderId', isLoggedIn, async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+
+        // Fetch order details
+        const order = await Order.findById(orderId)
+            .populate('items.productId', 'name price imageUrl')
+            .lean();
+
+        if (!order) {
+            req.flash('error_msg', 'Order not found');
+            return res.redirect('/cart');
+        }
+
+        // Ensure the order belongs to the current user
+        if (order.customerEmail !== req.user.email) {
+            req.flash('error_msg', 'Unauthorized access to order');
+            return res.redirect('/cart');
+        }
+
+        // Format order data for display
+        const orderDetails = {
+            orderId: order._id,
+            customerName: order.customerName,
+            customerEmail: order.customerEmail,
+            customerPhone: order.customerPhone,
+            customerLocation: order.customerLocation,
+            total: order.total,
+            paymentStatus: order.paymentStatus,
+            shippingStatus: order.shippingStatus,
+            transactionRequestId: order.transactionRequestId,
+            createdAt: new Date(order.createdAt).toLocaleString(),
+            items: order.items.map(item => ({
+                productName: item.productId.name,
+                quantity: item.quantity,
+                price: item.productId.price,
+                imageUrl: item.productId.imageUrl,
+                subtotal: (item.quantity * item.productId.price).toFixed(2)
+            })),
+            subtotal: order.items.reduce((sum, item) => sum + (item.quantity * item.productId.price), 0).toFixed(2),
+            deliveryFee: (order.total - order.items.reduce((sum, item) => sum + (item.quantity * item.productId.price), 0)).toFixed(2)
+        };
+
+        res.render('order-confirmation', {
+            order: orderDetails,
+            currentUser: req.user,
+            activePage: 'orders',
+            success_msg: req.flash('success_msg'),
+            error_msg: req.flash('error_msg')
+        });
+    } catch (error) {
+        console.error('Error fetching order confirmation:', error);
+        req.flash('error_msg', 'Failed to load order confirmation');
+        res.redirect('/cart');
+    }
+});
+
+>>>>>>> origin/main
 module.exports = router;

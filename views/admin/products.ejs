@@ -280,16 +280,106 @@
                            </select>
                        </div>
                        <div class="form-group mb-3">
+<<<<<<< HEAD
                            <label for="editImages" class="text-muted font-weight-bold small">Images (Replace Existing)</label>
                            <input type="file" class="form-control-file" id="editImages" name="images" accept="image/*" multiple style="padding: 6px; border: 1px dashed #ffc107; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;">
                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Leave empty to keep current images</small>
                        </div>
+=======
+                        <label for="editImages" class="text-muted fw-bold small">Images (Replace Existing)</label>
+                        <div class="custom-file-upload position-relative">
+                            <input 
+                                type="file" 
+                                class="form-control-file" 
+                                id="editImages" 
+                                name="images" 
+                                accept="image/jpeg,image/png,image/gif,image/webp" 
+                                multiple
+                                style="
+                                    padding: 6px; 
+                                    border: 1px dashed #ffc107; 
+                                    border-radius: 8px; 
+                                    background: #1a1a1a; 
+                                    font-size: 0.85rem;
+                                    cursor: pointer;
+                                    width: 100%;
+                                "
+                                aria-describedby="imageHelp"
+                                onchange="previewImages(event)"
+                            >
+                            <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                        </div>
+                        <small id="imageHelp" class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                            Leave empty to keep current images. Max 10 files, 10MB each.
+                        </small>
+                    </div>
+>>>>>>> origin/main
                        <button type="submit" class="btn btn-warning btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold; background: #ffc107; color: #212529;">Update Product</button>
                    </form>
                </div>
            </div>
        </div>
    </div>
+<<<<<<< HEAD
+=======
+   <!-- Add this JavaScript at the bottom of your page or in a separate file -->
+<script>
+    function previewImages(event) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        
+        const files = event.target.files;
+        if (files) {
+            Array.from(files).slice(0, 10).forEach(file => { 
+                if (file.size > 10 * 1024 * 1024) { 
+                    alert(`File ${file.name} exceeds 10MB limit`);
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    img.style.maxHeight = '100px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '4px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+    </script>
+    
+    <!-- Optional CSS for better styling -->
+    <style>
+    .custom-file-upload {
+        overflow: hidden;
+    }
+    
+    .custom-file-upload input[type="file"] {
+        transition: border-color 0.3s ease;
+    }
+    
+    .custom-file-upload input[type="file"]:hover {
+        border-color: #ffca2c;
+    }
+    
+    .custom-file-upload input[type="file"]:focus {
+        outline: none;
+        border-color: #ffca2c;
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+    }
+    
+    @media (max-width: 768px) {
+        .custom-file-upload input[type="file"] {
+            font-size: 0.8rem;
+            padding: 4px;
+        }
+    }
+    </style>
+>>>>>>> origin/main
    
    <style>
        .modal-content {

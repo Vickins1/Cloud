@@ -180,7 +180,11 @@
                                                      <% carts.forEach(cart => { %>
                                                          <tr>
                                                              <td><%= cart.userId %></td>
+<<<<<<< HEAD
                                                              <td><%= cart.user ? cart.user.username : 'Unknown' %></td>
+=======
+                                                             <td><%= cart.userId && cart.userId.username ? cart.userId.username : 'Unknown User' %></td>
+>>>>>>> origin/main
                                                              <td>
                                                                  <% if (cart.products && cart.products.length > 0) { %>
                                                                      <% cart.products.forEach(product => { %>

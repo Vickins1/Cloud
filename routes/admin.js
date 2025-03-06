@@ -152,6 +152,7 @@ router.get('/products', isAdmin, async (req, res) => {
 // Products - Add
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
+<<<<<<< HEAD
         const { name, price, description, stockQuantity, category } = req.body;
         const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
 
@@ -170,6 +171,73 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
     } catch (error) {
         console.error('Error adding product:', error);
         req.flash('error_msg', 'Failed to add product.');
+=======
+        // Validate required fields
+        const { name, price, description, stockQuantity, category } = req.body;
+        
+        if (!name || !price || !stockQuantity || !category) {
+            throw new Error('Missing required fields');
+        }
+
+        // Validate numeric fields
+        const parsedPrice = parseFloat(price);
+        const parsedStock = parseInt(stockQuantity, 10);
+        
+        if (isNaN(parsedPrice) || isNaN(parsedStock)) {
+            throw new Error('Price and stock quantity must be valid numbers');
+        }
+
+        if (parsedPrice < 0 || parsedStock < 0) {
+            throw new Error('Price and stock quantity cannot be negative');
+        }
+
+        // Handle image uploads
+        let imagePaths = [];
+        if (req.files && req.files.length > 0) {
+            imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+        } else {
+            throw new Error('At least one image is required');
+        }
+
+        // Create new product
+        const product = new Product({
+            name: name.trim(),
+            price: parsedPrice,
+            description: description ? description.trim() : '',
+            stockQuantity: parsedStock,
+            category: category.trim(),
+            imageUrl: imagePaths[0],
+            additionalImages: imagePaths.slice(1),
+            createdAt: new Date(),
+            updatedAt: new Date()
+        });
+
+        // Save product
+        await product.save();
+        
+        req.flash('success_msg', 'Product added successfully.');
+        res.redirect('/admin/products');
+
+    } catch (error) {
+        // Clean up uploaded files on error
+        if (req.files && req.files.length > 0) {
+            const fs = require('fs').promises;
+            const uploadDir = path.join(__dirname, '../public/uploads');
+            
+            try {
+                await Promise.all(
+                    req.files.map(file => 
+                        fs.unlink(path.join(uploadDir, file.filename))
+                    )
+                );
+            } catch (cleanupError) {
+                console.error('Error cleaning up files:', cleanupError);
+            }
+        }
+
+        console.error('Error adding product:', error);
+        req.flash('error_msg', error.message || 'Failed to add product.');
+>>>>>>> origin/main
         res.redirect('/admin/products');
     }
 });
@@ -484,12 +552,54 @@ router.get('/carts', isAdmin, async (req, res) => {
 router.get('/carts', isAdmin, async (req, res) => {
     try {
         const carts = await Cart.find()
+<<<<<<< HEAD
             .populate('userId', 'username') // Populate username from User
             .populate('products.productId'); // Populate product details
         res.render('admin/carts', { carts, currentUser: req.user, activePage: 'carts' });
     } catch (error) {
         console.error('Error fetching carts:', error);
         res.status(500).render('error', { error: 'Server error' });
+=======
+            .populate({
+                path: 'userId',
+                select: 'username email', 
+                model: 'User'
+            })
+            .populate({
+                path: 'products.productId',
+                select: 'name price imageUrl',
+                model: 'Product' 
+            })
+            .lean();
+
+        // Add fallback for missing user data
+        const formattedCarts = carts.map(cart => ({
+            ...cart,
+            userId: cart.userId ? {
+                _id: cart.userId._id,
+                username: cart.userId.username || 'Unknown User',
+                email: cart.userId.email || 'N/A'
+            } : {
+                _id: null,
+                username: 'Deleted User',
+                email: 'N/A'
+            }
+        }));
+
+        res.render('admin/carts', { 
+            carts: formattedCarts, 
+            currentUser: req.user, 
+            activePage: 'carts' 
+        });
+        
+    } catch (error) {
+        console.error('Error fetching carts:', error);
+        req.flash('error_msg', 'Failed to load carts');
+        res.status(500).render('error', { 
+            error: 'Server error',
+            currentUser: req.user 
+        });
+>>>>>>> origin/main
     }
 });
 
