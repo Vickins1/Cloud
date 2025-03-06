@@ -195,7 +195,7 @@ async function verifyPaymentStatus(transactionRequestId) {
         const verifyPayload = {
             api_key: process.env.UMS_API_KEY,
             email: process.env.UMS_EMAIL,
-            tranasaction_request_id: transactionRequestId
+            transaction_request_id: transactionRequestId
         };
 
         const response = await axios.post(
@@ -215,49 +215,46 @@ async function verifyPaymentStatus(transactionRequestId) {
     }
 }
 
-// Periodic cleanup and verification
+// Simplified periodic cleanup (runs every 5 minutes)
 setInterval(async () => {
     const now = Date.now();
     for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders) {
-        try {
-            await processPaymentVerification(transactionRequestId);
-
-            if ((now - orderData.createdAt) > 1000 * 60 * 30) {
-                transactionData.status = 'Failed';
-                transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
-                pendingOrders.delete(transactionRequestId);
-                console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
-            }
-        } catch (error) {
-            console.error('Periodic verification error:', error);
+        if ((now - orderData.createdAt) > 1000 * 60 * 30) { // 30 minutes timeout
+            transactionData.status = 'Failed';
+            transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
+            pendingOrders.delete(transactionRequestId);
+            console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
         }
     }
 }, 1000 * 60 * 5);
 
-// Verify payment endpoint
+// Updated verify payment endpoint
 router.get('/verify-payment/:transactionId', async (req, res) => {
     const { transactionId } = req.params;
     try {
         const verification = await verifyPaymentStatus(transactionId);
         const pendingOrder = pendingOrders.get(transactionId);
 
+        const response = {
+            status: verification.TransactionStatus?.toLowerCase() || 'pending',
+            message: verification.message || 'Payment status updated',
+            orderId: pendingOrder?.orderData?._id
+        };
+
         if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-            if (pendingOrder?.orderData?._id) {
-                res.json({ 
-                    status: 'completed', 
-                    message: 'Payment successful!', 
-                    orderId: pendingOrder.orderData._id 
-                });
-            } else {
-                res.json({ status: 'processing', message: 'Payment recorded, order processing' });
-            }
+            response.status = 'completed';
+            response.message = 'Payment successful!';
+            pendingOrders.delete(transactionId); // Clean up on success
         } else if (verification.ResultCode === '503') {
-            res.json({ status: 'pending', message: 'Payment service unavailable, please wait' });
+            response.status = 'pending';
+            response.message = 'Payment service unavailable, please wait';
         } else if (verification.TransactionStatus === 'Failed') {
-            res.json({ status: 'failed', message: 'Payment failed' });
-        } else {
-            res.json({ status: 'pending', message: 'Payment still processing' });
+            response.status = 'failed';
+            response.message = 'Payment failed';
+            pendingOrders.delete(transactionId); // Clean up on failure
         }
+
+        res.json(response);
     } catch (error) {
         res.status(error.status || 500).json({ 
             status: 'error', 

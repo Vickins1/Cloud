@@ -583,7 +583,7 @@
         </div>
     </div>
 </div>
-<!-- Payment Processing Modal -->
+<!-- Payment Processing Modal (unchanged) -->
 <div class="modal fade" id="paymentProcessingModal" tabindex="-1" role="dialog" aria-labelledby="paymentProcessingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%);">
@@ -593,7 +593,7 @@
                 </h5>
             </div>
             <div class="modal-body p-4 text-center">
-                <p class="text-white mb-3">Please wait while we process your payment. This may take a few moments.</p>
+                <p class="text-white mb-3">Please wait while we process your payment.</p>
                 <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
                     <span class="sr-only">Processing...</span>
                 </div>
@@ -603,259 +603,159 @@
     </div>
 </div>
 
-<!-- Consolidated JavaScript -->
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const checkoutForm = document.getElementById('checkoutForm');
-        const submitButton = document.getElementById('confirmCheckout');
-        const buttonText = submitButton?.querySelector('.button-text');
-        const loader = submitButton?.querySelector('.loader');
-        const locationSelect = document.getElementById('customerLocation');
-        const deliveryFeeInput = document.getElementById('deliveryFee');
-        const cartSubtotalInput = document.getElementById('cartSubtotal');
-        const cartTotalInput = document.getElementById('cartTotal');
-    
-        // Update total based on delivery location
-        function updateTotal() {
-            const deliveryFee = parseFloat(locationSelect.selectedOptions[0]?.dataset.delivery || 0);
-            const subtotal = parseFloat(cartSubtotalInput.value) || 0;
-            const total = subtotal + deliveryFee;
-    
-            deliveryFeeInput.value = deliveryFee.toFixed(2);
-            cartTotalInput.value = total.toFixed(2);
-        }
-    
-        if (locationSelect) {
-            locationSelect.addEventListener('change', updateTotal);
-            updateTotal();
-        }
-    
-        // Handle form submission
-        if (checkoutForm) {
-            checkoutForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-    
-                if (submitButton && buttonText && loader) {
-                    submitButton.disabled = true;
-                    buttonText.style.display = 'none';
-                    loader.style.display = 'inline-flex';
-                }
-    
-                const formData = {
-                    customerName: document.getElementById('customerName').value,
-                    customerEmail: document.getElementById('customerEmail').value,
-                    customerPhone: document.getElementById('customerPhone').value,
-                    customerLocation: document.getElementById('customerLocation').value,
-                    cartTotal: document.getElementById('cartTotal').value
-                };
-    
-                await initiatePayment(formData);
-            });
-        }
-    
-        async function initiatePayment(paymentData) {
-            try {
-                const response = await fetch('/cart/initiate-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(paymentData)
-                });
-    
-                const result = await response.json();
-    
-                if (submitButton && buttonText && loader) {
-                    submitButton.disabled = false;
-                    buttonText.style.display = 'inline';
-                    loader.style.display = 'none';
-                }
-    
-                if (result.success) {
-                    $('#checkoutModal').modal('hide');
-                    $('#paymentProcessingModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
-                    pollPaymentStatus(result.tranasaction_request_id);
-                } else {
-                    showNotification('Payment Error', result.message || 'Failed to initiate payment', 'danger');
-                }
-            } catch (error) {
-                console.error('Payment initiation failed:', error);
-                if (submitButton && buttonText && loader) {
-                    submitButton.disabled = false;
-                    buttonText.style.display = 'inline';
-                    loader.style.display = 'none';
-                }
-                showNotification('Error', 'Failed to connect to server. Please try again.', 'danger');
+document.addEventListener('DOMContentLoaded', () => {
+    const checkoutForm = document.getElementById('checkoutForm');
+    const submitButton = document.getElementById('confirmCheckout');
+    const buttonText = submitButton?.querySelector('.button-text');
+    const loader = submitButton?.querySelector('.loader');
+
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (submitButton && buttonText && loader) {
+                submitButton.disabled = true;
+                buttonText.style.display = 'none';
+                loader.style.display = 'inline-flex';
             }
-        }
-    
-        async function pollPaymentStatus(transactionRequestId) {
-            const maxAttempts = 30; // 60 seconds total at 2-second intervals
-            let attempts = 0;
-    
-            const pollInterval = setInterval(async () => {
-                attempts++;
-                try {
-                    const response = await fetch(`/verify-payment/${transactionRequestId}`);
-                    const status = await response.json();
-    
-                    if (status.status === 'completed' && status.orderId) {
-                        clearInterval(pollInterval);
-                        $('#paymentProcessingModal').modal('hide');
-                        sessionStorage.setItem('paymentMessage', JSON.stringify({
-                            type: 'success',
-                            title: 'Success',
-                            message: status.message || 'Payment completed successfully!'
-                        }));
-                        window.location.href = `/order-confirmation/${status.orderId}`;
-                    } else if (status.status === 'failed' || status.status === 'not_found') {
-                        clearInterval(pollInterval);
-                        $('#paymentProcessingModal').modal('hide');
-                        showNotification('Payment Failed', status.message || 'Payment processing failed', 'danger');
-                    } else if (status.status === 'error') {
-                        clearInterval(pollInterval);
-                        $('#paymentProcessingModal').modal('hide');
-                        showNotification('Error', status.message || 'Verification error occurred', 'danger');
-                    } else if (attempts >= maxAttempts) {
-                        clearInterval(pollInterval);
-                        $('#paymentProcessingModal').modal('hide');
-                        showNotification('Timeout', 'Payment processing took too long. Please check your order status.', 'warning');
-                    }
-                    // 'pending' status: keep polling
-                } catch (error) {
-                    console.error('Polling error:', error);
-                    clearInterval(pollInterval);
-                    $('#paymentProcessingModal').modal('hide');
-                    showNotification('Error', 'Network error while verifying payment', 'danger');
-                }
-            }, 2000); // Poll every 2 seconds
-        }
-    
-        // Notification function
-        function showNotification(title, message, type, persistent = false) {
-            const container = document.querySelector('.notification-container') || createNotificationContainer();
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
-            
-            container.appendChild(notification);
-            
-            if (!persistent) {
-                setTimeout(() => notification.remove(), 5000); // Increased to 5s for readability
-            }
-            
-            return {
-                element: notification,
-                update: (newTitle, newMessage, newType) => {
-                    notification.querySelector('.notification-title').textContent = newTitle;
-                    notification.querySelector('.notification-message').innerHTML = newMessage;
-                    notification.className = `notification notification-${newType}`;
-                },
-                remove: () => notification.remove()
+
+            const formData = {
+                customerName: document.getElementById('customerName').value,
+                customerEmail: document.getElementById('customerEmail').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerLocation: document.getElementById('customerLocation').value,
+                cartTotal: document.getElementById('cartTotal').value
             };
-        }
-    
-        function createNotificationContainer() {
-            const container = document.createElement('div');
-            container.className = 'notification-container';
-            document.body.appendChild(container);
-            return container;
-        }
-    
-        // Handle success/error message on order confirmation page load
-        window.addEventListener('load', () => {
-            const paymentMessage = sessionStorage.getItem('paymentMessage');
-            if (paymentMessage) {
-                const { type, title, message } = JSON.parse(paymentMessage);
-                showNotification(title, message, type);
-                sessionStorage.removeItem('paymentMessage');
-            }
+
+            await initiatePayment(formData);
         });
-    });
-    </script>
-    
-    <!-- Optional CSS for notifications -->
-    <style>
-    .notification-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1050;
-        width: 300px;
     }
-    
-    .notification {
-        padding: 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        color: white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    
-    .notification-success { background-color: #28a745; }
-    .notification-danger { background-color: #dc3545; }
-    .notification-warning { background-color: #ffc107; }
-    </style>
-    
-<script>
+
     async function initiatePayment(paymentData) {
-    try {
-        const response = await fetch('/initiate-payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentData)
-        });
-        const result = await response.json();
-
-        if (result.success) {
-            showSpinner();
-            pollPaymentStatus(result.tranasaction_request_id);
-        } else {
-            alert(result.message);
-        }
-    } catch (error) {
-        console.error('Payment initiation failed:', error);
-        alert('An error occurred. Please try again.');
-    }
-}
-
-async function pollPaymentStatus(tranasaction_request_id) {
-    const pollInterval = setInterval(async () => {
         try {
-            const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
-            const status = await response.json();
+            const response = await fetch('/cart/initiate-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentData)
+            });
 
-            if (status.status === 'completed') {
-                clearInterval(pollInterval);
-                hideSpinner();
-                alert(status.message);
-                window.location.href = `/order-confirmation/${status.orderId}`;
-            } else if (status.status === 'failed' || status.status === 'not_found') {
-                clearInterval(pollInterval);
-                hideSpinner();
-                alert(status.message);
-            } else if (status.status === 'error') {
-                clearInterval(pollInterval);
-                hideSpinner();
-                alert('Verification error. Please try again later.');
+            const result = await response.json();
+
+            if (submitButton && buttonText && loader) {
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loader.style.display = 'none';
             }
-            // 'pending' status: keep polling
+
+            if (result.success) {
+                $('#paymentProcessingModal').modal({ backdrop: 'static', keyboard: false }).modal('show');
+                await verifyAndRedirect(result.transaction_request_id); // Changed from tranasaction_request_id
+            } else {
+                showNotification('Payment Error', result.message || 'Failed to initiate payment', 'danger');
+            }
         } catch (error) {
-            console.error('Polling error:', error);
-            clearInterval(pollInterval);
-            hideSpinner();
-            alert('An error occurred while verifying payment.');
+            console.error('Payment initiation failed:', error);
+            if (submitButton && buttonText && loader) {
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loader.style.display = 'none';
+            }
+            showNotification('Error', 'Failed to connect to server. Please try again.', 'danger');
         }
-    }, 5000); // Poll every 5 seconds
-}
+    }
 
-function showSpinner() {
-    document.getElementById('payment-spinner').style.display = 'block';
-}
+    async function verifyAndRedirect(transactionRequestId) {
+        const maxAttempts = 15; // 30 seconds total at 2-second intervals
+        let attempts = 0;
 
-function hideSpinner() {
-    document.getElementById('payment-spinner').style.display = 'none';
-}
+        while (attempts < maxAttempts) {
+            try {
+                const response = await fetch(`/verify-payment/${transactionRequestId}`);
+                const status = await response.json();
+
+                if (status.status === 'completed' && status.orderId) {
+                    $('#paymentProcessingModal').modal('hide');
+                    window.location.href = `/order-confirmation/${status.orderId}`;
+                    return;
+                } else if (status.status === 'failed' || status.status === 'error') {
+                    $('#paymentProcessingModal').modal('hide');
+                    showNotification('Payment Failed', status.message || 'Payment processing failed', 'danger');
+                    return;
+                }
+
+                attempts++;
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+            } catch (error) {
+                console.error('Verification error:', error);
+                $('#paymentProcessingModal').modal('hide');
+                showNotification('Error', 'Network error while verifying payment', 'danger');
+                return;
+            }
+        }
+
+        // Timeout case
+        $('#paymentProcessingModal').modal('hide');
+        showNotification('Timeout', 'Payment processing took too long. Please check your order status.', 'warning');
+    }
+
+    // Notification function (unchanged)
+    function showNotification(title, message, type, persistent = false) {
+        const container = document.querySelector('.notification-container') || createNotificationContainer();
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
+        
+        container.appendChild(notification);
+        
+        if (!persistent) {
+            setTimeout(() => notification.remove(), 5000);
+        }
+        
+        return {
+            element: notification,
+            update: (newTitle, newMessage, newType) => {
+                notification.querySelector('.notification-title').textContent = newTitle;
+                notification.querySelector('.notification-message').innerHTML = newMessage;
+                notification.className = `notification notification-${newType}`;
+            },
+            remove: () => notification.remove()
+        };
+    }
+
+    function createNotificationContainer() {
+        const container = document.createElement('div');
+        container.className = 'notification-container';
+        document.body.appendChild(container);
+        return container;
+    }
+});
 </script>
 
+<!-- CSS remains the same -->
+<style>
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    width: 300px;
+}
+
+.notification {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.notification-success { background-color: #28a745; }
+.notification-danger { background-color: #dc3545; }
+.notification-warning { background-color: #ffc107; }
+</style>
+
+ 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
     const locationSelect = document.getElementById('customerLocation');
