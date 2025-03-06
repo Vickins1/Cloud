@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .about-container {
+            flex: 1;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #004824, #000000);
+            text-align: center;
+        }
+
+        .about-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 204, 0, 0.3);
+        }
+
+        .about-subtitle {
+            font-size: 1.5rem;
+            color: #cccccc;
+            margin-bottom: 40px;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .about-content p {
+            margin-bottom: 20px;
+        }
+
+        .about-cta {
+            background: linear-gradient(45deg, #003615, #00cc00);
+            color: #ffffff;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .about-cta:hover {
+            background: linear-gradient(45deg, #00cc00, #003615);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 204, 0, 0.4);
+        }
+
+        .leaf-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('/images/leaf.png') no-repeat center/cover;
+            animation: drift linear infinite;
+        }
+
+        @keyframes drift {
+            0% { transform: translateY(-50vh) translateX(-10vw); opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { transform: translateY(50vh) translateX(10vw); opacity: 0; }
+        }
+
+        footer {
+            background-color: #000000;
+            color: #999999;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .about-title {
+                font-size: 2.5rem;
+            }
+            .about-subtitle {
+                font-size: 1.2rem;
+            }
+            .about-content {
+                font-size: 1rem;
+            }
+            .about-cta {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .about-title {
+                font-size: 2rem;
+            }
+            .about-subtitle {
+                font-size: 1rem;
+            }
+            .about-content {
+                font-size: 0.9rem;
+            }
+            .about-cta {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="leaf-bg" id="leafContainer"></div>
+    <header>
+       <nav class="navbar navbar-expand-lg navbar-dark">
+           <a class="navbar-brand" href="/">
+               <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Logo">
+           </a>
+           <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+           </button>
+           <style>
+               .custom-toggler {
+                   border: none;
+                   background-color: transparent;
+                   margin-right: 20px;
+               }
+
+               .custom-toggler .navbar-toggler-icon {
+                   width: 30px;
+                   height: 30px;
+                   background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%280, 204, 0, 0.8%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+               }
+
+               .custom-toggler:focus {
+                   outline: none;
+                   box-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
+               }
+           </style>
+           <!-- Replace or append these within the respective <style> tags in your HTML -->
+
+               <div class="collapse navbar-collapse" id="navbarNav">
+                   <ul class="navbar-nav ms-auto">
+                       <li class="nav-item">
+                           <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
+                       </li>
+                       <li class="nav-item">
+                           <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart <% if (cartItems > 0) { %><span class="badge bg-success"><%= cartItems %></span><% } %></a>
+                       </li>
+                       <% if (isAuthenticated) { %>
+                           <li class="nav-item">
+                               <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
+                           </li>
+                           <li class="nav-item">
+                               <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+                           </li>
+                           <li class="nav-item">
+                               <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                           </li>
+                       <% } else { %>
+                           <li class="nav-item">
+                               <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                           </li>
+                           <li class="nav-item">
+                               <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                           </li>
+                       <% } %>
+                   </ul>
+               </div>
+       </nav>
+   </header>
+    <div class="about-container">
+        <h1 class="about-title">About Cloud 420</h1>
+        <p class="about-subtitle">Crafting Elevated Experiences Since 2737 BCE </p>
+        <div class="about-content">
+            <p>At Cloud 420, we’re more than just a cannabis brand—we’re curators of bliss, artisans of elevation. Born from a passion for purity and potency, our journey began with a simple mission: to bring the finest organic cannabis to discerning souls worldwide.</p>
+            <p>Every bud we offer is hand-selected, cultivated with care, and infused with the spirit of nature’s finest. From the rolling hills of our partner farms to your doorstep, we ensure a seamless, discreet experience that honors the plant and its legacy.</p>
+            <p>Join us as we redefine relaxation, one exquisite strain at a time. Today’s date: <%= currentDate %>.</p>
+            <a href="/products" class="about-cta">Explore Our Collection</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Cloud 420. All Rights Reserved. Crafted for Excellence.</p>
+    </footer>
+
+    <script>
+        const leafContainer = document.getElementById('leafContainer');
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            leaf.classList.add('leaf');
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = Math.random() * 10 + 10 + 's';
+            leafContainer.appendChild(leaf);
+            setTimeout(() => leaf.remove(), 20000);
+        }
+        setInterval(createLeaf, 2000);
+    </script>
+</body>
+</html>

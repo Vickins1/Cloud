@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, #000000 0%, #1a1f2a 100%);
+            color: #fff;
+            font-family: 'Poppins', Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            flex: 1;
+            padding: 80px 0 40px;
+        }
+
+        .navbar-custom {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: #00ab22;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba(255, 255, 255, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        .cart-item {
+            background: rgba(28, 28, 28, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-item h5 {
+            font-size: 1.2rem;
+            margin: 0;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .cart-item p {
+            margin: 5px 0;
+            color: #a0a0a0;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2px 8px;
+        }
+
+        .btn-quantity {
+            background: none;
+            border: none;
+            color: #00cc66;
+            width: 30px;
+            height: 30px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-quantity:hover {
+            color: #00ff80;
+            transform: scale(1.1);
+        }
+
+        .quantity-display {
+            min-width: 30px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #005000, #ff0b0b);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(104, 0, 26, 0.3);
+            color: #fff;
+        }
+
+        .total {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00cc66;
+            background: rgba(0, 204, 102, 0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(45deg, #00340e, #009619);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            margin-bottom: 50px;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 204, 31, 0.873);
+            color: #fff;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #000000 0%, #1a1f2a 100%);
+            color: #fff;
+            text-align: center;
+            width: 100%;
+            /* Ensure the footer spans the full width */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            /* Ensure the footer starts from the left edge */
+            padding: 10px 0;
+            /* Adjust padding as needed */
+            box-sizing: border-box;
+            /* Ensure padding is included in the width */
+            z-index: 1000;
+            /* Ensure the footer is above other content */
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                padding: 15px 0;
+                /* Increase padding for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer {
+                padding: 20px 0;
+                /* Further increase padding for very small screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            
+
+            .cart-item {
+                flex-direction: column;
+                text-align: center;
+                width: 80%;
+                margin: 0 auto;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .cart-item div {
+                margin-bottom: 15px;
+            }
+            .btn-checkout {
+                margin-right: 80px;
+                margin-left: 50px;
+                position: center-shrink;
+                bottom: 0;
+                font-size: 0.8rem;
+            }
+
+            .total {
+                margin-right: 50px;
+                margin-left: 50px;
+                position: center;
+                bottom: 0;
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Store Logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                                <% if (typeof cartItems !=='undefined' && cartItems> 0) { %>
+                                    <span class="badge bg-success" id="cart-count">
+                                        <%= cartItems %>
+                                    </span>
+                                    <% } %>
+                            </a>
+                        </li>
+                        <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </li>
+                            <% } else { %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                                </li>
+                                <% } %>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <style>
+            .notification-container {
+                position: fixed;
+                top: 15%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1060;
+            }
+        
+            .notification {
+                background-color: #1c1c1c;
+                border: 1px solid #444;
+                border-radius: 5px;
+                margin-bottom: 8px;
+                width: 300px;
+                padding: 15px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                color: #fff;
+                text-align: center;
+            }
+        
+            .notification-success {
+                background-color: #035925;
+                border: 1px solid #028a1b;
+            }
+        
+            .notification-danger {
+                background-color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+        
+            .btn-checkout:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+        </style>
+    </header>
+
+    <div class="content container mt-5">
+        <h1 class="mb-4"><strong>Shopping Cart</strong></h1>
+
+        <!-- Cart Items -->
+        <div class="cart-items" aria-live="polite">
+            <% if (cart.length> 0) { %>
+                <% cart.forEach(function(item) { %>
+                    <div class="cart-item d-flex justify-content-between align-items-center"
+                        data-item-id="<%= item._id %>">
+                        <div class="cart-item-details">
+                            <h5 class="item-name">
+                                <%= item.productId?.name || 'Unknown Product' %>
+                            </h5>
+                            <p class="item-price">
+                                Price: KES <%= item.productId?.price ? item.productId.price.toFixed(2) : '0.00' %>
+                            </p>
+
+                            <% if (item.productId) { %>
+                                <form action="/cart/update/<%= item.productId._id %>" method="POST"
+                                    class="d-flex align-items-center">
+                                    <input type="hidden" name="itemId" value="<%= item.productId._id %>">
+                                    <input type="hidden" name="quantity" id="quantity-<%= item._id %>"
+                                        value="<%= item.quantity %>">
+
+                                    <button type="submit" class="btn btn-custom quantity-decrease mx-1"
+                                        onclick="updateQuantity('<%= item._id %>', -1)" <%=item.quantity <=1
+                                        ? 'disabled' : '' %>
+                                        aria-label="Decrease quantity">
+                                        ➖
+                                    </button>
+
+                                    <span class="mx-2 font-weight-bold" id="quantity-display-<%= item._id %>">
+                                        <%= item.quantity %>
+                                    </span>
+
+                                    <button type="submit" class="btn btn-custom quantity-increase mx-1"
+                                        onclick="updateQuantity('<%= item._id %>', 1)" <%=item.productId.stockQuantity
+                                        && item.quantity>= item.productId.stockQuantity ? 'disabled' : '' %>
+                                        aria-label="Increase quantity">
+                                        ➕
+                                    </button>
+                                </form>
+                                <% } else { %>
+                                    <p class="text-danger">This product is no longer available.</p>
+                                    <% } %>
+                        </div>
+
+                        <div class="cart-item-actions">
+                            <form action="/cart/remove/<%= item._id %>" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-danger remove-item"
+                                    aria-label="Remove item from cart">
+                                    <i class="fas fa-trash-alt"></i> Remove
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                    <% }) %>
+
+                        <p class="total text-right font-weight-bold" id="cart-total">
+                            Total: KES <%= total.toFixed(2) %>
+                        </p>
+
+                        <div class="text-right mt-3">
+                            <button class="btn btn-checkout" data-toggle="modal" data-target="#checkoutModal"
+                                <%=cart.length===0 ? 'disabled' : '' %>
+                                aria-label="Proceed to checkout">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </button>
+                        </div>
+                        <% } else { %>
+                            <p class="empty-cart-message text-center">Your cart is empty.</p>
+                            <div class="text-center mt-4">
+                                <a href="/products" class="btn btn-explore" aria-label="Explore products">
+                                    <i class="fas fa-search"></i> Explore Products
+                                </a>
+                            </div>
+                            <style>
+                                .empty-cart-message {
+                                    font-size: 1.5rem;
+                                    font-weight: bold;
+                                    color: #ababab;
+                                    margin-top: 20px;
+                                }
+
+                                .btn-explore {
+                                    background-color: black;
+                                    color: white;
+                                    padding: 10px 20px;
+                                    font-size: 1.2rem;
+                                    border-radius: 8px;
+                                    text-decoration: none;
+                                    transition: background 0.3s ease, transform 0.2s;
+                                    display: inline-block;
+                                }
+
+                                .btn-explore:hover {
+                                    background-color: #035925;
+                                    transform: scale(1.05);
+                                    color: white;
+                                }
+                            </style>
+                            <% } %>
+        </div>
+
+        <script>
+            function updateQuantity(itemId, change) {
+                event.preventDefault();
+
+                let quantityInput = document.getElementById(`quantity-${itemId}`);
+                let quantityDisplay = document.getElementById(`quantity-display-${itemId}`);
+
+                let currentQuantity = parseInt(quantityInput.value, 10);
+                let newQuantity = currentQuantity + change;
+
+                if (newQuantity >= 1) {
+                    quantityInput.value = newQuantity;
+                    quantityDisplay.textContent = newQuantity;
+                    quantityInput.form.submit(); // Auto-submit form
+                }
+            }
+        </script>
+
+<!-- In your cart.ejs or equivalent template -->
+<% if (typeof showModal !== 'undefined' && showModal) { %>
+    <script>
+        $(document).ready(function() {
+            $('#checkoutModal').modal('show');
+        });
+    </script>
+<% } %>
+
+<!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%);">
+            <div class="modal-header border-0" style="background: #035925; color: white;">
+                <h5 class="modal-title" id="checkoutModalLabel">
+                    <i class="fas fa-check-circle mr-2"></i> Checkout
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="checkoutForm" method="POST" action="/cart/checkout">
+                    <div class="form-group mb-4">
+                        <label for="customerName" class="text-white mb-2">Full Name</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-dark border-0"><i class="fas fa-user text-muted"></i></span>
+                            </div>
+                            <input type="text" class="form-control shadow-sm" id="customerName" name="customerName" placeholder="Enter your name" required>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="customerEmail" class="text-white mb-2">Email Address</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-dark border-0"><i class="fas fa-envelope text-muted"></i></span>
+                            </div>
+                            <input type="email" class="form-control shadow-sm" id="customerEmail" name="customerEmail" placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="customerPhone" class="text-white mb-2">Phone Number</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-dark border-0"><i class="fas fa-phone text-muted"></i></span>
+                            </div>
+                            <input type="tel" class="form-control shadow-sm" id="customerPhone" name="customerPhone" placeholder="e.g., 0712345678" pattern="^(?:254|\+254|0)?[7][0-9]{8}$" required>
+                        </div>
+                        <small class="form-text text-muted">Format: 0712345678 or +254712345678</small>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="customerLocation" class="text-white mb-2">Delivery Location</label>
+                        <div class="custom-dropdown-wrapper">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text bg-dark border-0"><i class="fas fa-map-marker-alt text-muted"></i></span>
+                                </div>
+                                <select class="custom-dropdown form-control" id="customerLocation" name="customerLocation" required>
+                                    <option value="" disabled selected>Select your delivery location</option>
+                                    <option value="Juja" data-delivery="250">Juja</option>
+                                    <option value="Mombasa" data-delivery="1000">Mombasa</option>
+                                    <option value="Kutus" data-delivery="0">Kutus</option>
+                                    <option value="Kagio" data-delivery="100">Kagio</option>
+                                    <option value="Sagana" data-delivery="100">Sagana</option>
+                                    <option value="Karatina" data-delivery="150">Karatina</option>
+                                    <option value="Embu University" data-delivery="200">Embu University</option>
+                                    <option value="Murang'a University" data-delivery="200">Murang'a University</option>
+                                    <option value="Nyeri" data-delivery="250">Nyeri</option>
+                                    <option value="Thika" data-delivery="250">Thika</option>
+                                    <option value="Kerugoya" data-delivery="100">Kerugoya</option>
+                                    <option value="Nairobi" data-delivery="250">Nairobi</option>
+                                    <option value="Machakos" data-delivery="350">Machakos</option>
+                                    <option value="Meru" data-delivery="350">Meru</option>
+                                    <option value="Nanyuki" data-delivery="400">Nanyuki</option>
+                                    <option value="Mwea" data-delivery="100">Mwea</option>
+                                    <option value="Kiambu" data-delivery="250">Kiambu</option>
+                                    <option value="Ruiru" data-delivery="250">Ruiru</option>
+                                    <option value="Kikuyu" data-delivery="250">Kikuyu</option>
+                                    <option value="Karatina University" data-delivery="50">Karatina University</option>
+                                    <option value="Mombasa" data-delivery="1000">Mombasa</option>
+                                    <option value="Kisumu" data-delivery="1000">Kisumu</option>
+                                    <option value="Eldoret" data-delivery="1000">Eldoret</option>
+                                    <option value="Nakuru" data-delivery="500">Nakuru</option>
+                                    <option value="Kisii" data-delivery="1000">Kisii</option>
+                                    <option value="Kakamega" data-delivery="1000">Kakamega</option>
+                                    <option value="Kabarnet" data-delivery="1000">Kabarnet</option>
+                                    <option value="Kericho" data-delivery="1000">Kericho</option>
+                                    <option value="Kitale" data-delivery="1000">Kitale</option>
+                                    <option value="Bungoma" data-delivery="1000">Bungoma</option>
+                                    <option value="Busia" data-delivery="1000">Busia</option>
+                                    <option value="Kapsabet" data-delivery="1000">Kapsabet</option>
+                                    <option value="Kisii University" data-delivery="1000">Kisii University</option>
+                                    <option value="Kisumu University" data-delivery="1000">Kisumu University</option>
+                                    <option value="Maseno University" data-delivery="1000">Maseno University</option>
+                                    <option value="Moi University" data-delivery="1000">Moi University</option>
+                                    <option value="Kiamutugu" data-delivery="50">Kiamutugu</option>
+                                    <option value="Egerton University" data-delivery="1000">Egerton University</option>
+                                    <option value="Masinde Muliro University" data-delivery="1000">Masinde Muliro University</option>
+                                    <option value="Kirinyaga University" data-delivery="50">Kirinyaga University</option>
+                                    <option value="Baricho" data-delivery="100">Baricho</option>
+                                    <option value="Makutano" data-delivery="150">Makutano</option>
+                                    <option value="Kenyatta University" data-delivery="250">Kenyatta University</option>
+                                    <option value="Jomo Kenyatta University (JKUAT)" data-delivery="250">Jomo Kenyatta University (JKUAT)</option>
+                                    <option value="Technical University of Kenya" data-delivery="250">Technical University of Kenya</option>
+                                    <option value="Technical University of Mombasa" data-delivery="1000">Technical University of Mombasa</option>
+                                    <option value="Dedan Kimathi University" data-delivery="250">Dedan Kimathi University</option>
+                                    <option value="Chuka University" data-delivery="200">Chuka University</option>
+                                    <option value="Meru University" data-delivery="350">Meru University</option>
+                                    <option value="Multimedia University" data-delivery="250">Multimedia University</option>
+                                    <option value="South Eastern Kenya University" data-delivery="350">South Eastern Kenya University</option>
+                                    <option value="Pwani University" data-delivery="1000">Pwani University</option>
+                                    <option value="Maasai Mara University" data-delivery="500">Maasai Mara University</option>
+                                    <option value="University of Eldoret" data-delivery="1000">University of Eldoret</option>
+                                    <option value="Kibabii University" data-delivery="1000">Kibabii University</option>
+                                    <option value="Wang'uru" data-delivery="100">Wang'uru</option>
+                                    <option value="Kangai" data-delivery="50">Kangai</option>
+                                    <option value="Rongo University" data-delivery="1000">Rongo University</option>
+                                    <option value="Jaramogi Oginga Odinga University" data-delivery="1000">Jaramogi Oginga Odinga University</option>
+                                    <option value="Laikipia University" data-delivery="400">Laikipia University</option>
+                                    <option value="Garissa University" data-delivery="1000">Garissa University</option>
+                                    <option value="Taita Taveta University" data-delivery="1000">Taita Taveta University</option>
+                                    <option value="Bomet University College" data-delivery="1000">Bomet University College</option>
+                                    <option value="Strathmore University" data-delivery="250">Strathmore University</option>
+                                    <option value="USIU Africa" data-delivery="250">USIU Africa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="cartSubtotal" class="text-white mb-2">Cart Subtotal</label>
+                        <input type="number" class="form-control shadow-sm" id="cartSubtotal" name="cartSubtotal" value="<%= total.toFixed(2) %>" readonly>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="deliveryFee" class="text-white mb-2">Delivery Fee</label>
+                        <input type="number" class="form-control shadow-sm" id="deliveryFee" name="deliveryFee" value="0" readonly>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="cartTotal" class="text-white mb-2">Total Amount (incl. Delivery)</label>
+                        <input type="number" class="form-control shadow-sm font-weight-bold" id="cartTotal" name="cartTotal" value="<%= total.toFixed(2) %>" readonly style="background: #035925; color: white;">
+                    </div>
+                    <div id="umsPayContainer"></div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer border-0">
+                        <button type="submit" class="btn btn-checkout shadow-sm w-100" id="confirmCheckout">
+                            <span class="button-text"><i class="fas fa-check mr-1"></i> Confirm Checkout</span>
+                            <span class="loader" style="display: none;">
+                                <i class="fas fa-spinner fa-spin mr-1"></i> Processing...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Payment Processing Modal -->
+<div class="modal fade" id="paymentProcessingModal" tabindex="-1" role="dialog" aria-labelledby="paymentProcessingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%);">
+            <div class="modal-header border-0" style="background: #035925; color: white;">
+                <h5 class="modal-title" id="paymentProcessingModalLabel">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Processing Payment
+                </h5>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <p class="text-white mb-3">Please wait while we process your payment. This may take a few moments.</p>
+                <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="sr-only">Processing...</span>
+                </div>
+                <p class="text-muted mt-3">Do not close this window.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkoutForm = document.getElementById('checkoutForm');
+        const submitButton = document.getElementById('confirmCheckout');
+        const buttonText = submitButton.querySelector('.button-text');
+        const loader = submitButton.querySelector('.loader');
+        const locationSelect = document.getElementById('customerLocation');
+        const deliveryFeeInput = document.getElementById('deliveryFee');
+        const cartSubtotalInput = document.getElementById('cartSubtotal');
+        const cartTotalInput = document.getElementById('cartTotal');
+    
+        // Update total based on delivery location
+        function updateTotal() {
+            const deliveryFee = parseFloat(locationSelect.selectedOptions[0]?.dataset.delivery || 0);
+            const subtotal = parseFloat(cartSubtotalInput.value) || 0;
+            const total = subtotal + deliveryFee;
+    
+            deliveryFeeInput.value = deliveryFee.toFixed(2);
+            cartTotalInput.value = total.toFixed(2);
+        }
+    
+        locationSelect.addEventListener('change', updateTotal);
+        updateTotal();
+    
+        // Handle form submission
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            // Show loader on submit button
+            submitButton.disabled = true;
+            buttonText.style.display = 'none';
+            loader.style.display = 'inline-flex';
+    
+            const formData = {
+                customerName: document.getElementById('customerName').value,
+                customerEmail: document.getElementById('customerEmail').value,
+                customerPhone: document.getElementById('customerPhone').value,
+                customerLocation: document.getElementById('customerLocation').value,
+                cartTotal: document.getElementById('cartTotal').value
+            };
+    
+            try {
+                const response = await fetch('/cart/initiate-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+    
+                const result = await response.json();
+    
+                // Hide loader on submit button
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loader.style.display = 'none';
+    
+                if (result.success) {
+                    // Close checkout modal and open processing modal
+                    $('#checkoutModal').modal('hide');
+                    $('#paymentProcessingModal').modal('show');
+    
+                    // Start polling immediately with shorter interval
+                    pollPaymentStatus(result.tranasaction_request_id);
+                } else {
+                    showNotification('Error', result.message, 'danger');
+                }
+            } catch (error) {
+                console.error('Frontend payment error:', error);
+                showNotification('Error', 'Failed to connect to the server. Please try again.', 'danger');
+                submitButton.disabled = false;
+                buttonText.style.display = 'inline';
+                loader.style.display = 'none';
+            }
+        });
+    });
+    
+    // Poll payment status with shorter interval
+    async function pollPaymentStatus(tranasaction_request_id) {
+        const pollInterval = setInterval(async () => {
+            try {
+                const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
+                const status = await response.json();
+    
+                if (status.status === 'completed') {
+                    clearInterval(pollInterval);
+                    $('#paymentProcessingModal').modal('hide');
+                    showNotification('Success', status.message, 'success');
+                    window.location.href = `/order-confirmation/${status.orderId}`;
+                } else if (status.status === 'failed' || status.status === 'not_found') {
+                    clearInterval(pollInterval);
+                    $('#paymentProcessingModal').modal('hide');
+                    showNotification('Error', status.message, 'danger');
+                } else if (status.status === 'error') {
+                    clearInterval(pollInterval);
+                    $('#paymentProcessingModal').modal('hide');
+                    showNotification('Error', 'Verification error. Please try again later.', 'danger');
+                }
+                // 'pending' status: keep polling
+            } catch (error) {
+                console.error('Polling error:', error);
+                clearInterval(pollInterval);
+                $('#paymentProcessingModal').modal('hide');
+                showNotification('Error', 'An error occurred while verifying payment.', 'danger');
+            }
+        }, 2000); // Poll every 2 seconds for faster feedback
+    }
+    
+    // Notification Functions (unchanged)
+    function showNotification(title, message, type, persistent = false) {
+        const container = document.querySelector('.notification-container') || createNotificationContainer();
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
+    
+        container.appendChild(notification);
+    
+        if (!persistent) {
+            setTimeout(() => notification.remove(), 3000);
+        }
+    
+        return {
+            element: notification,
+            update: (newTitle, newMessage, newType) => {
+                notification.querySelector('.notification-title').textContent = newTitle;
+                notification.querySelector('.notification-message').innerHTML = newMessage;
+                notification.className = `notification notification-${newType}`;
+            },
+            remove: () => notification.remove()
+        };
+    }
+    
+    function createNotificationContainer() {
+        const container = document.createElement('div');
+        container.className = 'notification-container';
+        document.body.appendChild(container);
+        return container;
+    }
+    </script>
+    
+<script>
+    async function initiatePayment(paymentData) {
+    try {
+        const response = await fetch('/initiate-payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(paymentData)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            showSpinner();
+            pollPaymentStatus(result.tranasaction_request_id);
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Payment initiation failed:', error);
+        alert('An error occurred. Please try again.');
+    }
+}
+
+async function pollPaymentStatus(tranasaction_request_id) {
+    const pollInterval = setInterval(async () => {
+        try {
+            const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
+            const status = await response.json();
+
+            if (status.status === 'completed') {
+                clearInterval(pollInterval);
+                hideSpinner();
+                alert(status.message);
+                window.location.href = `/order-confirmation/${status.orderId}`;
+            } else if (status.status === 'failed' || status.status === 'not_found') {
+                clearInterval(pollInterval);
+                hideSpinner();
+                alert(status.message);
+            } else if (status.status === 'error') {
+                clearInterval(pollInterval);
+                hideSpinner();
+                alert('Verification error. Please try again later.');
+            }
+            // 'pending' status: keep polling
+        } catch (error) {
+            console.error('Polling error:', error);
+            clearInterval(pollInterval);
+            hideSpinner();
+            alert('An error occurred while verifying payment.');
+        }
+    }, 5000); // Poll every 5 seconds
+}
+
+function showSpinner() {
+    document.getElementById('payment-spinner').style.display = 'block';
+}
+
+function hideSpinner() {
+    document.getElementById('payment-spinner').style.display = 'none';
+}
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const locationSelect = document.getElementById('customerLocation');
+    const deliveryFeeInput = document.getElementById('deliveryFee');
+    const cartSubtotalInput = document.getElementById('cartSubtotal');
+    const cartTotalInput = document.getElementById('cartTotal');
+
+    function updateTotal() {
+        const deliveryFee = parseFloat(locationSelect.selectedOptions[0]?.dataset.delivery || 0);
+        const subtotal = parseFloat(cartSubtotalInput.value) || 0;
+        const total = subtotal + deliveryFee;
+
+        deliveryFeeInput.value = deliveryFee.toFixed(2);
+        cartTotalInput.value = total.toFixed(2);
+    }
+
+    locationSelect.addEventListener('change', updateTotal);
+    updateTotal();
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const checkoutForm = document.getElementById('checkoutForm');
+    const submitButton = document.getElementById('confirmCheckout');
+    const buttonText = submitButton.querySelector('.button-text');
+    const loader = submitButton.querySelector('.loader');
+
+    checkoutForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Show loader
+        submitButton.disabled = true;
+        buttonText.style.display = 'none';
+        loader.style.display = 'inline-flex';
+
+        const formData = {
+            customerName: document.getElementById('customerName').value,
+            customerEmail: document.getElementById('customerEmail').value,
+            customerPhone: document.getElementById('customerPhone').value,
+            customerLocation: document.getElementById('customerLocation').value,
+            cartTotal: document.getElementById('cartTotal').value
+        };
+
+        try {
+            const response = await fetch('/cart/initiate-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            // Hide loader
+            submitButton.disabled = false;
+            buttonText.style.display = 'inline';
+            loader.style.display = 'none';
+
+            // Show notification
+            showNotification(
+                result.success ? 'Success' : 'Error',
+                result.message,
+                result.success ? 'success' : 'danger'
+            );
+
+            if (result.success) {
+                setTimeout(() => {
+                    // Optionally redirect or reset the form
+                    checkoutForm.reset();
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error) {
+            console.error('Frontend payment error:', error);
+            showNotification('Error', 'Failed to connect to the server. Please try again.', 'danger');
+            submitButton.disabled = false;
+            buttonText.style.display = 'inline';
+            loader.style.display = 'none';
+        }
+    });
+});
+
+// Notification Functions (unchanged from your code)
+function showNotification(title, message, type, persistent = false) {
+    const container = document.querySelector('.notification-container') || createNotificationContainer();
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
+
+    container.appendChild(notification);
+
+    if (!persistent) {
+        setTimeout(() => notification.remove(), 3000);
+    }
+
+    return {
+        element: notification,
+        update: (newTitle, newMessage, newType) => {
+            notification.querySelector('.notification-title').textContent = newTitle;
+            notification.querySelector('.notification-message').innerHTML = newMessage;
+            notification.className = `notification notification-${newType}`;
+        },
+        remove: () => notification.remove()
+    };
+}
+
+function createNotificationContainer() {
+    const container = document.createElement('div');
+    container.className = 'notification-container';
+    document.body.appendChild(container);
+    return container;
+}
+</script>
+
+<style>
+.notification-container {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1060;
+    width: 90%; /* Responsive width */
+    max-width: 400px; /* Limit max width */
+    text-align: center;
+}
+
+.notification {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    word-wrap: break-word;
+}
+
+.notification-success { background-color: #28a745; }
+.notification-danger { background-color: #dc3545; }
+.loader { margin-left: 10px; }
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .notification-container {
+        width: 95%;
+        max-width: 300px;
+    }
+}
+</style>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>© 2025 Cloud 420 Store. All rights reserved.</p>
+        </footer>
+
+               <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+
+</body>
+
+</html>

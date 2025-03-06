@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud 420 - Premium Cannabis Experience</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Subtle Leaf Overlay */
+        .leaf-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('/images/leaf.png') no-repeat center/cover;
+            animation: drift linear infinite;
+        }
+
+        @keyframes drift {
+            0% { transform: translateY(-50vh) translateX(-10vw); opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { transform: translateY(50vh) translateX(10vw); opacity: 0; }
+        }
+
+        /* Professional Header */
+        header {
+            background: #000000;
+            color: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: box-shadow 0.3s;
+            height: 70px;
+        }
+
+        header.scrolled {
+            box-shadow: 0 4px 12px rgba(0, 255, 0, 0.1);
+        }
+
+        .navbar-brand img {
+            height: 45px;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.05);
+        }
+
+        nav a {
+            color: #ffffff;
+            margin: 0 20px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #00cc00;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #004824, #000000);
+            height: 60vh;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            animation: fadeSlideUp 1.5s ease-out;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            animation: fadeSlideUp 2s ease-out;
+            color: #cccccc;
+        }
+
+        .btn-primary {
+            background-color: #003615;
+            border-color: #003615;
+            border-radius: 30px;
+            padding: 12px 35px;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #017801;
+            border-color: #018901;
+            transform: translateY(-2px);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 100px 20px;
+            background-color: #0a0a0a;
+        }
+
+        .feature-card {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 5px 15px rgba(0, 204, 0, 0.2);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: #008400;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Social Media */
+        .social-section {
+            padding: 60px 20px;
+            background-color: #0a0a0a;
+            text-align: center;
+        }
+
+        .social-icons a {
+            font-size: 2rem;
+            color: #ffffff;
+            margin: 0 25px;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: #017d01;
+            transform: translateY(-5px);
+        }
+
+        /* CTA */
+        .cta-button {
+            background: linear-gradient(45deg, #003615, #00cc00);
+            color: #ffffff;
+            padding: 15px 50px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 1.3rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: linear-gradient(45deg, #00cc00, #003615);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 204, 0, 0.4);
+        }
+
+        .footer {
+            background-color: #000000;
+            color: #999999;
+            text-align: center;
+            margin-top: auto;
+            padding: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeSlideUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .feature-card { padding: 20px; }
+            .cta-button { font-size: 1.1rem; padding: 12px 30px; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Subtle Leaf Overlay -->
+    <div class="leaf-bg" id="leafContainer"></div>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="/">
+                <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Logo">
+            </a>
+            <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <style>
+                .custom-toggler {
+                    border: none;
+                    background-color: transparent;
+                    margin-right: 20px;
+                }
+
+                .custom-toggler .navbar-toggler-icon {
+                    width: 30px;
+                    height: 30px;
+                    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%280, 204, 0, 0.8%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
+                }
+
+                .custom-toggler:focus {
+                    outline: none;
+                    box-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
+                }
+            </style>
+            <!-- Replace or append these within the respective <style> tags in your HTML -->
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
+                        </li>
+                         <li class="nav-item">
+                        <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                            <% if (cartItems> 0) { %>
+                                <span class="badge bg-success" id="cart-count">
+                                    <%= cartItems %>
+                                </span>
+                                <% } %>
+                        </a>
+                    </li>
+                        <% if (isAuthenticated) { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </li>
+                        <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                            </li>
+                        <% } %>
+                    </ul>
+                </div>
+        </nav>
+    </header>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-overlay"></div> <!-- For a subtle gradient or texture -->
+    <div class="hero-content">
+        <h1 class="hero-title animate-fade-in">Unleash the Art of Elevation</h1>
+        <p class="hero-subtitle animate-slide-up">Savor the Finest Cannabis, Curated for the Discerning Soul</p>
+        
+        <!-- Country-wide Delivery Feature -->
+        <div class="delivery-announcement animate-pop-in">
+            <span class="delivery-icon">🚚</span>
+            <span class="delivery-text">We Deliver Country-Wide!</span>
+        </div>
+
+        <div class="hero-cta">
+            <a href="/products" class="btn btn-primary btn-lg btn-glow">Dive Into Bliss</a>
+            <a href="/about" class="btn btn-secondary btn-lg">Our Craft</a>
+        </div>
+    </div>
+    <div class="hero-background">
+        <video autoplay muted loop class="hero-video">
+            <source src="/videos/cannabis-smoke.mp4" type="video/mp4">
+            <!-- Fallback image if video fails -->
+            <img src="/images/cannabis-leaf-bg.jpg" alt="Cannabis Leaf Background">
+        </video>
+    </div>
+</section>
+<style>
+    .delivery-announcement {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px 20px;
+    border-radius: 25px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.delivery-icon {
+    font-size: 24px;
+    animation: bounce 2s infinite;
+}
+
+.delivery-text {
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}
+
+.delivery-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.delivery-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+/* Animations */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.animate-pop-in {
+    animation: pop-in 0.5s ease-out;
+}
+
+@keyframes pop-in {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+</style>
+
+<style>
+    .hero-section {
+        position: relative;
+        height: 50vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background-color: #074215; /* Deep forest green base */
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(26, 46, 31, 0.7));
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #fff;
+        padding: 20px;
+    }
+
+    .hero-title {
+        font-size: 4.5rem;
+        font-family: 'Playfair Display', serif; /* Elegant, sophisticated font */
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+        font-family: 'Lora', serif; /* Subtle, refined font */
+        opacity: 0.9;
+        margin-bottom: 40px;
+    }
+
+    .hero-cta .btn {
+        margin: 0 15px;
+        padding: 15px 35px;
+        font-size: 1.2rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background-color: #1a7105; /* Golden accent for luxury */
+        border: none;
+    }
+
+    .btn-primary.btn-glow:hover {
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+        transform: translateY(-5px);
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        border: 2px solid #fff;
+        color: #fff;
+    }
+
+    .btn-secondary:hover {
+        background-color: #fff;
+        color: #1a2e1f;
+    }
+
+    .hero-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 0;
+    }
+
+    .hero-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.6; /* Subtle visibility for text contrast */
+    }
+
+    /* Animation Keyframes */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 0.9; }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 1.5s ease-in-out;
+    }
+
+    .animate-slide-up {
+        animation: slideUp 1.8s ease-in-out;
+    }
+
+    /* Media Queries for Responsiveness */
+    @media (max-width: 1200px) {
+        .hero-title { font-size: 3.5rem; }
+        .hero-subtitle { font-size: 1.2rem; }
+    }
+
+    @media (max-width: 992px) {
+        .hero-section { height: 60vh; }
+        .hero-title { font-size: 3rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .hero-cta .btn { padding: 12px 30px; font-size: 1rem; }
+    }
+
+    @media (max-width: 768px) {
+        .hero-section { height: 70vh; }
+        .hero-title { font-size: 2.5rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .hero-cta .btn { display: block; margin: 10px auto; padding: 10px 25px; font-size: 0.9rem; }
+    }
+
+    @media (max-width: 576px) {
+        .hero-section { height: 80vh; }
+        .hero-title { font-size: 2rem; }
+        .hero-subtitle { font-size: 0.9rem; }
+        .hero-cta .btn { padding: 8px 20px; font-size: 0.8rem; }
+    }
+</style>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="text-center mb-5">The Cloud 420 Difference</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-leaf"></i>
+                        <h5>Artisan Quality</h5>
+                        <p>Hand-selected, organic cannabis for a refined experience.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-shipping-fast"></i>
+                        <h5>Swift Delivery</h5>
+                        <p>Discreet, reliable shipping to your door.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <i class="fas fa-award"></i>
+                        <h5>Unmatched Excellence</h5>
+                        <p>Curated from the finest cultivators worldwide.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="latest-products">
+        <h2>Latest Products</h2>
+        <div class="products-container">
+          <% 
+            const latestProducts = products.slice(-3);
+            latestProducts.forEach(product => { 
+          %>
+            <div class="product-item">
+              <% if(product.image) { %>
+                <div class="image-wrapper">
+                  <img src="<%= product.image %>" alt="<%= product.name %>">
+                </div>
+              <% } %>
+              <div class="product-content">
+                <h3><%= product.name %></h3>
+                <p class="description"><%= product.description %></p>
+                <p class="price">Price: <span>$<%= product.price.toFixed(2) %></span></p>
+                <button class="add-to-cart">Add to Cart</button>
+              </div>
+            </div>
+          <% }); %>
+        </div>
+      </section>
+      
+      <style>
+      .latest-products {
+        padding: 60px 20px;
+        max-width: 1400px;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
+      }
+      
+      .latest-products h2 {
+        text-align: center;
+        margin-bottom: 50px;
+        font-size: 2.8rem;
+        color: #2c3e50;
+        font-weight: 700;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      .latest-products h2::after {
+        content: '';
+        width: 80px;
+        height: 5px;
+        background: #074215;
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 2px;
+      }
+      
+      .products-container {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 30px;
+        padding: 0 15px;
+      }
+      
+      .product-item {
+        flex: 1;
+        min-width: 280px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+      
+      .product-item:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      }
+      
+      .image-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+      
+      .product-item img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
+      
+      .product-item:hover img {
+        transform: scale(1.05);
+      }
+      
+      .product-content {
+        padding: 15px 0;
+      }
+      
+      .product-item h3 {
+        margin: 0 0 10px;
+        font-size: 1.6rem;
+        color: #2c3e50;
+        font-weight: 600;
+      }
+      
+      .description {
+        margin: 0 0 15px;
+        color: #7f8c8d;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        max-height: 4.8em;
+        overflow: hidden;
+      }
+      
+      .price {
+        margin: 0 0 15px;
+        color: #2c3e50;
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+      
+      .price span {
+        color: #074215;
+        font-size: 1.3rem;
+        font-weight: 700;
+      }
+      
+      .add-to-cart {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: #074215;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+      
+      .add-to-cart:hover {
+        background: #074215;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 1024px) {
+        .products-container {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+        
+        .product-item {
+          flex: 0 1 45%;
+          max-width: 45%;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .latest-products {
+          padding: 40px 15px;
+        }
+      
+        .latest-products h2 {
+          font-size: 2.2rem;
+        }
+      
+        .product-item {
+          flex: 0 1 100%;
+          max-width: 100%;
+        }
+        
+        .product-item img {
+          height: 200px;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .latest-products h2 {
+          font-size: 1.8rem;
+        }
+      
+        .product-item h3 {
+          font-size: 1.4rem;
+        }
+      }
+      </style>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <h2 class="section-title animate-reveal">Voices of Elevation</h2>
+        <p class="section-subtitle animate-reveal delay-1">Hear from Our Connoisseurs Who’ve Found Their Bliss</p>
+        
+        <div class="testimonial-carousel">
+            <div class="testimonial-slide active">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>The quality here is unmatched—smooth, rich, and pure. Cloud 420 has redefined my ritual.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Smoked Beacon</strong> <span class="author-tag">— Bud Enthusiast</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>Lightning-fast delivery and service that feels personal. It’s like they know me by vibe!</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Stoned Escobar</strong> <span class="author-tag">— Chillmaster</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>So many strains, so little time! I’m hooked on their curated vibes—this is next-level.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Elchapo</strong> <span class="author-tag">— Strain Explorer</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>The packaging alone is art. Every hit feels like a luxury escape.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Mystic Toker</strong> <span class="author-tag">— Aroma Alchemist</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-controls">
+            <button class="carousel-prev">&larr;</button>
+            <button class="carousel-next">&rarr;</button>
+        </div>
+    </div>
+    <div class="testimonials-bg-effect"></div>
+</section>
+
+<style>
+    .testimonials-section {
+        position: relative;
+        padding: 80px 0;
+        background: #0f1a13; /* Darker green for depth */
+        overflow: hidden;
+    }
+
+    .section-title {
+        font-size: 3.5rem;
+        font-family: 'Playfair Display', serif;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 20px;
+        text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .section-subtitle {
+        font-size: 1.3rem;
+        font-family: 'Lora', serif;
+        color: #d4af37; /* Golden accent */
+        text-align: center;
+        margin-bottom: 60px;
+        opacity: 0.9;
+    }
+
+    .testimonial-carousel {
+        position: relative;
+        max-width: 900px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .testimonial-slide {
+        display: none;
+        transition: opacity 0.5s ease;
+    }
+
+    .testimonial-slide.active {
+        display: block;
+    }
+
+    .testimonial-card {
+        background: rgba(26, 46, 31, 0.9); /* Semi-transparent green */
+        border-radius: 15px;
+        padding: 40px;
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .testimonial-quote {
+        position: relative;
+        font-size: 1.4rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .quote-icon {
+        font-size: 4rem;
+        color: #d4af37;
+        position: absolute;
+        top: -20px;
+        left: -20px;
+        opacity: 0.3;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+    }
+
+    .author-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-right: 15px;
+        border: 2px solid #d4af37;
+    }
+
+    .author-tag {
+        font-size: 0.9rem;
+        color: #b0b0b0;
+        margin-left: 10px;
+    }
+
+    .carousel-controls {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .carousel-prev, .carousel-next {
+        background: #d4af37;
+        border: none;
+        color: #1a2e1f;
+        font-size: 1.5rem;
+        padding: 10px 20px;
+        margin: 0 10px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: transform 0.5s ease;
+    }
+
+    .carousel-prev:hover, .carousel-next:hover {
+        transform: scale(1.1);
+    }
+
+    .testimonials-bg-effect {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('/images/smoke-texture.png') repeat;
+        opacity: 0.1;
+        z-index: 0;
+        animation: drift 20s infinite linear;
+    }
+
+    /* Animations */
+    @keyframes reveal {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes cardPop {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes drift {
+        0% { background-position: 0 0; }
+        100% { background-position: 100px 100px; }
+    }
+
+    .animate-reveal {
+        animation: reveal 1s ease-out forwards;
+    }
+
+    .delay-1 { animation-delay: 0.5s; }
+
+    .animate-card {
+        animation: cardPop 0.8s ease-out forwards;
+    }
+
+    @media (max-width: 768px) {
+        .section-title { font-size: 2.5rem; }
+        .testimonial-card { padding: 20px; }
+        .testimonial-quote { font-size: 1.2rem; }
+        .author-avatar { width: 50px; height: 50px; }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const prevBtn = document.querySelector('.carousel-prev');
+        const nextBtn = document.querySelector('.carousel-next');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        // Auto-rotate every 5 seconds
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 5000);
+    });
+</script>
+
+<!-- Blog Section -->
+<section class="blog-section">
+    <div class="container">
+        <h2 class="text-center mb-5 blog-header animate-glow">Latest from Our Blog</h2>
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="blog-card">
+                    <div class="blog-image-wrapper">
+                        <img src="/images/blog1.jpg" alt="Organic Cannabis" class="blog-img">
+                    </div>
+                    <h5 class="blog-title">The Benefits of Organic Cannabis</h5>
+                    <p class="blog-date">March 1, 2025</p>
+                    <p class="blog-excerpt">Dive into the lush world of organic cannabis—free from pesticides, bursting with terpenes, and crafted by nature’s finest. Elevate your senses with purity you can taste.</p>
+                    <a href="/blog/benefits-of-organic-cannabis" class="blog-link">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="blog-card">
+                    <div class="blog-image-wrapper">
+                        <img src="/images/blog2.jpg" alt="Relaxation Strains" class="blog-img">
+                    </div>
+                    <h5 class="blog-title">Top Cannabis Strains for Relaxation</h5>
+                    <p class="blog-date">February 25, 2025</p>
+                    <p class="blog-excerpt">Unwind with our hand-picked strains: from velvety Indicas to dreamy hybrids. Let stress melt away as you sink into a cloud of calm.</p>
+                    <a href="/blog/top-strains-for-relaxation" class="blog-link">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="blog-card">
+                    <div class="blog-image-wrapper">
+                        <img src="/images/blog3.jpg" alt="Cannabis Storage" class="blog-img">
+                    </div>
+                    <h5 class="blog-title">How to Store Your Cannabis Properly</h5>
+                    <p class="blog-date">February 20, 2025</p>
+                    <p class="blog-excerpt">Master the art of preservation—keep your buds fresh, potent, and aromatic with these pro tips. Your stash deserves the royal treatment!</p>
+                    <a href="/blog/storing-cannabis" class="blog-link">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="blog-card">
+                    <div class="blog-image-wrapper">
+                        <img src="/images/blog4.jpg" alt="Cannabis Cocktails" class="blog-img">
+                    </div>
+                    <h5 class="blog-title">Infused Elixirs: Cannabis Cocktails 101</h5>
+                    <p class="blog-date">February 15, 2025</p>
+                    <p class="blog-excerpt">Shake up your evenings with THC-infused cocktails! From smoky sours to herbal highballs, sip your way to bliss with these recipes.</p>
+                    <a href="/blog/cannabis-cocktails" class="blog-link">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="blog-card">
+                    <div class="blog-image-wrapper">
+                        <img src="/images/blog5.jpg" alt="Cannabis Myths" class="blog-img">
+                    </div>
+                    <h5 class="blog-title">Debunking Cannabis Myths</h5>
+                    <p class="blog-date">February 10, 2025</p>
+                    <p class="blog-excerpt">Reefer madness or reality? We shatter the wildest myths—couch lock, munchies, and more—with science and a sprinkle of humor.</p>
+                    <a href="/blog/cannabis-myths" class="blog-link">Read More</a>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="blog-card">
+                    <div class="blog-image-wrapper">
+                        <img src="/images/blog6.jpg" alt="Terpene Guide" class="blog-img">
+                    </div>
+                    <h5 class="blog-title">The Terpene Treasure Map</h5>
+                    <p class="blog-date">February 5, 2025</p>
+                    <p class="blog-excerpt">Unlock the secret scents of cannabis—limonene for zest, myrcene for chill. Explore our guide to terpene magic!</p>
+                    <a href="/blog/terpene-guide" class="blog-link">Read More</a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5">
+            <a href="/blog" class="cta-button blog-cta">Explore All Posts</a>
+        </div>
+    </div>
+    <div class="blog-bg-effect"></div>
+</section>
+
+<style>
+.blog-section {
+    padding: 100px 20px;
+    background-color: #0a0a0a;
+    position: relative;
+    overflow: hidden;
+}
+
+.blog-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    text-shadow: 0 0 10px rgba(0, 204, 0, 0.3);
+}
+
+.blog-card {
+    background: #1a1a1a;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.blog-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 5px 15px rgba(0, 204, 0, 0.2);
+}
+
+.blog-image-wrapper {
+    position: relative;
+    height: 200px; /* Fixed height for uniformity */
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.blog-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures images scale uniformly */
+    transition: transform 0.5s ease;
+}
+
+.blog-card:hover .blog-img {
+    transform: scale(1.05); /* Subtle zoom on hover */
+}
+
+.blog-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-family: 'Lora', serif;
+}
+
+.blog-date {
+    font-size: 0.9rem;
+    color: #cccccc;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.blog-excerpt {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.blog-link {
+    color: #00cc00;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.blog-link:hover {
+    color: #017d01;
+    text-decoration: underline;
+}
+
+.blog-cta {
+    background: linear-gradient(45deg, #003615, #00cc00);
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.blog-cta:hover {
+    background: linear-gradient(45deg, #00cc00, #003615);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 204, 0, 0.4);
+}
+
+.blog-bg-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('/images/smoke-texture.png') repeat;
+    opacity: 0.05;
+    z-index: 0;
+    animation: drift 30s infinite linear;
+}
+
+/* Animations */
+@keyframes glow {
+    0% { text-shadow: 0 0 5px rgba(0, 204, 0, 0.2); }
+    50% { text-shadow: 0 0 15px rgba(0, 204, 0, 0.5); }
+    100% { text-shadow: 0 0 5px rgba(0, 204, 0, 0.2); }
+}
+
+@keyframes drift {
+    0% { background-position: 0 0; }
+    100% { background-position: 100px 100px; }
+}
+
+.animate-glow {
+    animation: glow 3s infinite ease-in-out;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .blog-section {
+        padding: 60px 10px;
+    }
+    .blog-header {
+        font-size: 2.5rem;
+    }
+    .blog-image-wrapper {
+        height: 150px; /* Slightly smaller for tablets */
+    }
+    .blog-title {
+        font-size: 1.3rem;
+    }
+    .blog-excerpt {
+        font-size: 0.9rem;
+    }
+    .blog-link {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .blog-header {
+        font-size: 2rem;
+    }
+    .blog-image-wrapper {
+        height: 120px; /* Compact for phones */
+    }
+    .blog-title {
+        font-size: 1.2rem;
+    }
+    .blog-date, .blog-excerpt {
+        font-size: 0.85rem;
+    }
+    .blog-cta {
+        padding: 10px 25px;
+        font-size: 1rem;
+    }
+}
+</style>
+
+
+<!-- Social Media Section -->
+<section class="social-section">
+    <h3 class="social-title animate-fade-in">Connect with Us</h3>
+    <div class="social-icons">
+        <a href="https://wa.me/your-number" target="_blank" class="social-link" aria-label="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://t.me/your-telegram" target="_blank" class="social-link" aria-label="Telegram">
+            <i class="fab fa-telegram-plane"></i>
+        </a>
+        <a href="https://x.com/your-twitter" target="_blank" class="social-link" aria-label="X (Twitter)">
+            <span class="x-icon"><i class="fab fa-twitter"></i></span>
+        </a>
+        <a href="tel:+1234567890" target="_blank" class="social-link" aria-label="Phone">
+            <i class="fas fa-phone"></i>
+        </a>
+    </div>
+</section>
+
+<style>
+.social-section {
+    padding: 60px 20px;
+    background-color: #0a0a0a;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.social-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 30px;
+    text-shadow: 0 0 10px rgba(0, 204, 0, 0.2);
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* Replaces margin for better spacing control */
+}
+
+.social-link {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-link i {
+    font-size: 2rem; /* Consistent size with other icons */
+}
+
+.social-link:hover {
+    color: #017d01;
+    transform: translateY(-5px);
+}
+
+/* X Icon Styling */
+.x-icon {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 2rem; /* Matches icon size */
+    height: 2rem;
+    font-size: 2rem; /* Consistent with other icons */
+}
+
+/* Animation */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .social-section {
+        padding: 40px 10px;
+    }
+    .social-title {
+        font-size: 2rem;
+    }
+    .social-icons {
+        gap: 20px; /* Reduced spacing for tablets */
+    }
+    .social-link i, .x-icon {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .social-title {
+        font-size: 1.5rem;
+    }
+    .social-icons {
+        flex-wrap: wrap; /* Allows icons to wrap on very small screens */
+        gap: 15px;
+    }
+    .social-link i, .x-icon {
+        font-size: 1.2rem;
+    }
+}
+</style>
+
+    <!-- Call to Action Section -->
+    <div class="container-fluid py-5 bg-dark text-white text-center">
+        <h3>Unwind in Style</h3>
+        <p>Elevate your senses with our exclusive cannabis collection.</p>
+        <a href="/products" class="cta-button">Shop the Finest</a>
+    </div>
+<!-- Floating WhatsApp Button -->
+<div class="whatsapp-float">
+    <a href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank" class="whatsapp-btn">
+        <i class="fab fa-whatsapp whatsapp-icon"></i>
+    </a>
+    <div class="whatsapp-message">
+        <span>Hi! How can I help you?</span>
+    </div>
+</div>
+
+<style>
+    /* WhatsApp Float Styles */
+.whatsapp-float {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-color: #25D366; /* WhatsApp green */
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+}
+
+.whatsapp-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.whatsapp-icon {
+    font-size: 36px;
+    color: white;
+}
+
+.whatsapp-message {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background-color: #fff;
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    white-space: nowrap;
+    animation: popMessage 4s infinite;
+    display: none; /* Hidden by default, shown with JS */
+}
+
+.whatsapp-message::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    right: 20px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #fff;
+}
+
+/* Animation for message pop */
+@keyframes popMessage {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    20% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    80% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .whatsapp-btn {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .whatsapp-icon {
+        font-size: 28px;
+    }
+    
+    .whatsapp-message {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+}
+</style>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const whatsappFloat = document.querySelector('.whatsapp-float');
+    const whatsappMessage = document.querySelector('.whatsapp-message');
+
+    whatsappMessage.style.display = 'block';
+
+    setInterval(() => {
+        whatsappMessage.style.display = 
+            whatsappMessage.style.display === 'block' ? 'none' : 'block';
+    }, 4000);
+
+    // Show message on hover
+    whatsappFloat.addEventListener('mouseenter', () => {
+        whatsappMessage.style.display = 'block';
+        whatsappMessage.style.animation = 'none';
+    });
+
+    whatsappFloat.addEventListener('mouseleave', () => {
+        whatsappMessage.style.animation = 'popMessage 4s infinite';
+    });
+});
+</script>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 Cloud 420. All Rights Reserved. Crafted for Excellence.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            header.classList.toggle('scrolled', window.scrollY > 0);
+        });
+
+        // Subtle leaf drift
+        const leafContainer = document.getElementById('leafContainer');
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            leaf.classList.add('leaf');
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = Math.random() * 10 + 10 + 's';
+            leafContainer.appendChild(leaf);
+            setTimeout(() => leaf.remove(), 20000);
+        }
+        setInterval(createLeaf, 2000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+       <meta charset="utf-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <title>Cloud 420 | Admin Dashboard</title>
+
+       <!-- Google Font: Source Sans Pro -->
+       <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+       <!-- Font Awesome Icons -->
+       <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+       <!-- overlayScrollbars -->
+       <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+       <!-- Theme style -->
+       <link rel="stylesheet" href="/dist/css/adminlte.min2167.css?v=3.2.0">
+       <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
+</head>
+
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+       <div class="wrapper">
+
+              <!-- Preloader -->
+              <div class="preloader flex-column justify-content-center align-items-center">
+                     <img class="animation__wobble" src="/images/icon.png" alt="AdminLTELogo" height="200"
+                            width="200">
+              </div>
+
+              <!-- Navbar -->
+              <nav class="main-header navbar navbar-expand navbar-dark">
+                     <!-- Left navbar links -->
+                     <ul class="navbar-nav">
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
+                                                 class="fas fa-bars"></i></a>
+                            </li>
+                            <li class="nav-item d-none d-sm-inline-block">
+                                   <a href="/" class="nav-link">Home</a>
+                            </li>
+                     </ul>
+
+                     <!-- Right navbar links -->
+                     <ul class="navbar-nav ml-auto">
+                           
+                                  
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                                          <i class="fas fa-expand-arrows-alt"></i>
+                                   </a>
+                            </li>
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
+                                          role="button">
+                                          <i class="fas fa-th-large"></i>
+                                   </a>
+                            </li>
+                     </ul>
+              </nav>
+
+             <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+              <!-- Brand Logo -->
+              <a href="/admin/dashboard" class="brand-link">
+                  <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                  <span class="brand-text font-weight-light"></span>
+              </a>
+  
+              <!-- Sidebar -->
+              <div class="sidebar">
+                  <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                      <div class="image">
+                          <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                      </div>
+                      <div class="info">
+                          <a href="#" class="d-block"><strong><%= currentUser.username %></strong></a>
+                      </div>
+                  </div>
+  
+                  <nav class="mt-2">
+                      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                          <!-- Dashboard -->
+                          <li class="nav-item menu-open">
+                              <a href="/admin/dashboard" class="nav-link active">
+                                  <i class="nav-icon fas fa-tachometer-alt"></i>
+                                  <p>Dashboard</p>
+                              </a>
+                          </li>
+  
+                          
+  
+                          <!-- Products -->
+                          <li class="nav-item">
+                              <a href="/admin/products" class="nav-link">
+                                  <i class="nav-icon fas fa-cube"></i>
+                                  <p>Products</p>
+                              </a>
+                          </li>
+  
+                          <!-- Orders -->
+                          <li class="nav-item">
+                              <a href="/admin/orders" class="nav-link">
+                                  <i class="nav-icon fas fa-shopping-bag"></i>
+                                  <p>Orders</p>
+                              </a>
+                          </li>
+  
+                          <!-- Carts (optional) -->
+                          <li class="nav-item">
+                              <a href="/admin/carts" class="nav-link">
+                                  <i class="nav-icon fas fa-shopping-cart"></i>
+                                  <p>Carts</p>
+                              </a>
+                          </li>
+
+                          <li class="nav-item">
+                            <a href="/admin/transactions" class="nav-link">
+                                <i class="nav-icon fas fa-exchange-alt"></i>
+                                <p>Transactions</p>
+                            </a>
+                        </li>
+                             <!-- Users -->
+                          <li class="nav-item">
+                            <a href="/admin/users" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Users</p>
+                            </a>
+                        </li>  
+                            <!-- Settings -->
+                            <li class="nav-item">
+                                   <a href="/admin/settings" class="nav-link">
+                                   <i class="nav-icon fas fa-cogs"></i>
+                                   <p>Settings</p>
+                                   </a>
+                            </li>
+       
+                            <!-- Logout -->
+                            <li class="nav-item">
+                                   <a href="/auth/logout" class="nav-link">
+                                   <i class="nav-icon fas fa-sign-out-alt"></i>
+                                   <p>Logout</p>
+                                   </a>
+                            </li>
+
+                      </ul>
+                  </nav>
+                     </div>
+              </aside>
+
+             <!-- Content Wrapper -->
+<div class="content-wrapper">
+       <!-- Main content -->
+       <section class="content">
+           <div class="container-fluid">
+<!-- Info boxes -->
+<div class="row">
+    <!-- Total Sales -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-dollar-sign"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Total Sales</span>
+                <span class="info-box-number">KES <%= totalSales.toFixed(2) %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue This Month -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-dark elevation-1"><i class="fas fa-coins"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Revenue This Month</span>
+                <span class="info-box-number">KES <%= monthlyRevenue.toFixed(2) %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-shopping-bag"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Orders</span>
+                <span class="info-box-number"><%= orderCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Orders -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-hourglass-half"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Pending Orders</span>
+                <span class="info-box-number"><%= pendingOrders %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed Orders -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-check-circle"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Completed Orders</span>
+                <span class="info-box-number"><%= completedOrders %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-success elevation-1"><i class="fas fa-cube"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Products</span>
+                <span class="info-box-number"><%= productCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-info elevation-1"><i class="fas fa-users"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">Users</span>
+                <span class="info-box-number"><%= userCount %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Users This Month (Replacement for Active Subscriptions) -->
+    <div class="col-12 col-sm-6 col-md-3 mb-3">
+        <div class="info-box">
+            <span class="info-box-icon bg-teal elevation-1"><i class="fas fa-user-plus"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">New Users This Month</span>
+                <span class="info-box-number"><%= newUsersThisMonth %></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+   
+               <!-- Latest Orders Table -->
+               <div class="card">
+                   <div class="card-header border-transparent">
+                       <h3 class="card-title">Latest Orders</h3>
+                       <div class="card-tools">
+                           <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                               <i class="fas fa-minus"></i>
+                           </button>
+                           <button type="button" class="btn btn-tool" data-card-widget="remove">
+                               <i class="fas fa-times"></i>
+                           </button>
+                       </div>
+                   </div>
+                   <div class="card-body p-0">
+                       <div class="table-responsive">
+                           <table class="table m-0">
+                               <thead>
+                                   <tr>
+                                       <th>Order ID</th>
+                                       <th>Customer</th>
+                                       <th>Total (KES)</th>
+                                       <th>Status</th>
+                                       <th>Date</th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   <% orders.slice(0, 5).forEach(order => { %>
+                                       <% if (order && order.total !== undefined) { %>
+                                           <tr>
+                                               <td><a href="/admin/orders/<%= order._id %>"><%= order._id %></a></td>
+                                               <td><%= order.customerName || 'N/A' %></td>
+                                               <td><%= order.total.toFixed(2) %></td>
+                                               <td>
+                                                   <span class="badge <%= order.status === 'Completed' ? 'badge-success' : order.status === 'Pending' ? 'badge-warning' : 'badge-danger' %>">
+                                                       <%= order.status || 'Unknown' %>
+                                                   </span>
+                                               </td>
+                                               <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
+                                           </tr>
+                                       <% } else { %>
+                                           <tr>
+                                               <td colspan="5">Invalid order data</td>
+                                           </tr>
+                                       <% } %>
+                                   <% }); %>
+                                   <% if (!orders || orders.length === 0) { %>
+                                       <tr>
+                                           <td colspan="5">No orders available.</td>
+                                       </tr>
+                                   <% } %>
+                               </tbody>
+                           </table>
+                       </div>
+                   </div>
+                   <div class="card-footer clearfix">
+                       <a href="/admin/orders" class="btn btn-sm btn-secondary float-right">View All Orders</a>
+                   </div>
+               </div>
+           </div>
+       </section>
+   </div>
+   <style>
+       /* Ensure tables are scrollable on small screens */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Reduce padding and text sizes for better readability */
+@media (max-width: 768px) {
+    .info-box .info-box-text {
+        font-size: 14px;
+    }
+    .info-box .info-box-number {
+        font-size: 18px;
+    }
+    .info-box-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        line-height: 40px;
+    }
+
+    /* Adjust table for small screens */
+    .table th, .table td {
+        font-size: 12px;
+        padding: 6px;
+        white-space: nowrap;
+    }
+
+    .badge {
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+}
+
+/* Ensure the cards maintain good spacing */
+.card {
+    margin-bottom: 15px;
+}
+
+   </style>
+<style>
+    /* Optional: Enhance card hover effect */
+    .card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.3s ease;
+    }
+</style>
+
+              <!-- Control Sidebar -->
+              <aside class="control-sidebar control-sidebar-dark">
+              </aside>
+
+              <!-- Main Footer -->
+              <footer class="main-footer">
+                     <div class="float-right d-none d-sm-block">
+                            <b>Version</b> 1.0.1
+                     </div>
+                     <strong>Copyright © 2025 <a href="/">Cloud 420</a>.</strong>
+                     All rights reserved.
+              </footer>
+       </div>
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+       <!-- REQUIRED SCRIPTS -->
+       <script src="/plugins/jquery/jquery.min.js"></script>
+       <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+       <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+       <script src="/dist/js/adminlte2167.js?v=3.2.0"></script>
+       <script src="/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+       <script src="/plugins/raphael/raphael.min.js"></script>
+       <script src="/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+       <script src="/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+       <script src="/plugins/chart.js/Chart.min.js"></script>
+       <script src="/dist/js/demo.js"></script>
+       <script src="/dist/js/pages/dashboard2.js"></script>
+</body>
+</html>

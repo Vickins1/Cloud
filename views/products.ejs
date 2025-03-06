@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Cloud 420</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000 0%, #1a2a2a 100%);
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 15px rgba(0, 255, 100, 0.1);
+        }
+
+        .navbar-brand img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand img:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: #00ff73;
+            transition: left 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            left: 0;
+        }
+
+        .card {
+            background: rgba(28, 28, 28, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 100, 0.2);
+        }
+
+        .card-img-top {
+            height: 220px;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-img-top {
+            transform: scale(1.1);
+        }
+
+        .card-body {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 255, 100, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #035925, #00ff73);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.4s ease;
+        }
+
+        .btn-primary:hover::after {
+            left: 100%;
+        }
+
+        .btn-dark {
+            background: linear-gradient(45deg, #01671c, #000e03);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-dark:hover {
+            background: #001304;
+            color: #ffffff;
+        }
+
+        .floating-leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: rgba(0, 255, 100, 0.3);
+            border-radius: 50% 0 50% 50%;
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-50vh) rotate(180deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 100, 0.2);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(0, 255, 100, 0.4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .card-img-top {
+                height: 180px;
+            }
+
+            .navbar-brand img {
+                height: 50px;
+            }
+        }
+    </style>
+
+    <style>
+        /* Style modal images */
+.modal-img {
+    border-radius: 10px;
+    height: 70vh; /* Set max height for modal images */
+    object-fit: cover; /* Cover image without stretching */
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+
+/* Darken modal background */
+.modal-content {
+    background-color: #121212; /* Dark gray/black */
+    color: white;
+}
+
+/* Border and text styling */
+.modal-header, .modal-footer {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Style the close button */
+.btn-close-white {
+    filter: invert(1); /* Makes close button white */
+}
+
+/* Style carousel buttons */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(1); /* Makes arrows white */
+}
+.notification-container {
+    position: fixed;
+    top: 15%; /* Default top position */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1060;
+    width: 90%; /* Allow flexibility on smaller screens */
+    max-width: 300px; /* Cap width for larger screens */
+    padding: 0 10px; /* Add horizontal padding to prevent edge overlap */
+}
+
+.notification {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    width: 100%; /* Full width of container */
+    max-width: 200px; /* Default max-width */
+    height: auto;
+    padding: 10px; /* Default padding */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box; /* Ensure padding doesn’t increase width */
+}
+
+.notification-success {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+.notification-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+.notification-title {
+    font-weight: bold;
+    font-size: 14px; /* Default font size */
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .notification-container {
+        top: 10%; 
+        max-width: 250px;
+    }
+
+    .notification {
+        max-width: 100%;
+        padding: 8px;
+        margin-bottom: 6px;
+    }
+
+    .notification-title {
+        font-size: 13px; 
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .notification-container {
+        top: 5%;
+        width: 85%;
+        max-width: 200px;
+        padding: 0 5px;
+    }
+
+    .notification {
+        padding: 6px; /* Further reduce padding */
+        margin-bottom: 5px; /* Tighter spacing */
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); /* Lighter shadow */
+    }
+
+    .notification-title {
+        font-size: 12px; /* Smaller font for phones */
+    }
+}
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Greenleaf Haven Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                            <% if (cartItems> 0) { %>
+                                <span class="badge bg-success" id="cart-count">
+                                    <%= cartItems %>
+                                </span>
+                                <% } %>
+                        </a>
+                    </li>
+                     <% if (isAuthenticated) { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                            </li>
+                        <% } else { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
+                            </li>
+                        <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="floating-leaves">
+            <div class="leaf" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+            <div class="leaf" style="left: 70%; top: 40%; animation-delay: 2s;"></div>
+            <div class="leaf" style="left: 40%; top: 60%; animation-delay: 4s;"></div>
+        </div>
+        
+        <h1 class="hero-title"><strong>Explore Our Cloud Treasures</strong></h1>
+        
+        <div class="filter-container">
+            <input type="text" id="searchInput" class="filter-input" placeholder="Search products...">
+            <select id="categoryFilter" class="filter-select">
+                <option value="">All Categories</option>
+                <option value="Flower">Flower</option>
+                <option value="Edibles">Edibles</option>
+                <option value="Vapes">Vapes</option>
+                <option value="Concentrates">Concentrates</option>
+                <option value="Accessories">Accessories</option>
+                <option value="CBD">CBD</option>
+            </select>
+        </div>
+        <div id="resultsContainer" class="results-container"></div>
+    
+        <style>
+            /* Hero Section Styling */
+            .hero-section {
+                text-align: center;
+                padding: 30px 10px; /* Default padding */
+                position: relative;
+                background: linear-gradient(to right, #000, #035925);
+                color: white;
+                overflow: hidden;
+                margin-top: 20px;
+            }
+            .hero-section h1 {
+                font-size: 2rem; /* Default size */
+                font-weight: bold;
+                margin-top: 50px; /* Default margin */
+            }
+        
+            /* Floating Leaves Animation */
+            .floating-leaves .leaf {
+                position: absolute;
+                width: 30px; /* Default size */
+                height: 30px;
+                background: url('/public/images/leaf-icon.png') no-repeat center;
+                background-size: contain;
+                opacity: 0.7;
+                animation: floatLeaf 6s infinite linear;
+            }
+        
+            @keyframes floatLeaf {
+                0% { transform: translateY(0); }
+                50% { transform: translateY(-20px); }
+                100% { transform: translateY(0); }
+            }
+        
+            /* Hero Title */
+            .hero-title {
+                font-size: 2.5rem; /* Default size */
+                font-weight: bold;
+                margin-top: 20px; /* Default margin */
+            }
+        
+            /* Filter Section */
+            .filter-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 15px; /* Default gap */
+                background: rgba(255, 255, 255, 0.1);
+                padding: 15px; /* Default padding */
+                border-radius: 10px;
+                backdrop-filter: blur(5px);
+                margin-top: 20px; /* Default margin */
+                max-width: 490px; /* Default max-width */
+                margin-left: auto;
+                margin-right: auto;
+            }
+        
+            /* Inputs and Select */
+            .filter-input, .filter-select, .filter-button {
+                padding: 12px; /* Default padding */
+                border: none;
+                border-radius: 8px;
+                font-size: 16px; /* Default font size */
+            }
+        
+            .filter-input {
+                width: 100%;
+                max-width: 250px; /* Default max-width */
+                background: rgba(255, 255, 255, 0.8);
+                color: black;
+            }
+        
+            .filter-select {
+                width: 100%;
+                max-width: 180px; /* Default max-width */
+                background: white;
+            }
+        
+            .filter-button {
+                background: #0f5132;
+                color: white;
+                cursor: pointer;
+                transition: 0.3s;
+                font-weight: bold;
+            }
+        
+            .filter-button:hover {
+                background: #198754;
+            }
+        
+            /* Results Container Styling */
+            .results-container {
+                margin-top: 20px; /* Default margin */
+                padding: 15px; /* Default padding */
+                color: white;
+            }
+        
+            .product-item {
+                background: rgba(255, 255, 255, 0.1);
+                padding: 10px; /* Default padding */
+                border-radius: 8px;
+                margin-bottom: 10px;
+                text-align: left;
+            }
+        
+            .product-item h3 {
+                margin: 0 0 5px;
+                font-size: 1.2rem; /* Default size */
+            }
+        
+            .product-item p {
+                margin: 5px 0;
+            }
+        
+            .product-item img {
+                max-width: 100px; /* Default size */
+                border-radius: 5px;
+            }
+        
+            /* Responsive Design */
+            @media screen and (max-width: 768px) {
+                .hero-section {
+                    padding: 20px 5px; /* Reduced padding */
+                    margin-top: 10px; /* Reduced margin */
+                }
+        
+                .hero-section h1 {
+                    font-size: 1.5rem; /* Smaller font size */
+                    margin-top: 20px; /* Reduced margin */
+                }
+        
+                .hero-title {
+                    font-size: 1.8rem; /* Smaller title size */
+                    margin-top: 10px; /* Reduced margin */
+                }
+        
+                .floating-leaves .leaf {
+                    width: 20px; /* Smaller leaves */
+                    height: 20px;
+                }
+        
+                @keyframes floatLeaf {
+                    0% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); } /* Reduced animation range */
+                    100% { transform: translateY(0); }
+                }
+        
+                .filter-container {
+                    flex-direction: column;
+                    gap: 8px; /* Reduced gap */
+                    width: 90%;
+                    padding: 10px; /* Reduced padding */
+                    margin-top: 15px; /* Reduced margin */
+                    max-width: 100%; /* Full width on small screens */
+                }
+        
+                .filter-input, .filter-select, .filter-button {
+                    padding: 8px; /* Reduced padding */
+                    font-size: 14px; /* Smaller font size */
+                    width: 100%;
+                    max-width: none; /* Remove max-width constraints */
+                }
+        
+                .results-container {
+                    margin-top: 10px; /* Reduced margin */
+                    padding: 10px; /* Reduced padding */
+                }
+        
+                .product-item {
+                    padding: 8px; /* Reduced padding */
+                }
+        
+                .product-item h3 {
+                    font-size: 1rem; /* Smaller heading */
+                }
+        
+                .product-item img {
+                    max-width: 80px; /* Smaller image */
+                }
+            }
+        
+            /* Extra small screens (e.g., phones below 576px) */
+            @media screen and (max-width: 576px) {
+                .hero-section {
+                    margin-top: 80px;
+                    padding: 15px 5px; /* Even smaller padding */
+                }
+        
+                .hero-section h1 {
+                    font-size: 1.2rem; /* Even smaller font */
+                    margin-top: 15px;
+                }
+        
+                .hero-title {
+                    font-size: 1.5rem; /* Even smaller title */
+                    margin-top: 8px;
+                }
+        
+                .floating-leaves .leaf {
+                    width: 15px; /* Even smaller leaves */
+                    height: 15px;
+                }
+        
+                .filter-container {
+                    padding: 8px; /* Even smaller padding */
+                    gap: 6px; /* Even smaller gap */
+                }
+        
+                .filter-input, .filter-select, .filter-button {
+                    padding: 6px; /* Even smaller padding */
+                    font-size: 12px; /* Even smaller font */
+                }
+            }
+        </style>
+    </section>
+
+
+    <div class="container mt-5">
+        <div class="row">
+            <% products.forEach(product=> { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
+                        <!-- Professional Image Carousel with Click to Open Modal -->
+                        <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
+                            <div class="carousel-inner" data-bs-toggle="modal"
+                                data-bs-target="#productModal-<%= product._id %>" style="cursor: pointer;">
+                                <div class="carousel-item active">
+                                    <img src="<%= product.imageUrl %>" class="d-block w-100" alt="Main Product Image">
+                                </div>
+                                <% if (product.additionalImages && product.additionalImages.length> 0) { %>
+                                    <% product.additionalImages.forEach((img, index)=> { %>
+                                        <div class="carousel-item">
+                                            <img src="<%= img %>" class="d-block w-100"
+                                                alt="Product Image <%= index + 1 %>">
+                                        </div>
+                                        <% }) %>
+                                            <% } %>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= product.name %>
+                            </h5>
+                            <p class="card-text">
+                                <%= product.shortDescription %>
+                            </p>
+                            <p class="card-text text-success">KES <%= product.price.toFixed(2) %>
+                            </p>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy
+                                Now!</button>
+                            <button class="btn btn-dark add-to-cart">Add to Cart</button>
+                        </div>
+                    </div>
+
+                    <!-- Product Details Modal -->
+<div class="modal fade" id="productModal-<%= product._id %>" tabindex="-1" aria-labelledby="productModalLabel-<%= product._id %>" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark text-white shadow-lg" style="border-radius: 10px; overflow: hidden;">
+            <div class="modal-header border-secondary bg-gradient" style="background: linear-gradient(90deg, #1a1a1a, #2d2d2d);">
+                <h5 class="modal-title fw-bold" id="productModalLabel-<%= product._id %>">
+                    <%= product.name %>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-4">
+                    <!-- Carousel Section -->
+                    <div class="col-md-6">
+                        <div class="carousel slide" data-bs-ride="carousel" id="modal-carousel-<%= product._id %>">
+                            <div class="carousel-inner rounded">
+                                <div class="carousel-item active">
+                                    <img src="<%= product.imageUrl %>" class="d-block w-100 modal-img" alt="Main Product Image" style="object-fit: cover; max-height: 300px;">
+                                </div>
+                                <% if (product.additionalImages && product.additionalImages.length > 0) { %>
+                                    <% product.additionalImages.forEach((img, index) => { %>
+                                        <div class="carousel-item">
+                                            <img src="<%= img %>" class="d-block w-100 modal-img" alt="Product Image <%= index + 1 %>" style="object-fit: cover; max-height: 300px;">
+                                        </div>
+                                    <% }) %>
+                                <% } %>
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                        <!-- Thumbnail Previews -->
+                        <div class="d-flex flex-wrap gap-2 mt-2 justify-content-center">
+                            <img src="<%= product.imageUrl %>" class="thumbnail rounded" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide-to="0" alt="Thumbnail">
+                            <% if (product.additionalImages && product.additionalImages.length > 0) { %>
+                                <% product.additionalImages.forEach((img, index) => { %>
+                                    <img src="<%= img %>" class="thumbnail rounded" style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide-to="<%= index + 1 %>" alt="Thumbnail">
+                                <% }) %>
+                            <% } %>
+                        </div>
+                    </div>
+                   <!-- Details Section -->
+<div class="col-md-6 details-section">
+    <p class="mt-3 Category-box">
+        <i class="bi bi-tag-fill text-info me-1"></i><strong>
+        Category:</strong>  <span class="text-info fw-semibold"><%= product.category %></span>
+    <p>
+    <h6 class="text mb-2">
+        <i class="bi bi-cash-stack text-success me-1"></i><strong>
+            Price: </strong> <span class="text-success fw-bold">KES <%= product.price.toFixed(2) %></span>
+    </h6>
+    <p class="mt-3 description-box">
+        <strong class="text-light">Description:</strong>
+        <span class="text-light d-block mt-1"><%= product.description %></span>
+    </p>
+    <p class="availability-box">
+        <strong class="text-light">Availability:<br></strong>
+        <span class="fw-semibold <%= product.stockQuantity > 0 ? 'text-success' : 'text-danger' %> d-inline-flex align-items-center">
+            <i class="bi <%= product.stockQuantity > 0 ? 'bi-check-circle-fill' : 'bi-x-circle-fill' %> me-1"></i>
+            <%= product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' %>
+        </span>
+    </p>
+</div>
+
+<style>
+    /* Details Section Styling */
+    .details-section {
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05); /* Subtle background for contrast */
+        border-radius: 8px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .details-section:hover {
+        transform: translateY(-5px); /* Slight lift on hover */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+    }
+
+    .details-section h6 {
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        transition: color 0.3s ease;
+    }
+
+    .details-section h6:hover {
+        color: #e0e0e0; /* Lighten text on hover */
+    }
+
+    .description-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        border-radius: 6px;
+        border-left: 4px solid #17a2b8; /* Info color accent */
+        transition: background 0.3s ease;
+    }
+
+    .description-box:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .availability-box {
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        transition: background 0.3s ease;
+    }
+
+    .availability-box:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Responsive Adjustments */
+    @media screen and (max-width: 768px) {
+        .details-section {
+            padding: 10px;
+        }
+
+        .details-section h6 {
+            font-size: 0.9rem;
+        }
+
+        .description-box, .availability-box {
+            padding: 8px;
+        }
+    }
+</style>
+                </div>
+            </div>
+            <div class="modal-footer border-secondary bg-gradient" style="background: linear-gradient(90deg, #2d2d2d, #1a1a1a);">
+                <button class="btn btn-outline-light buy-now" data-product-id="<%= product._id %>">Buy
+                    Now!</button>
+                <button type="button" class="btn btn-success add-to-cart-modal" data-product-id="<%= product._id %>">
+                    <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+                </div>
+                <% }) %>
+        </div>
+    </div>
+
+    <!-- Script Dependencies -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("DOM fully loaded");
+
+            // Add to Cart button listeners (card)
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCartHandler);
+            });
+
+            // Add to Cart from Modal
+            document.querySelectorAll('.add-to-cart-modal').forEach(button => {
+                button.addEventListener('click', addToCartHandler);
+            });
+
+            // Add to Cart handler function
+            async function addToCartHandler(event) {
+                const button = event.target;
+                const card = button.closest('.card') || button.closest('.modal-content');
+                if (!card) {
+                    showNotification('Error', 'Product container not found!', 'danger');
+                    return;
+                }
+
+                const productId = card.getAttribute('data-product-id') || button.getAttribute('data-product-id');
+                if (!productId) {
+                    showNotification('Error', 'Product ID is missing!', 'danger');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/cart/add/${productId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                    });
+
+                    if (!response.ok) {
+                        showNotification('Error', `Failed to add to cart: ${response.status}`, 'danger');
+                        return;
+                    }
+
+                    const data = await response.json();
+                    if (!data.success) {
+                        showNotification('Error', data.message || 'Server error', 'danger');
+                        return;
+                    }
+
+                    showNotification('Success', 'Product added to cart!', 'success');
+                    updateCartCount(true);
+
+                    // Close modal if clicked from there
+                    const modal = button.closest('.modal');
+                    if (modal) {
+                        bootstrap.Modal.getInstance(modal).hide();
+                    }
+
+                } catch (error) {
+                    showNotification('Error', 'Couldn’t add product to cart.', 'danger');
+                    console.error('Error:', error);
+                }
+            }
+
+            
+            // Update cart count function
+            async function updateCartCount(forceUpdate = false) {
+                try {
+                    const response = await fetch('/cart-count');
+                    if (!response.ok) throw new Error(`Server error: ${response.status}`);
+
+                    const data = await response.json();
+                    const cartCountEl = document.getElementById('cart-count');
+                    const cartLink = document.querySelector('a[href="/cart"]');
+
+                    if (data.cartCount > 0) {
+                        if (!cartCountEl) {
+                            cartLink.insertAdjacentHTML('beforeend',
+                                `<span class="badge bg-success" id="cart-count">${data.cartCount}</span>`);
+                        } else if (forceUpdate || cartCountEl.textContent !== String(data.cartCount)) {
+                            cartCountEl.textContent = data.cartCount;
+                        }
+                    } else if (cartCountEl) {
+                        cartCountEl.remove();
+                    }
+                } catch (error) {
+                    console.error('Error updating cart count:', error);
+                }
+            }
+
+            // Initial cart count update and periodic refresh
+            updateCartCount();
+            setInterval(() => updateCartCount(), 30000);
+        });
+
+        // Notification functions
+        function showNotification(title, message, type) {
+            const container = document.querySelector('.notification-container') || createNotificationContainer();
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `<strong class="notification-title">${title}</strong><br>${message}`;
+
+            container.appendChild(notification);
+
+            setTimeout(() => { notification.remove(); }, 3000);
+        }
+
+        function createNotificationContainer() {
+            const container = document.createElement('div');
+            container.className = 'notification-container';
+            document.body.appendChild(container);
+            return container;
+        }
+    </script>
+
+    <style>
+        .carousel-item img {
+            object-fit: cover;
+            height: 250px;
+            border-radius: 5px;
+        }
+
+        .card {
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+    </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        function filterProducts() {
+            const searchText = searchInput.value.toLowerCase().trim();
+            const selectedCategory = categoryFilter.value;
+            const productCards = document.querySelectorAll('.card.h-100');
+
+            let hasResults = false;
+
+            productCards.forEach(card => {
+                const productName = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
+                const productDescription = card.querySelector('.card-text')?.textContent.toLowerCase() || '';
+                const productCategory = card.dataset.category || '';
+
+                const matchesSearch = productName.includes(searchText) || productDescription.includes(searchText);
+                const matchesCategory = !selectedCategory || productCategory === selectedCategory;
+
+                const cardColumn = card.closest('.col-md-4');
+                if (cardColumn) {
+                    if (matchesSearch && matchesCategory) {
+                        cardColumn.style.display = 'block';
+                        hasResults = true;
+                    } else {
+                        cardColumn.style.display = 'none';
+                    }
+                }
+            });
+
+            resultsContainer.innerHTML = hasResults ? '' : '<p>No products found.</p>';
+        }
+
+        searchInput.addEventListener('input', filterProducts);
+        categoryFilter.addEventListener('change', filterProducts);
+    });
+</script>
+
+    <script>
+        // Buy Now functionality
+        document.querySelectorAll('.buy-now').forEach(button => {
+            button.addEventListener('click', async function () {
+                const productId = this.getAttribute('data-product-id');
+                if (!productId) {
+                    showNotification('Error', 'Invalid product ID.', 'danger');
+                    return;
+                }
+                try {
+                    const response = await fetch(`/cart/add/${productId}`, { method: 'POST' });
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                    // Redirect to cart page after adding the item
+                    setTimeout(() => {
+                        window.location.href = '/cart';
+                    }, 500);
+                } catch (error) {
+                    console.error('Error processing buy now:', error);
+                    showNotification('Error', 'An error occurred while processing your request.', 'danger');
+                }
+            });
+        });
+    </script>
+
+
+
+</body>
+
+</html>

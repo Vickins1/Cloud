@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+       <meta charset="utf-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <title>Cloud 420 | Admin Dashboard</title>
+
+       <!-- Google Font: Source Sans Pro -->
+       <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+       <!-- Font Awesome Icons -->
+       <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+       <!-- overlayScrollbars -->
+       <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+       <!-- Theme style -->
+       <link rel="stylesheet" href="/dist/css/adminlte.min2167.css?v=3.2.0">
+       <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
+</head>
+
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+       <div class="wrapper">
+
+              <!-- Preloader -->
+              <div class="preloader flex-column justify-content-center align-items-center">
+                     <img class="animation__wobble" src="/images/icon.png" alt="AdminLTELogo" height="200" width="200">
+              </div>
+
+              <!-- Navbar -->
+              <nav class="main-header navbar navbar-expand navbar-dark">
+                     <!-- Left navbar links -->
+                     <ul class="navbar-nav">
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
+                                                 class="fas fa-bars"></i></a>
+                            </li>
+                            <li class="nav-item d-none d-sm-inline-block">
+                                   <a href="/" class="nav-link">Home</a>
+                            </li>
+                     </ul>
+
+                     <!-- Right navbar links -->
+                     <ul class="navbar-nav ml-auto">
+                           
+
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                                          <i class="fas fa-expand-arrows-alt"></i>
+                                   </a>
+                            </li>
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
+                                          role="button">
+                                          <i class="fas fa-th-large"></i>
+                                   </a>
+                            </li>
+                     </ul>
+              </nav>
+
+              <!-- Main Sidebar Container -->
+              <aside class="main-sidebar sidebar-dark-primary elevation-4">
+                     <!-- Brand Logo -->
+                     <a href="/admin/dashboard" class="brand-link">
+                            <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="brand-image img-circle elevation-3"
+                                   style="opacity: .8">
+                            <span class="brand-text font-weight-light"></span>
+                     </a>
+
+                     <!-- Sidebar --> <!-- Sidebar -->
+                     <div class="sidebar">
+                            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                                   <div class="image">
+                                          <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2"
+                                                 alt="User Image">
+                                   </div>
+                                   <div class="info">
+                                          <a href="#" class="d-block"><strong>
+                                                        <%= currentUser.username %>
+                                                 </strong></a>
+                                   </div>
+                            </div>
+
+                            <nav class="mt-2">
+                                   <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                                          data-accordion="false">
+                                          <!-- Dashboard -->
+                                          <li class="nav-item menu-open">
+                                                 <a href="/admin/dashboard" class="nav-link active">
+                                                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                                                        <p>Dashboard</p>
+                                                 </a>
+                                          </li>
+
+
+
+                                          <!-- Products -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/products" class="nav-link">
+                                                        <i class="nav-icon fas fa-cube"></i>
+                                                        <p>Products</p>
+                                                 </a>
+                                          </li>
+
+                                          <!-- Orders -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/orders" class="nav-link">
+                                                        <i class="nav-icon fas fa-shopping-bag"></i>
+                                                        <p>Orders</p>
+                                                 </a>
+                                          </li>
+
+                                          <!-- Carts (optional) -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/carts" class="nav-link">
+                                                        <i class="nav-icon fas fa-shopping-cart"></i>
+                                                        <p>Carts</p>
+                                                 </a>
+                                          </li>
+
+                                          <li class="nav-item">
+                                                 <a href="/admin/transactions" class="nav-link">
+                                                        <i class="nav-icon fas fa-exchange-alt"></i>
+                                                        <p>Transactions</p>
+                                                 </a>
+                                          </li>
+                                          <!-- Users -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/users" class="nav-link">
+                                                        <i class="nav-icon fas fa-users"></i>
+                                                        <p>Users</p>
+                                                 </a>
+                                          </li>
+                                          <!-- Settings -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/settings" class="nav-link">
+                                                        <i class="nav-icon fas fa-cogs"></i>
+                                                        <p>Settings</p>
+                                                 </a>
+                                          </li>
+
+                                          <!-- Logout -->
+                                          <li class="nav-item">
+                                                 <a href="/admin/logout" class="nav-link">
+                                                        <i class="nav-icon fas fa-sign-out-alt"></i>
+                                                        <p>Logout</p>
+                                                 </a>
+                                          </li>
+
+                                   </ul>
+                            </nav>
+                     </div>
+              </aside>
+
+              <div class="content-wrapper">
+
+                     <section class="content">
+    <div class="container-fluid">
+        <div class="card shadow-lg border-0">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center py-2">
+                <h3 class="card-title text-white font-weight-bold m-0" style="font-size: 1.25rem;">Manage Products</h3>
+                <div class="card-tools">
+                    <button type="button" class="btn btn-sm btn-success shadow-sm" data-toggle="modal" data-target="#addProductModal">
+                        <i class="fas fa-plus mr-1"></i> Add
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
+                    <div class="alert alert-danger alert-dismissible fade show mx-2 mt-2" role="alert">
+                        <%= error_msg[0] %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                <% } %>
+                <% if (typeof success_msg !== 'undefined' && success_msg.length > 0) { %>
+                    <div class="alert alert-success alert-dismissible fade show mx-2 mt-2" role="alert">
+                        <%= success_msg[0] %>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                <% } %>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover table-sm m-0">
+                        <thead>
+                            <tr>
+                                <th class="py-2 pl-2">Name</th>
+                                <th class="py-2">Price</th>
+                                <th class="py-2">Stock</th>
+                                <th class="py-2">Category</th>
+                                <th class="py-2 pr-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% products.forEach(product => { %>
+                                <tr>
+                                    <td class="py-2 pl-2"><%= product.name %></td>
+                                    <td class="py-2"><%= product.price.toFixed(2) %></td>
+                                    <td class="py-2"><%= product.stockQuantity %></td>
+                                    <td class="py-2"><%= product.category || 'N/A' %></td>
+                                    <td class="py-2 pr-2">
+                                        <button class="btn btn-xs btn-warning edit-btn"
+                                            data-id="<%= product._id %>"
+                                            data-name="<%= product.name %>"
+                                            data-price="<%= product.price %>"
+                                            data-description="<%= product.description || '' %>"
+                                            data-stock="<%= product.stockQuantity %>"
+                                            data-category="<%= product.category || '' %>"
+                                            data-toggle="modal"
+                                            data-target="#editProductModal">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <form action="/admin/products/delete/<%= product._id %>" method="POST" class="delete-form d-inline"
+                                            onsubmit="return confirmDelete()">
+                                            <button type="submit" class="btn btn-xs btn-danger delete-btn">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <nav>
+              <ul class="pagination">
+                     <% for (let i = 1; i <= totalPages; i++) { %>
+                         <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                             <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                         </li>
+                     <% } %>
+                 </ul>
+                 
+          </nav>
+
+
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-md" role="document"> <!-- Changed from modal-lg to modal-md -->
+           <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #ffc107;">
+               <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #856404);">
+                   <h5 class="modal-title font-weight-bold" id="editProductModalLabel" style="font-size: 1.25rem; color: #fff3cd;">Edit Product</h5>
+                   <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                       <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                   </button>
+               </div>
+               <div class="modal-body p-3">
+                   <form id="editProductForm" action="/admin/products/edit" method="POST" enctype="multipart/form-data">
+                       <input type="hidden" id="editProductId" name="id">
+                       <div class="form-group mb-3">
+                           <label for="editName" class="text-muted font-weight-bold small">Product Name</label>
+                           <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="editName" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="editPrice" class="text-muted font-weight-bold small">Price (KES)</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="editPrice" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="editDescription" class="text-muted font-weight-bold small">Description</label>
+                           <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="editDescription" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="editStockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="editStockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="editCategory" class="text-muted font-weight-bold small">Category</label>
+                           <select class="form-control bg-secondary text-white border-0 shadow-sm" id="editCategory" name="category" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                               <option value="Flower">Flower</option>
+                               <option value="Edibles">Edibles</option>
+                               <option value="Vapes">Vapes</option>
+                               <option value="Concentrates">Concentrates</option>
+                               <option value="Accessories">Accessories</option>
+                               <option value="CBD">CBD</option>
+                           </select>
+                       </div>
+                       <div class="form-group mb-3">
+                        <label for="editImages" class="text-muted fw-bold small">Images (Replace Existing)</label>
+                        <div class="custom-file-upload position-relative">
+                            <input 
+                                type="file" 
+                                class="form-control-file" 
+                                id="editImages" 
+                                name="images" 
+                                accept="image/jpeg,image/png,image/gif,image/webp" 
+                                multiple
+                                style="
+                                    padding: 6px; 
+                                    border: 1px dashed #ffc107; 
+                                    border-radius: 8px; 
+                                    background: #1a1a1a; 
+                                    font-size: 0.85rem;
+                                    cursor: pointer;
+                                    width: 100%;
+                                "
+                                aria-describedby="imageHelp"
+                                onchange="previewImages(event)"
+                            >
+                            <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                        </div>
+                        <small id="imageHelp" class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                            Leave empty to keep current images. Max 10 files, 10MB each.
+                        </small>
+                    </div>
+                       <button type="submit" class="btn btn-warning btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold; background: #ffc107; color: #212529;">Update Product</button>
+                   </form>
+               </div>
+           </div>
+       </div>
+   </div>
+   <!-- Add this JavaScript at the bottom of your page or in a separate file -->
+<script>
+    function previewImages(event) {
+        const preview = document.getElementById('imagePreview');
+        preview.innerHTML = '';
+        
+        const files = event.target.files;
+        if (files) {
+            Array.from(files).slice(0, 10).forEach(file => { 
+                if (file.size > 10 * 1024 * 1024) { 
+                    alert(`File ${file.name} exceeds 10MB limit`);
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.style.maxWidth = '100px';
+                    img.style.maxHeight = '100px';
+                    img.style.objectFit = 'cover';
+                    img.style.borderRadius = '4px';
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+    </script>
+    
+    <!-- Optional CSS for better styling -->
+    <style>
+    .custom-file-upload {
+        overflow: hidden;
+    }
+    
+    .custom-file-upload input[type="file"] {
+        transition: border-color 0.3s ease;
+    }
+    
+    .custom-file-upload input[type="file"]:hover {
+        border-color: #ffca2c;
+    }
+    
+    .custom-file-upload input[type="file"]:focus {
+        outline: none;
+        border-color: #ffca2c;
+        box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+    }
+    
+    @media (max-width: 768px) {
+        .custom-file-upload input[type="file"] {
+            font-size: 0.8rem;
+            padding: 4px;
+        }
+    }
+    </style>
+   
+   <style>
+       .modal-content {
+           transition: all 0.3s ease;
+       }
+   
+       .form-control,
+       .form-control-file {
+           background: #2d2d2d;
+           color: #fff;
+           border: none;
+           border-radius: 8px;
+           padding: 8px;
+       }
+   
+       .form-control:focus {
+           box-shadow: 0 0 5px rgba(255, 193, 7, 0.5); /* Adjusted to match warning theme */
+           background: #333;
+       }
+   
+       .btn-warning {
+           background: #ffc107;
+           border: none;
+           transition: transform 0.2s, background 0.3s;
+       }
+   
+       .btn-warning:hover {
+           background: #e0a800;
+           transform: translateY(-2px);
+       }
+   
+       @media (max-width: 768px) {
+           .modal-dialog {
+               margin: 8px auto;
+               max-width: 85%;
+           }
+   
+           .modal-content {
+               border-radius: 8px;
+           }
+   
+           .modal-header {
+               padding: 10px 15px;
+           }
+   
+           .modal-title {
+               font-size: 1.1rem;
+           }
+   
+           .modal-body {
+               padding: 15px;
+           }
+   
+           .form-group {
+               margin-bottom: 12px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .btn-warning {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .close span {
+               font-size: 1rem;
+           }
+       }
+   
+       @media (max-width: 576px) {
+           .modal-dialog {
+               max-width: 90%;
+           }
+   
+           .modal-title {
+               font-size: 1rem;
+           }
+   
+           .modal-body {
+               padding: 10px;
+           }
+   
+           .form-group {
+               margin-bottom: 10px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           .btn-warning {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           label {
+               font-size: 0.85rem;
+           }
+   
+           small {
+               font-size: 0.7rem;
+           }
+       }
+   </style>
+                                   <script>
+                                          document.addEventListener("DOMContentLoaded", function () {
+                                                 document.querySelectorAll(".edit-btn").forEach(button => {
+                                                        button.addEventListener("click", function () {
+                                                               document.getElementById("editProductId").value = this.dataset.id;
+                                                               document.getElementById("editName").value = this.dataset.name;
+                                                               document.getElementById("editPrice").value = this.dataset.price;
+                                                               document.getElementById("editDescription").value = this.dataset.description;
+                                                               document.getElementById("editStockQuantity").value = this.dataset.stock;
+                                                               document.getElementById("editCategory").value = this.dataset.category;
+                                                        });
+                                                 });
+                                          });
+                                   </script>
+
+
+                                   <!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+       <div class="modal-dialog modal-md" role="document"> <!-- Changed from modal-lg to modal-md -->
+           <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #035925;">
+               <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
+                   <h5 class="modal-title font-weight-bold" id="addProductModalLabel" style="font-size: 1.25rem; color: #d4edda;">Add New Product</h5>
+                   <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                       <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                   </button>
+               </div>
+               <div class="modal-body p-3">
+                   <form id="addProductForm" action="/admin/products/add" method="POST" enctype="multipart/form-data">
+                       <div class="form-group mb-3">
+                           <label for="name" class="text-muted font-weight-bold small">Product Name</label>
+                           <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="name" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="price" class="text-muted font-weight-bold small">Price (KES)</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="price" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="description" class="text-muted font-weight-bold small">Description</label>
+                           <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="description" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="stockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
+                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="stockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                       </div>
+                       <div class="form-group mb-3">
+                           <label for="category" class="text-muted font-weight-bold small">Category</label>
+                           <select class="form-control bg-secondary text-white border-0 shadow-sm" id="category" name="category" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                               <option value="Flower">Flowers</option>
+                               <option value="Edibles">Edibles</option>
+                               <option value="Vapes">Vapes</option>
+                               <option value="Booklets">Booklets</option>
+                               <option value="Accessories">420 Accessories</option>
+                               <option value="Tips">Seeds</option>
+                               <option value="Tips">Bongs and Chalice</option>
+
+                           </select>
+                       </div>
+                       <div class="form-group mb-3">
+                        <label for="images" class="text-muted font-weight-bold small">Images (Multiple)</label>
+                        <input 
+                            type="file" 
+                            class="form-control-file" 
+                            id="images" 
+                            name="images" 
+                            accept="image/*" 
+                            multiple 
+                            required 
+                            capture="environment" 
+                            style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;"
+                        >
+                        <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Ctrl (Win) or Cmd (Mac) for multiple; tap to use camera on phone</small>
+                    </div>
+                       <button type="submit" class="btn btn-success btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add Product</button>
+                   </form>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <style>
+       .modal-content {
+           transition: all 0.3s ease;
+       }
+   
+       .form-control,
+       .form-control-file {
+           background: #2d2d2d;
+           color: #fff;
+           border: none;
+           border-radius: 8px;
+           padding: 8px;
+       }
+   
+       .form-control:focus {
+           box-shadow: 0 0 5px rgba(3, 89, 37, 0.5);
+           background: #333;
+       }
+   
+       .btn-success {
+           background: #035925;
+           border: none;
+           transition: transform 0.2s, background 0.3s;
+       }
+   
+       .btn-success:hover {
+           background: #028a1b;
+           transform: translateY(-2px);
+       }
+   
+       @media (max-width: 768px) {
+           .modal-dialog {
+               margin: 8px auto;
+               max-width: 85%;
+           }
+   
+           .modal-content {
+               border-radius: 8px;
+           }
+   
+           .modal-header {
+               padding: 10px 15px;
+           }
+   
+           .modal-title {
+               font-size: 1.1rem;
+           }
+   
+           .modal-body {
+               padding: 15px;
+           }
+   
+           .form-group {
+               margin-bottom: 12px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .btn-success {
+               padding: 6px;
+               font-size: 0.85rem;
+           }
+   
+           .close span {
+               font-size: 1rem;
+           }
+       }
+   
+       @media (max-width: 576px) {
+           .modal-dialog {
+               max-width: 90%;
+           }
+   
+           .modal-title {
+               font-size: 1rem;
+           }
+   
+           .modal-body {
+               padding: 10px;
+           }
+   
+           .form-group {
+               margin-bottom: 10px;
+           }
+   
+           .form-control,
+           .form-control-file {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           .btn-success {
+               padding: 5px;
+               font-size: 0.8rem;
+           }
+   
+           label {
+               font-size: 0.85rem;
+           }
+   
+           small {
+               font-size: 0.7rem;
+           }
+       }
+   </style>
+                            </div>
+                     </section>
+              </div>
+
+              <!-- Control Sidebar -->
+              <aside class="control-sidebar control-sidebar-dark">
+              </aside>
+
+              <!-- Main Footer -->
+              <footer class="main-footer">
+                     <div class="float-right d-none d-sm-block">
+                            <b>Version</b> 1.0.1
+                     </div>
+                     <strong>Copyright © 2025 <a href="/">Cloud 420</a>.</strong>
+                     All rights reserved.
+              </footer>
+       </div>
+
+       <!-- REQUIRED SCRIPTS -->
+       <script src="/plugins/jquery/jquery.min.js"></script>
+       <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+       <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+       <script src="/dist/js/adminlte2167.js?v=3.2.0"></script>
+       <script src="/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+       <script src="/plugins/raphael/raphael.min.js"></script>
+       <script src="/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+       <script src="/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+       <script src="/plugins/chart.js/Chart.min.js"></script>
+       <script src="/dist/js/demo.js"></script>
+       <script src="/dist/js/pages/dashboard2.js"></script>
+</body>
+
+</html>

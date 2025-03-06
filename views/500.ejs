@@ -1,0 +1,173 @@
+<!-- 500.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Cloud 420</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .error-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(135deg, #004824, #000000);
+        }
+
+        .error-icon {
+            font-size: 6rem;
+            color: #00cc00;
+            margin-bottom: 20px;
+            animation: spin 4s infinite linear;
+        }
+
+        .error-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(0, 204, 0, 0.3);
+        }
+
+        .error-message {
+            font-size: 1.5rem;
+            color: #cccccc;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .error-cta {
+            background: linear-gradient(45deg, #003615, #00cc00);
+            color: #ffffff;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .error-cta:hover {
+            background: linear-gradient(45deg, #00cc00, #003615);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 204, 0, 0.4);
+        }
+
+        .leaf-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: url('/images/leaf.png') no-repeat center/cover;
+            animation: drift linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes drift {
+            0% { transform: translateY(-50vh) translateX(-10vw); opacity: 0; }
+            50% { opacity: 0.2; }
+            100% { transform: translateY(50vh) translateX(10vw); opacity: 0; }
+        }
+
+        footer {
+            background-color: #000000;
+            color: #999999;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .error-icon {
+                font-size: 4rem;
+            }
+            .error-title {
+                font-size: 2.5rem;
+            }
+            .error-message {
+                font-size: 1.2rem;
+            }
+            .error-cta {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .error-icon {
+                font-size: 3rem;
+            }
+            .error-title {
+                font-size: 2rem;
+            }
+            .error-message {
+                font-size: 1rem;
+            }
+            .error-cta {
+                padding: 8px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Subtle Leaf Overlay -->
+    <div class="leaf-bg" id="leafContainer"></div>
+
+    <div class="error-container">
+        <i class="fas fa-exclamation-circle error-icon"></i>
+        <h1 class="error-title">500 - Smoke in the System</h1>
+        <p class="error-message">Oops, something went up in smoke on our end. We’re working to clear the haze—try again soon!</p>
+        <a href="/" class="error-cta">Back to Safety</a>
+    </div>
+
+    <footer>
+        <p>© 2025 Cloud 420. All Rights Reserved. Crafted for Excellence.</p>
+    </footer>
+
+    <script>
+        const leafContainer = document.getElementById('leafContainer');
+        function createLeaf() {
+            const leaf = document.createElement('div');
+            leaf.classList.add('leaf');
+            leaf.style.left = Math.random() * 100 + 'vw';
+            leaf.style.animationDuration = Math.random() * 10 + 10 + 's';
+            leafContainer.appendChild(leaf);
+            setTimeout(() => leaf.remove(), 20000);
+        }
+        setInterval(createLeaf, 2000);
+    </script>
+</body>
+</html>
