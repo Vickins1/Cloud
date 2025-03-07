@@ -13,13 +13,12 @@ const User = require('./models/user');
 const { isLoggedIn } = require('./middleware/auth');
 const cartRoutes = require('./routes/cart');
 const Order = require('./models/order');
-const fs = require('fs');
+const fs = require('fs').promises;
 const multer = require('multer');
 const adminRouter = require('./routes/admin');
 const Cart = require('./models/cart');
 require('dotenv').config();
 const os = require('os');
-
 const app = express();
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
