@@ -38,12 +38,6 @@ async function connectToDatabase() {
 
 connectToDatabase();
 
-<<<<<<< HEAD
-// Multer configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'public/uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-=======
 // Ensure upload directory exists
 const uploadDir = 'public/uploads/';
 (async () => {
@@ -64,7 +58,6 @@ const storage = multer.diskStorage({
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     cb(null, `${uniqueSuffix}${path.extname(file.originalname).toLowerCase()}`);
   },
->>>>>>> origin/main
 });
 
 // Multer upload configuration
