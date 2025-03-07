@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-<<<<<<< HEAD
 const transporter = nodemailer.createTransp
   service: 'gmail',
   auth: {
@@ -285,34 +284,6 @@ const emailService = {
         throw error;
       }
     },
-=======
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-=======
-// Validate environment variables
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASS = process.env.EMAIL_PASS;
-
-if (!EMAIL_USER || !EMAIL_PASS) {
-  console.error('Email configuration missing. Please set EMAIL_USER and EMAIL_PASS in .env');
-  throw new Error('Email service configuration incomplete');
-}
-
-// Nodemailer transporter with connection pooling
-const transporter = nodemailer.createTransport({
-  service: 'gmail', // Can be made configurable via env if needed
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS,
-  },
-  pool: true, // Use connection pooling for better performance
-  maxConnections: 5, // Limit concurrent connections
-  maxMessages: 100, // Limit messages per connection
->>>>>>> origin/main
-});
 
 // Common HTML template function
 const generateEmailTemplate = ({ headerTitle, content, host }) => `
