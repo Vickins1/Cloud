@@ -152,26 +152,6 @@ router.get('/products', isAdmin, async (req, res) => {
 // Products - Add
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
-<<<<<<< HEAD
-        const { name, price, description, stockQuantity, category } = req.body;
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
-
-        const product = new Product({
-            name,
-            price,
-            description,
-            stockQuantity,
-            category,
-            imageUrl: imagePaths[0],
-            additionalImages: imagePaths.slice(1)
-        });
-        await product.save();
-        req.flash('success_msg', 'Product added successfully.');
-        res.redirect('/admin/products');
-    } catch (error) {
-        console.error('Error adding product:', error);
-        req.flash('error_msg', 'Failed to add product.');
-=======
         // Validate required fields
         const { name, price, description, stockQuantity, category } = req.body;
         
@@ -237,7 +217,6 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
 
         console.error('Error adding product:', error);
         req.flash('error_msg', error.message || 'Failed to add product.');
->>>>>>> origin/main
         res.redirect('/admin/products');
     }
 });
@@ -552,14 +531,6 @@ router.get('/carts', isAdmin, async (req, res) => {
 router.get('/carts', isAdmin, async (req, res) => {
     try {
         const carts = await Cart.find()
-<<<<<<< HEAD
-            .populate('userId', 'username') // Populate username from User
-            .populate('products.productId'); // Populate product details
-        res.render('admin/carts', { carts, currentUser: req.user, activePage: 'carts' });
-    } catch (error) {
-        console.error('Error fetching carts:', error);
-        res.status(500).render('error', { error: 'Server error' });
-=======
             .populate({
                 path: 'userId',
                 select: 'username email', 
@@ -599,7 +570,6 @@ router.get('/carts', isAdmin, async (req, res) => {
             error: 'Server error',
             currentUser: req.user 
         });
->>>>>>> origin/main
     }
 });
 

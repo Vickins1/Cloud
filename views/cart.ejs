@@ -583,11 +583,8 @@
         </div>
     </div>
 </div>
-<<<<<<< HEAD
-=======
 
 
->>>>>>> origin/main
 <!-- Payment Processing Modal -->
 <div class="modal fade" id="paymentProcessingModal" tabindex="-1" role="dialog" aria-labelledby="paymentProcessingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -598,11 +595,7 @@
                 </h5>
             </div>
             <div class="modal-body p-4 text-center">
-<<<<<<< HEAD
-                <p class="text-white mb-3">Please wait while we process your payment. This may take a few moments.</p>
-=======
                 <p class="text-white mb-3">Please wait while we process your payment.</p>
->>>>>>> origin/main
                 <div class="spinner-border text-light" role="status" style="width: 3rem; height: 3rem;">
                     <span class="sr-only">Processing...</span>
                 </div>
@@ -611,35 +604,11 @@
         </div>
     </div>
 </div>
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const checkoutForm = document.getElementById('checkoutForm');
         const submitButton = document.getElementById('confirmCheckout');
-<<<<<<< HEAD
-        const buttonText = submitButton.querySelector('.button-text');
-        const loader = submitButton.querySelector('.loader');
-    
-        checkoutForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-    
-            // Show loader on submit button
-            submitButton.disabled = true;
-            buttonText.style.display = 'none';
-            loader.style.display = 'inline-flex';
-    
-            const formData = {
-                customerName: document.getElementById('customerName').value,
-                customerEmail: document.getElementById('customerEmail').value,
-                customerPhone: document.getElementById('customerPhone').value,
-                customerLocation: document.getElementById('customerLocation').value,
-                cartTotal: document.getElementById('cartTotal').value
-            };
-    
-=======
         const buttonText = submitButton?.querySelector('.button-text');
         const loader = submitButton?.querySelector('.loader');
     
@@ -685,174 +654,15 @@
         }
     
         async function initiatePayment(paymentData) {
->>>>>>> origin/main
             try {
                 const response = await fetch('/cart/initiate-payment', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-<<<<<<< HEAD
-                    body: JSON.stringify(formData)
-=======
                     body: JSON.stringify(paymentData)
->>>>>>> origin/main
                 });
     
                 const result = await response.json();
     
-<<<<<<< HEAD
-                // Hide loader on submit button
-                submitButton.disabled = false;
-                buttonText.style.display = 'inline';
-                loader.style.display = 'none';
-    
-                if (result.success) {
-                    // Close the checkout modal
-                    $('#checkoutModal').modal('hide');
-    
-                    // Open the payment processing modal immediately
-                    $('#paymentProcessingModal').modal('show');
-    
-                    // Start polling for payment status
-                    pollPaymentStatus(result.tranasaction_request_id);
-                } else {
-                    // Show error notification if STK Push fails
-                    showNotification('Error', result.message, 'danger');
-                }
-            } catch (error) {
-                console.error('Frontend payment error:', error);
-                showNotification('Error', 'Failed to connect to the server. Please try again.', 'danger');
-                submitButton.disabled = false;
-                buttonText.style.display = 'inline';
-                loader.style.display = 'none';
-            }
-        });
-    });
-    
-    // Existing polling function updated to handle modal
-    async function pollPaymentStatus(tranasaction_request_id) {
-        const pollInterval = setInterval(async () => {
-            try {
-                const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
-                const status = await response.json();
-    
-                if (status.status === 'completed') {
-                    clearInterval(pollInterval);
-                    $('#paymentProcessingModal').modal('hide'); // Close processing modal
-                    showNotification('Success', status.message, 'success');
-                    window.location.href = `/order-confirmation/${status.orderId}`;
-                } else if (status.status === 'failed' || status.status === 'not_found') {
-                    clearInterval(pollInterval);
-                    $('#paymentProcessingModal').modal('hide'); // Close processing modal
-                    showNotification('Error', status.message, 'danger');
-                } else if (status.status === 'error') {
-                    clearInterval(pollInterval);
-                    $('#paymentProcessingModal').modal('hide'); // Close processing modal
-                    showNotification('Error', 'Verification error. Please try again later.', 'danger');
-                }
-                // 'pending' status: keep polling, modal stays open
-            } catch (error) {
-                console.error('Polling error:', error);
-                clearInterval(pollInterval);
-                $('#paymentProcessingModal').modal('hide'); // Close processing modal
-                showNotification('Error', 'An error occurred while verifying payment.', 'danger');
-            }
-        }, 5000); // Poll every 5 seconds
-    }
-    
-    // Notification Functions (unchanged)
-    function showNotification(title, message, type, persistent = false) {
-        const container = document.querySelector('.notification-container') || createNotificationContainer();
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
-    
-        container.appendChild(notification);
-    
-        if (!persistent) {
-            setTimeout(() => notification.remove(), 3000);
-        }
-    
-        return {
-            element: notification,
-            update: (newTitle, newMessage, newType) => {
-                notification.querySelector('.notification-title').textContent = newTitle;
-                notification.querySelector('.notification-message').innerHTML = newMessage;
-                notification.className = `notification notification-${newType}`;
-            },
-            remove: () => notification.remove()
-        };
-    }
-    
-    function createNotificationContainer() {
-        const container = document.createElement('div');
-        container.className = 'notification-container';
-        document.body.appendChild(container);
-        return container;
-    }
-    </script>
-
-<script>
-    async function initiatePayment(paymentData) {
-    try {
-        const response = await fetch('/initiate-payment', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(paymentData)
-        });
-        const result = await response.json();
-
-        if (result.success) {
-            showSpinner();
-            pollPaymentStatus(result.tranasaction_request_id);
-        } else {
-            alert(result.message);
-        }
-    } catch (error) {
-        console.error('Payment initiation failed:', error);
-        alert('An error occurred. Please try again.');
-    }
-}
-
-async function pollPaymentStatus(tranasaction_request_id) {
-    const pollInterval = setInterval(async () => {
-        try {
-            const response = await fetch(`/verify-payment/${tranasaction_request_id}`);
-            const status = await response.json();
-
-            if (status.status === 'completed') {
-                clearInterval(pollInterval);
-                hideSpinner();
-                alert(status.message);
-                window.location.href = `/order-confirmation/${status.orderId}`;
-            } else if (status.status === 'failed' || status.status === 'not_found') {
-                clearInterval(pollInterval);
-                hideSpinner();
-                alert(status.message);
-            } else if (status.status === 'error') {
-                clearInterval(pollInterval);
-                hideSpinner();
-                alert('Verification error. Please try again later.');
-            }
-            // 'pending' status: keep polling
-        } catch (error) {
-            console.error('Polling error:', error);
-            clearInterval(pollInterval);
-            hideSpinner();
-            alert('An error occurred while verifying payment.');
-        }
-    }, 5000); // Poll every 5 seconds
-}
-
-function showSpinner() {
-    document.getElementById('payment-spinner').style.display = 'block';
-}
-
-function hideSpinner() {
-    document.getElementById('payment-spinner').style.display = 'none';
-}
-</script>
-
-=======
                 if (submitButton && buttonText && loader) {
                     submitButton.disabled = false;
                     buttonText.style.display = 'inline';
@@ -975,7 +785,6 @@ function hideSpinner() {
 </style>
 
  
->>>>>>> origin/main
 <script>
     document.addEventListener('DOMContentLoaded', () => {
     const locationSelect = document.getElementById('customerLocation');
@@ -1090,10 +899,6 @@ function createNotificationContainer() {
 }
 </script>
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 <style>
 .notification-container {
     position: fixed;

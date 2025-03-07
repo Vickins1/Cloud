@@ -10,14 +10,6 @@ const dotenv = require('dotenv');
 // Define pendingOrders at module scope
 const pendingOrders = new Map();
 
-<<<<<<< HEAD
-const generateOrderId = () => {
-    const randomNum = Math.floor(100000 + Math.random() * 900000);
-    return `CLOUD${randomNum}`;
-};
-
-=======
->>>>>>> origin/main
 // Middleware to check if the user is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
@@ -26,9 +18,6 @@ function isLoggedIn(req, res, next) {
     res.redirect('/auth/login');
 }
 
-<<<<<<< HEAD
-
-=======
 // Verify payment status
 async function verifyPaymentStatus(transactionRequestId) {
     try {
@@ -127,39 +116,25 @@ async function processPaymentVerification(transactionRequestId) {
 }
 
 // Initiate STK Push
->>>>>>> origin/main
 router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     const { customerName, customerEmail, customerPhone, customerLocation, cartTotal } = req.body;
 
     try {
-<<<<<<< HEAD
-        // Validate input
-=======
->>>>>>> origin/main
         if (!customerName || !customerEmail || !customerPhone || !customerLocation || !cartTotal) {
             return res.status(400).json({ success: false, message: 'Missing required fields' });
         }
 
         const cart = req.session.cart || [];
         if (!cart.length) {
-<<<<<<< HEAD
-            return res.status(400).json({ success: false, message: 'Your cart is empty' });
-=======
             return res.status(400).json({ success: false, message: 'Cart is empty' });
->>>>>>> origin/main
         }
 
         // Calculate delivery fee
         const deliveryLocations = {
             'Kutus': 0, 'Kerugoya': 100, 'Kagio': 100, 'Sagana': 100, 'Karatina': 150,
             'Embu University': 200, "Murang'a University": 200, 'Nyeri': 250, 'Thika': 250, 'Nairobi': 250,
-<<<<<<< HEAD
-            'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, Kiambu: 250, Ruiru: 250, Kikuyu: 250,
-            'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, Nakuru: 500, 'Kisii': 1000,
-=======
             'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, 'Kiambu': 250, 'Ruiru': 250, 'Kikuyu': 250,
             'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, 'Nakuru': 500, 'Kisii': 1000,
->>>>>>> origin/main
             'Kakamega': 1000, 'Kabarnet': 1000, 'Kericho': 1000, 'Kitale': 1000, 'Bungoma': 1000, 'Busia': 1000,
             'Kapsabet': 1000, 'Kisii University': 1000, 'Kisumu University': 1000, 'Maseno University': 1000,
             'Moi University': 1000, 'Egerton University': 1000, 'Masinde Muliro University': 1000,
@@ -200,11 +175,7 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             account_id: process.env.UMS_ACCOUNT_ID,
             amount: calculatedTotal,
             msisdn: customerPhone.startsWith('0') ? `254${customerPhone.slice(1)}` : customerPhone,
-<<<<<<< HEAD
-            reference: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}` 
-=======
             reference: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
->>>>>>> origin/main
         };
 
         const stkResponse = await axios.post('https://api.umeskiasoftwares.com/api/v1/intiatestk', stkPayload, {
@@ -215,11 +186,7 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
         if (stkData.success === '200') {
             const transactionRequestId = stkData.tranasaction_request_id;
 
-<<<<<<< HEAD
-            // Create transaction data 
-=======
             // Create transaction data
->>>>>>> origin/main
             const transactionData = {
                 orderId: null,
                 transactionRequestId: transactionRequestId,
@@ -236,12 +203,9 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             // Clear session cart
             req.session.cart = [];
 
-<<<<<<< HEAD
-=======
             // Start immediate polling for this transaction
             setImmediate(() => processPaymentVerification(transactionRequestId));
 
->>>>>>> origin/main
             return res.json({
                 success: true,
                 message: 'STK Push initiated. Please check your phone to complete payment.',
@@ -266,77 +230,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-// Payment verification function
-async function verifyPaymentStatus(transactionRequestId) {
-    try {
-        const verifyPayload = {
-            api_key: process.env.UMS_API_KEY,
-            email: process.env.UMS_EMAIL,
-            tranasaction_request_id: transactionRequestId
-        };
-
-        const response = await axios.post('https://api.umeskiasoftwares.com/api/v1/transactionstatus', verifyPayload, {
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        return response.data;
-    } catch (error) {
-        console.error('Payment verification failed:', error);
-        throw error;
-    }
-}
-
-// Periodic payment verification
-setInterval(async () => {
-    const now = new Date();
-    for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders) {
-        try {
-            const verification = await verifyPaymentStatus(transactionRequestId);
-            console.log(`Verification result for ${transactionRequestId}:`, verification);
-
-            // Check TransactionStatus and TransactionCode
-            if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-                // Update order data with verification details
-                orderData.paymentStatus = 'completed';
-                orderData.transactionRequestId = transactionRequestId;
-                orderData.paymentDetails = verification;
-
-                // Save order to database
-                const order = new Order(orderData);
-                await order.save();
-
-                // Update transaction data with order ID
-                transactionData.orderId = order._id;
-                transactionData.status = 'Completed';
-                transactionData.gatewayResponse = verification;
-
-                // Save transaction to database
-                const transaction = new Transaction(transactionData);
-                await transaction.save();
-
-                // Remove from pendingOrders
-                pendingOrders.delete(transactionRequestId);
-                console.log(`Payment completed and saved for order: ${order._id}`);
-            } else if (verification.TransactionStatus === 'Failed' || 
-                       ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.TransactionCode)) {
-                // Mark as failed but don’t save to database
-                transactionData.status = 'Failed';
-                transactionData.gatewayResponse = verification;
-                pendingOrders.delete(transactionRequestId);
-                console.log(`Payment failed for transaction: ${transactionRequestId}`);
-            }
-
-            // Cleanup expired pending orders 
-            if (now - orderData.createdAt > 1000 * 60 * 30) {
-                transactionData.status = 'Failed';
-                transactionData.gatewayResponse = { message: 'Payment timeout' };
-                pendingOrders.delete(transactionRequestId);
-                console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
-            }
-        } catch (error) {
-            console.error(`Error verifying ${transactionRequestId}:`, error);
-=======
 // Periodic cleanup (runs every 5 minutes)
 setInterval(async () => {
     const now = Date.now();
@@ -358,38 +251,15 @@ setInterval(async () => {
             } catch (error) {
                 console.error(`Error cleaning up ${transactionRequestId}:`, error);
             }
->>>>>>> origin/main
         }
     }
 }, 1000 * 60 * 5);
 
-<<<<<<< HEAD
-=======
 // Verify payment endpoint
->>>>>>> origin/main
 router.get('/verify-payment/:transactionId', async (req, res) => {
     const { transactionId } = req.params;
     try {
         const verification = await verifyPaymentStatus(transactionId);
-<<<<<<< HEAD
-        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-            const order = pendingOrders.get(transactionId)?.orderData;
-            if (order) {
-                res.json({ status: 'completed', message: 'Payment successful!', orderId: order._id });
-            } else {
-                res.json({ status: 'not_found', message: 'Transaction not found' });
-            }
-        } else if (verification.TransactionStatus === 'Failed') {
-            res.json({ status: 'failed', message: 'Payment failed' });
-        } else {
-            res.json({ status: 'pending', message: 'Payment still processing' });
-        }
-    } catch (error) {
-        res.json({ status: 'error', message: 'Verification error' });
-    }
-});
-
-=======
         const pendingOrder = pendingOrders.get(transactionId);
 
         const response = {
@@ -422,7 +292,6 @@ router.get('/verify-payment/:transactionId', async (req, res) => {
 });
 
 
->>>>>>> origin/main
 // GET cart page
 router.get('/', isLoggedIn, async (req, res) => {
     try {
@@ -566,8 +435,6 @@ router.get('/cart-count', isLoggedIn, async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-=======
 // Order Confirmation Route
 router.get('/order-confirmation/:orderId', isLoggedIn, async (req, res) => {
     try {
@@ -626,5 +493,4 @@ router.get('/order-confirmation/:orderId', isLoggedIn, async (req, res) => {
     }
 });
 
->>>>>>> origin/main
 module.exports = router;
