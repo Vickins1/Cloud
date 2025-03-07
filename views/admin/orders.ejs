@@ -228,6 +228,89 @@
                                                                     <span class="text-muted">No items</span>
                                                                 <% } %>
                                                             </td>
+                                                            No code was selected, so I will provide a general improvement to the code. Here's an example of how the table can be improved for better responsiveness and accessibility:
+
+```html
+<div class="table-responsive">
+    <table class="table table-dark table-hover" aria-label="Orders table">
+        <caption>Manage Orders</caption>
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Order ID</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Products Ordered</th>
+                <th scope="col">Total (KES)</th>
+                <th scope="col">Payment Status</th>
+                <th scope="col">Shipping Status</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% 
+                const sortedOrders = orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                sortedOrders.forEach((order, index) => { 
+                    const count = sortedOrders.length - index;
+                    if (order && order.total !== undefined) { 
+            %>
+            <tr>
+                <td><%= count %></td>
+                <td class="text-truncate" style="max-width: 120px;"><%= order._id %></td>
+                <td class="text-truncate" style="max-width: 120px;"><%= order.customerName || 'N/A' %></td>
+                <td>
+                    <% if (order.items && order.items.length > 0) { %>
+                        <ul class="list-unstyled">
+                            <% order.items.forEach(item => { %>
+                                <li>
+                                    <strong><%= item.productId?.name || 'Unknown Product' %></strong> 
+                                    <span class="text-muted">(Qty: <%= item.quantity %>)</span>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <span class="text-muted">No items</span>
+                    <% } %>
+                </td>
+                
+                <td><%= order.total.toFixed(2) %></td>
+                <td>
+                    <span class="badge 
+                        <%= order.status === 'Completed' ? 'badge-success' : 
+                            order.status === 'Pending' ? 'badge-warning' : 'badge-danger' %>">
+                        <%= order.paymentStatus %>
+                    </span>
+                </td>
+                <td>
+                    <form action="/admin/orders/update-shipping-status" method="POST" style="display:inline;">
+                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                        <select name="shippingStatus" class="form-control form-control-sm" onchange="this.form.submit()">
+                            <option value="Not Shipped" <%= order.shippingStatus === 'Not Shipped' ? 'selected' : '' >>Not Shipped</option>
+                            <option value="Processing" <%= order.shippingStatus === 'Processing' ? 'selected' : '' >>Processing</option>
+                            <option value="Shipped" <%= order.shippingStatus === 'Shipped' ? 'selected' : '' >>Shipped</option>
+                            <option value="Delivered" <%= order.shippingStatus === 'Delivered' ? 'selected' : '' >>Delivered</option>
+                            <option value="Cancelled" <%= order.shippingStatus === 'Cancelled' ? 'selected' : '' >>Cancelled</option>
+                        </select>
+                    </form>
+                </td>
+                <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
+                <td>
+                    <form action="/admin/orders/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            <% 
+                    }
+                }); 
+            %>
+        </tbody>
+    </table>
+</div>
+```
                                                             <td><%= order.total.toFixed(2) %></td>
                                                             <td>
                                                                 <span class="badge 

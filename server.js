@@ -13,13 +13,12 @@ const User = require('./models/user');
 const { isLoggedIn } = require('./middleware/auth');
 const cartRoutes = require('./routes/cart');
 const Order = require('./models/order');
-const fs = require('fs');
+const fs = require('fs').promises;
 const multer = require('multer');
 const adminRouter = require('./routes/admin');
 const Cart = require('./models/cart');
 require('dotenv').config();
 const os = require('os');
-
 const app = express();
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
@@ -39,23 +38,50 @@ async function connectToDatabase() {
 
 connectToDatabase();
 
+<<<<<<< HEAD
 // Multer configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'public/uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+=======
+// Ensure upload directory exists
+const uploadDir = 'public/uploads/';
+(async () => {
+  try {
+    await fs.mkdir(uploadDir, { recursive: true });
+    console.log(`Upload directory ensured: ${uploadDir}`);
+  } catch (error) {
+    console.error(`Failed to create upload directory: ${error}`);
+  }
+})();
+
+// Multer storage configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    cb(null, `${uniqueSuffix}${path.extname(file.originalname).toLowerCase()}`);
+  },
+>>>>>>> origin/main
 });
 
+// Multer upload configuration
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024, files: 10 },
+  limits: { 
+    fileSize: 10 * 1024 * 1024, // 10MB
+    files: 10, // Max 10 files
+  },
   fileFilter: (req, file, cb) => {
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-      if (allowedTypes.includes(file.mimetype)) {
-          cb(null, true);
-      } else {
-          cb(new Error('Only JPEG, PNG, GIF, and WEBP images are allowed'));
-      }
-  }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new multer.MulterError('INVALID_FILE_TYPE', 'Only JPEG, PNG, GIF, and WEBP images are allowed'));
+    }
+  },
 });
 
 module.exports = { app, upload };
