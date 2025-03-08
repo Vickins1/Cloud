@@ -176,6 +176,7 @@
                                                 <tr>
                                                     <th class="py-2 pl-3">Order ID</th>
                                                     <th class="py-2">Customer</th>
+                                                    <th class="py-2">Phone</th>
                                                     <th class="py-2">Total (KES)</th>
                                                     <th class="py-2">Payment Date</th>
                                                     <th class="py-2">Transaction ID</th>
@@ -187,6 +188,7 @@
                                                     <tr>
                                                         <td class="py-2 pl-3"><%= transaction.orderId %></td>
                                                         <td class="py-2"><%= transaction.customerName %></td>
+                                                        <td class="py-2"><%= transaction.customerPhone %></td>
                                                         <td class="py-2"><%= Number(transaction.total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td><td class="py-2">
                                                             <%= new Date(transaction.paymentDate).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) %>
                                                           </td>                                                          
