@@ -192,7 +192,7 @@
                                                         <td class="py-2"><%= Number(transaction.total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td><td class="py-2">
                                                             <%= new Date(transaction.paymentDate).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) %>
                                                           </td>                                                          
-                                                        <td class="py-2"><%= transaction._id %></td>
+                                                          <td class="py-2"><%= transaction.transactionId %></td>
                                                         <td class="py-2 pr-3">
                                                             <span class="badge <%= transaction.status === 'completed' ? 'badge-success' : transaction.status === 'failed' ? 'badge-danger' : 'badge-warning' %>">
                                                                 <%= transaction.status %>

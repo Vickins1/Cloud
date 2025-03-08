@@ -170,8 +170,8 @@
                                             <th scope="col">Products Ordered</th>
                                             <th scope="col">Total (KES)</th>
                                             <th scope="col">Payment Status</th>
-                                            <th scope="col">Shipping Status</th>
                                             <th scope="col">Date</th>
+                                            <th scope="col">Shipping Status</th>
                                             <th scope="col">Action</th>
                                         </tr>
                                     </thead>
@@ -212,10 +212,12 @@
                                             </td>
                                             <td><%= order.total.toFixed(2) %></td>
                                             <td>
-                                                <span class="badge <%= order.status === 'Completed' ? 'badge-success' : order.status === 'Pending' ? 'badge-warning' : 'badge-danger' %>">
+                                                <span class="badge <%= order.status === 'Completed' ? 'badge-danger' : order.status === 'Pending' ? 'badge-warning' : 'badge-success' %>">
                                                     <%= order.paymentStatus %>
                                                 </span>
                                             </td>
+                                            
+                                            <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
                                             <td>
                                                 <form action="/admin/orders/update-shipping-status" method="POST" style="display:inline;">
                                                     <input type="hidden" name="orderId" value="<%= order._id %>">
@@ -228,7 +230,6 @@
                                                     </select>
                                                 </form>
                                             </td>
-                                            <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
                                             <td>
                                                 <form action="/admin/orders/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
                                                     <input type="hidden" name="orderId" value="<%= order._id %>">

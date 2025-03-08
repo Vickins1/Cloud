@@ -38,25 +38,36 @@ router.get('/dashboard', isAdmin, async (req, res) => {
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
         const totalSalesResult = await Order.aggregate([
-            { $match: { paymentStatus: 'completed' } }, // Changed from 'status' to 'paymentStatus'
+            { $match: { paymentStatus: 'completed' } },
             { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
         ]);
         const totalSales = totalSalesResult[0]?.total || 0;
 
         const monthlyRevenueResult = await Order.aggregate([
-            { $match: { paymentStatus: 'completed', createdAt: { $gte: startOfMonth, $lte: endOfMonth } } }, // Changed from 'status'
+            { $match: { paymentStatus: 'completed', createdAt: { $gte: startOfMonth, $lte: endOfMonth } } },
             { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
         ]);
         const monthlyRevenue = monthlyRevenueResult[0]?.total || 0;
 
-        const [pendingOrders, shippedOrders] = await Promise.all([
-            Order.countDocuments({ paymentStatus: 'Pending' }), // Changed from 'status'
-            Order.countDocuments({ shippingStatus: 'Shipped' }) // Updated to count 'Shipped' instead of 'Completed'
+        const [pendingOrdersPaidNotShipped, shippedOrders] = await Promise.all([
+            Order.countDocuments({ paymentStatus: 'completed', shippingStatus: 'Processing' }),
+            Order.countDocuments({ shippingStatus: 'Shipped' })
         ]);
 
-        const newUsersThisMonth = await User.countDocuments({
-            createdAt: { $gte: startOfMonth, $lte: endOfMonth }
-        });
+        let newUsersThisMonth;
+        try {
+            newUsersThisMonth = await User.countDocuments({
+                createdAt: { 
+                    $gte: startOfMonth, 
+                    $lte: endOfMonth 
+                }
+            }).exec();
+            
+            console.log(`New users from ${startOfMonth} to ${endOfMonth}: ${newUsersThisMonth}`);
+        } catch (userCountError) {
+            console.error('Error counting new users:', userCountError);
+            newUsersThisMonth = 0; 
+        }
 
         const orders = await Order.find()
             .sort({ createdAt: -1 })
@@ -101,7 +112,7 @@ router.get('/dashboard', isAdmin, async (req, res) => {
             productCount,
             orderCount,
             totalSales,
-            pendingOrders,
+            pendingOrders: pendingOrdersPaidNotShipped,
             completedOrders: shippedOrders,
             monthlyRevenue,
             newUsersThisMonth,
@@ -113,7 +124,8 @@ router.get('/dashboard', isAdmin, async (req, res) => {
         });
     } catch (error) {
         console.error('Admin dashboard error:', error);
-        res.status(500).render('error', { error: 'Server error occurred while loading the dashboard' });
+        req.flash('error_msg', 'Server error occurred while loading the dashboard.');
+        res.redirect('/admin/dashboard'); // Redirect with flash message instead of rendering error page
     }
 });
 
@@ -258,23 +270,62 @@ router.delete('/products/delete/:id', isAdmin, async (req, res) => {
 
 router.get('/users', isAdmin, async (req, res) => {
     try {
-        let page = parseInt(req.query.page) || 1;
-        let limit = 10;
-        let skip = (page - 1) * limit;
-        const user = req.user ? await User.findById(req.user._id).lean() : null;
-        let totalUsers = await User.countDocuments();
-        let users = await User.find().skip(skip).limit(limit);
+        // Pagination parameters
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
 
+        // Fetch current user (if logged in)
+        const currentUser = req.user ? await User.findById(req.user._id).lean() : null;
+
+        // Fetch total users and paginated users
+        const totalUsers = await User.countDocuments();
+        const users = await User.find()
+            .skip(skip)
+            .limit(limit)
+            .lean(); // Use .lean() for performance if you don’t need Mongoose documents
+
+        // Calculate total pages
+        const totalPages = Math.ceil(totalUsers / limit);
+
+        // Render the users page
         res.render('admin/users', {
             users,
             currentPage: page,
-            totalPages: Math.ceil(totalUsers / limit),
-            user: user || {}, // Pass user with fallback
-            messageCount: user?.messageCount || 0 // Default to 0 if undefined
+            totalPages,
+            user: currentUser || {}, // Fallback to empty object if null
+            messageCount: currentUser?.messageCount || 0, // Safe default
+            success_msg: req.flash('success_msg'), // Add success flash message
+            error_msg: req.flash('error_msg') // Add error flash message
         });
     } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error('Error fetching users:', error);
+        req.flash('error_msg', 'Failed to load users. Please try again.');
         res.redirect('/admin/dashboard');
+    }
+});
+
+// Toggle Admin Status
+router.post('/users/toggle-admin/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            req.flash('error_msg', 'User not found.');
+            return res.redirect('/admin/users');
+        }
+
+        // Toggle isAdmin status
+        user.isAdmin = !user.isAdmin;
+        await user.save();
+
+        req.flash('success_msg', `User ${user.username} ${user.isAdmin ? 'promoted to' : 'demoted from'} admin status.`);
+        res.redirect('/admin/users');
+    } catch (err) {
+        console.error('Error toggling admin status:', err);
+        req.flash('error_msg', 'Failed to update admin status.');
+        res.redirect('/admin/users');
     }
 });
 
@@ -644,10 +695,11 @@ router.get('/transactions', isAdmin, async (req, res) => {
             .skip((page - 1) * perPage)
             .limit(perPage)
             .lean();
-        const fetchTime = Date.now() - startTime; // End timer
+        const fetchTime = Date.now() - startTime;
 
         const enrichedTransactions = transactions.map(transaction => ({
             ...transaction,
+            transactionId: transaction._id, 
             orderId: transaction.orderId?._id || transaction._id,
             customerName: transaction.orderId?.customerName || transaction.customerPhone || 'Cloud Wanderer',
             total: transaction.orderId?.total || transaction.amount || 0,
@@ -656,6 +708,7 @@ router.get('/transactions', isAdmin, async (req, res) => {
                 : transaction.createdAt,
             status: transaction.status || 'Unknown'
         }));
+        
 
         res.render('admin/transactions', {
             transactions: enrichedTransactions,

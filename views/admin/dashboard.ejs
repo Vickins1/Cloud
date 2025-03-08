@@ -187,16 +187,16 @@
         </div>
     </div>
 
-    <!-- Pending Orders -->
-    <div class="col-12 col-sm-6 col-md-3 mb-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-hourglass-half"></i></span>
-            <div class="info-box-content">
-                <span class="info-box-text">Pending Orders</span>
-                <span class="info-box-number"><%= pendingOrders %></span>
-            </div>
+<!-- Pending Orders -->
+<div class="col-12 col-sm-6 col-md-3 mb-3">
+    <div class="info-box">
+        <span class="info-box-icon bg-secondary elevation-1"><i class="fas fa-hourglass-half"></i></span>
+        <div class="info-box-content">
+            <span class="info-box-text">Orders Paid, Not Shipped</span>
+            <span class="info-box-number"><%= pendingOrders %></span>
         </div>
     </div>
+</div>
 
     <!-- Completed Orders -->
     <div class="col-12 col-sm-6 col-md-3 mb-3">
@@ -231,7 +231,7 @@
         </div>
     </div>
 
-    <!-- New Users This Month (Replacement for Active Subscriptions) -->
+    <!-- New Users This Month -->
     <div class="col-12 col-sm-6 col-md-3 mb-3">
         <div class="info-box">
             <span class="info-box-icon bg-teal elevation-1"><i class="fas fa-user-plus"></i></span>
@@ -244,64 +244,138 @@
 </div>
 
    
-               <!-- Latest Orders Table -->
-               <div class="card">
-                   <div class="card-header border-transparent">
-                       <h3 class="card-title">Latest Orders</h3>
-                       <div class="card-tools">
-                           <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                               <i class="fas fa-minus"></i>
-                           </button>
-                           <button type="button" class="btn btn-tool" data-card-widget="remove">
-                               <i class="fas fa-times"></i>
-                           </button>
-                       </div>
-                   </div>
-                   <div class="card-body p-0">
-                       <div class="table-responsive">
-                           <table class="table m-0">
-                               <thead>
-                                   <tr>
-                                       <th>Order ID</th>
-                                       <th>Customer</th>
-                                       <th>Total (KES)</th>
-                                       <th>Status</th>
-                                       <th>Date</th>
-                                   </tr>
-                               </thead>
-                               <tbody>
-                                   <% orders.slice(0, 5).forEach(order => { %>
-                                       <% if (order && order.total !== undefined) { %>
-                                           <tr>
-                                               <td><a href="/admin/orders/<%= order._id %>"><%= order._id %></a></td>
-                                               <td><%= order.customerName || 'N/A' %></td>
-                                               <td><%= order.total.toFixed(2) %></td>
-                                               <td>
-                                                   <span class="badge <%= order.status === 'Completed' ? 'badge-success' : order.status === 'Pending' ? 'badge-warning' : 'badge-danger' %>">
-                                                       <%= order.status || 'Unknown' %>
-                                                   </span>
-                                               </td>
-                                               <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
-                                           </tr>
-                                       <% } else { %>
-                                           <tr>
-                                               <td colspan="5">Invalid order data</td>
-                                           </tr>
-                                       <% } %>
-                                   <% }); %>
-                                   <% if (!orders || orders.length === 0) { %>
-                                       <tr>
-                                           <td colspan="5">No orders available.</td>
-                                       </tr>
-                                   <% } %>
-                               </tbody>
-                           </table>
-                       </div>
-                   </div>
-                   <div class="card-footer clearfix">
-                       <a href="/admin/orders" class="btn btn-sm btn-secondary float-right">View All Orders</a>
-                   </div>
-               </div>
+<!-- Latest Orders Table -->
+<div class="card">
+    <div class="card-header border-transparent">
+        <h3 class="card-title">Latest Orders</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-card-widget="remove">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Total (KES)</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.slice(0, 5).forEach(order => { %>
+                        <% if (order && order.total !== undefined) { %>
+                            <tr>
+                                <td>
+                                    <a href="#" class="order-link" data-toggle="modal" data-target="#orderModal" data-order-id="<%= order._id %>">
+                                        <%= order._id %>
+                                    </a>
+                                </td>
+                                <td><%= order.customerName || 'N/A' %></td>
+                                <td><%= order.total.toFixed(2) %></td>
+                                <td>
+                                    <span class="badge <%= order.status === 'Completed' ? 'badge-success' : order.status === 'Pending' ? 'badge-warning' : 'badge-danger' %>">
+                                        <%= order.status || 'Unknown' %>
+                                    </span>
+                                </td>
+                                <td><%= order.createdAt ? new Date(order.createdAt).toDateString() : 'N/A' %></td>
+                            </tr>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="5">Invalid order data</td>
+                            </tr>
+                        <% } %>
+                    <% }); %>
+                    <% if (!orders || orders.length === 0) { %>
+                        <tr>
+                            <td colspan="5">No orders available.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer clearfix">
+        <a href="/admin/orders" class="btn btn-sm btn-secondary float-right">View All Orders</a>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Order ID:</strong> <span id="modalOrderId"></span></p>
+                <p><strong>Customer:</strong> <span id="modalCustomer"></span></p>
+                <p><strong>Total:</strong> <span id="modalTotal"></span> KES</p>
+                <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                <h6>Items:</h6>
+                <ul id="modalItems"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('.order-link').on('click', function(e) {
+            e.preventDefault();
+            const orderId = $(this).data('order-id');
+    
+            // Fetch order details via AJAX
+            $.ajax({
+                url: `/admin/orders/${orderId}`,
+                method: 'GET',
+                success: function(order) {
+                    $('#modalOrderId').text(order._id);
+                    $('#modalCustomer').text(order.customerName || 'N/A');
+                    $('#modalTotal').text(order.total ? order.total.toFixed(2) : 'N/A');
+                    $('#modalStatus').text(order.status || 'Unknown');
+                    $('#modalDate').text(order.createdAt ? new Date(order.createdAt).toDateString() : 'N/A');
+    
+                    // Populate items
+                    const itemsList = $('#modalItems');
+                    itemsList.empty();
+                    if (order.items && order.items.length > 0) {
+                        order.items.forEach(item => {
+                            const productName = item.productId?.name || 'Unknown Product';
+                            const quantity = item.quantity || 0;
+                            const price = item.productId?.price || 0;
+                            itemsList.append(`<li>${productName} - Qty: ${quantity} - Price: ${price.toFixed(2)} KES</li>`);
+                        });
+                    } else {
+                        itemsList.append('<li>No items found.</li>');
+                    }
+                },
+                error: function(err) {
+                    console.error('Error fetching order details:', err);
+                    $('#modalOrderId').text(orderId);
+                    $('#modalCustomer').text('Error');
+                    $('#modalTotal').text('Error');
+                    $('#modalStatus').text('Error');
+                    $('#modalDate').text('Error');
+                    $('#modalItems').html('<li>Unable to load items.</li>');
+                }
+            });
+        });
+    });
+    </script>
            </div>
        </section>
    </div>

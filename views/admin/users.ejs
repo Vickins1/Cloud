@@ -15,7 +15,7 @@
        <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
        <!-- Theme style -->
        <link rel="stylesheet" href="/dist/css/adminlte.min2167.css?v=3.2.0">
-       <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
+       <link rel="icon" type="image/png" sizes="64x64" href="/images/1con.png">
 </head>
 
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
@@ -154,7 +154,7 @@
                                             <h3 class="card-title">Manage Users</h3>
                                         </div>
                                         <div class="card-body">
-                                            <div class="table-responsive"> <!-- Responsive wrapper -->
+                                            <div class="table-responsive">
                                                 <table class="table table-dark">
                                                     <thead>
                                                         <tr>
@@ -173,9 +173,21 @@
                                                                 <td><%= user._id %></td>
                                                                 <td><%= user.username %></td>
                                                                 <td><%= user.email %></td>
-                                                                <td><%= user.isAdmin ? 'Yes' : 'No' %></td>
                                                                 <td>
-                                                                    <form action="/admin/users/delete/<%= user._id %>" method="POST" onsubmit="return confirmDelete()">
+                                                                    <span class="badge <%= user.isAdmin ? 'badge-success' : 'badge-secondary' %>">
+                                                                        <%= user.isAdmin ? 'Yes' : 'No' %>
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <!-- Toggle Admin Form -->
+                                                                    <form action="/admin/users/toggle-admin/<%= user._id %>" method="POST" style="display:inline;">
+                                                                        <button type="submit" class="btn btn-sm <%= user.isAdmin ? 'btn-warning' : 'btn-success' %> mr-2" title="<%= user.isAdmin ? 'Remove Admin' : 'Make Admin' %>">
+                                                                            <i class="fas <%= user.isAdmin ? 'fa-user-minus' : 'fa-user-plus' %>"></i>
+                                                                            <%= user.isAdmin ? 'Remove' : 'Make' %> Admin
+                                                                        </button>
+                                                                    </form>
+                                                                    <!-- Delete Form -->
+                                                                    <form action="/admin/users/delete/<%= user._id %>" method="POST" onsubmit="return confirmDelete()" style="display:inline;">
                                                                         <button type="submit" class="btn btn-sm btn-danger">
                                                                             <i class="fas fa-trash-alt"></i> Delete
                                                                         </button>
@@ -186,7 +198,7 @@
                                                     </tbody>
                                                 </table>
                                             </div>
-                                            
+                                        
                                             <!-- Pagination Controls -->
                                             <nav>
                                                 <ul class="pagination justify-content-center">
@@ -208,6 +220,20 @@
                                                 </ul>
                                             </nav>
                                         </div>
+                                        
+                                        <!-- JavaScript for Confirmation -->
+                                        <script>
+                                            function confirmDelete() {
+                                                return confirm('Are you sure you want to delete this user?');
+                                            }
+                                        </script>
+                                        
+                                        <!-- JavaScript for Confirmation -->
+                                        <script>
+                                            function confirmDelete() {
+                                                return confirm('Are you sure you want to delete this user?');
+                                            }
+                                        </script>
                                     </div>
                                 </div>
                             </section>
