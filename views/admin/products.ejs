@@ -280,107 +280,17 @@
                            </select>
                        </div>
                        <div class="form-group mb-3">
-<<<<<<< HEAD
                            <label for="editImages" class="text-muted font-weight-bold small">Images (Replace Existing)</label>
                            <input type="file" class="form-control-file" id="editImages" name="images" accept="image/*" multiple style="padding: 6px; border: 1px dashed #ffc107; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;">
                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Leave empty to keep current images</small>
                        </div>
-=======
-                        <label for="editImages" class="text-muted fw-bold small">Images (Replace Existing)</label>
-                        <div class="custom-file-upload position-relative">
-                            <input 
-                                type="file" 
-                                class="form-control-file" 
-                                id="editImages" 
-                                name="images" 
-                                accept="image/jpeg,image/png,image/gif,image/webp" 
-                                multiple
-                                style="
-                                    padding: 6px; 
-                                    border: 1px dashed #ffc107; 
-                                    border-radius: 8px; 
-                                    background: #1a1a1a; 
-                                    font-size: 0.85rem;
-                                    cursor: pointer;
-                                    width: 100%;
-                                "
-                                aria-describedby="imageHelp"
-                                onchange="previewImages(event)"
-                            >
-                            <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
-                        </div>
-                        <small id="imageHelp" class="text-muted d-block mt-1" style="font-size: 0.75rem;">
-                            Leave empty to keep current images. Max 10 files, 10MB each.
-                        </small>
-                    </div>
->>>>>>> origin/main
                        <button type="submit" class="btn btn-warning btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold; background: #ffc107; color: #212529;">Update Product</button>
                    </form>
                </div>
            </div>
        </div>
    </div>
-<<<<<<< HEAD
-=======
-   <!-- Add this JavaScript at the bottom of your page or in a separate file -->
-<script>
-    function previewImages(event) {
-        const preview = document.getElementById('imagePreview');
-        preview.innerHTML = '';
-        
-        const files = event.target.files;
-        if (files) {
-            Array.from(files).slice(0, 10).forEach(file => { 
-                if (file.size > 10 * 1024 * 1024) { 
-                    alert(`File ${file.name} exceeds 10MB limit`);
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '100px';
-                    img.style.maxHeight = '100px';
-                    img.style.objectFit = 'cover';
-                    img.style.borderRadius = '4px';
-                    preview.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-    }
-    </script>
-    
-    <!-- Optional CSS for better styling -->
-    <style>
-    .custom-file-upload {
-        overflow: hidden;
-    }
-    
-    .custom-file-upload input[type="file"] {
-        transition: border-color 0.3s ease;
-    }
-    
-    .custom-file-upload input[type="file"]:hover {
-        border-color: #ffca2c;
-    }
-    
-    .custom-file-upload input[type="file"]:focus {
-        outline: none;
-        border-color: #ffca2c;
-        box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
-    }
-    
-    @media (max-width: 768px) {
-        .custom-file-upload input[type="file"] {
-            font-size: 0.8rem;
-            padding: 4px;
-        }
-    }
-    </style>
->>>>>>> origin/main
-   
+
    <style>
        .modal-content {
            transition: all 0.3s ease;
@@ -506,178 +416,259 @@
                                    </script>
 
 
-                                   <!-- Add Product Modal -->
+<!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
-       <div class="modal-dialog modal-md" role="document"> <!-- Changed from modal-lg to modal-md -->
-           <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #035925;">
-               <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
-                   <h5 class="modal-title font-weight-bold" id="addProductModalLabel" style="font-size: 1.25rem; color: #d4edda;">Add New Product</h5>
-                   <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                       <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
-                   </button>
-               </div>
-               <div class="modal-body p-3">
-                   <form id="addProductForm" action="/admin/products/add" method="POST" enctype="multipart/form-data">
-                       <div class="form-group mb-3">
-                           <label for="name" class="text-muted font-weight-bold small">Product Name</label>
-                           <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="name" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                       </div>
-                       <div class="form-group mb-3">
-                           <label for="price" class="text-muted font-weight-bold small">Price (KES)</label>
-                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="price" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                       </div>
-                       <div class="form-group mb-3">
-                           <label for="description" class="text-muted font-weight-bold small">Description</label>
-                           <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="description" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
-                       </div>
-                       <div class="form-group mb-3">
-                           <label for="stockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
-                           <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="stockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                       </div>
-                       <div class="form-group mb-3">
-                           <label for="category" class="text-muted font-weight-bold small">Category</label>
-                           <select class="form-control bg-secondary text-white border-0 shadow-sm" id="category" name="category" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                               <option value="Flower">Flowers</option>
-                               <option value="Edibles">Edibles</option>
-                               <option value="Vapes">Vapes</option>
-                               <option value="Booklets">Booklets</option>
-                               <option value="Accessories">420 Accessories</option>
-                               <option value="Tips">Seeds</option>
-                               <option value="Tips">Bongs and Chalice</option>
-
-                           </select>
-                       </div>
-                       <div class="form-group mb-3">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #035925;">
+            <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
+                <h5 class="modal-title font-weight-bold" id="addProductModalLabel" style="font-size: 1.25rem; color: #d4edda;">Add New Product</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <form id="addProductForm" action="/admin/products/add" method="POST" enctype="multipart/form-data">
+                    <div class="form-group mb-3">
+                        <label for="name" class="text-muted font-weight-bold small">Product Name</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="name" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="price" class="text-muted font-weight-bold small">Price (KES)</label>
+                        <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="price" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="description" class="text-muted font-weight-bold small">Description</label>
+                        <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="description" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="stockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
+                        <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="stockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="category" class="text-muted font-weight-bold small">Category</label>
+                        <select class="form-control bg-secondary text-white border-0 shadow-sm" id="category" name="category" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                            <option value="Flower">Flowers</option>
+                            <option value="Edibles">Edibles</option>
+                            <option value="Vapes">Vapes</option>
+                            <option value="Booklets">Booklets</option>
+                            <option value="Accessories">420 Accessories</option>
+                            <option value="Seeds">Seeds</option>
+                            <option value="Bongs">Bongs and Chalice</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
                         <label for="images" class="text-muted font-weight-bold small">Images (Multiple)</label>
                         <input 
                             type="file" 
                             class="form-control-file" 
                             id="images" 
                             name="images" 
-                            accept="image/*" 
-                            multiple 
-                            required 
-                            capture="environment" 
-                            style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;"
+                            accept="image/jpeg,image/png,image/gif,image/webp" 
+                            multiple
+                            style="
+                                padding: 10px; 
+                                border: 1px dashed #035925; 
+                                border-radius: 8px; 
+                                background: #1a1a1a; 
+                                font-size: 0.85rem;
+                                width: 100%;
+                                height: auto;
+                                -webkit-appearance: none;
+                                appearance: none;
+                                cursor: pointer;
+                            "
+                            aria-describedby="imageHelp"
+                            onchange="previewImages(event)"
                         >
-                        <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Ctrl (Win) or Cmd (Mac) for multiple; tap to use camera on phone</small>
+                        <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                        <small id="imageHelp" class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                            Tap to select from gallery. Max 10 files, 10MB each.
+                        </small>
                     </div>
-                       <button type="submit" class="btn btn-success btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add Product</button>
-                   </form>
-               </div>
-           </div>
-       </div>
-   </div>
-   
-   <style>
-       .modal-content {
-           transition: all 0.3s ease;
-       }
-   
-       .form-control,
-       .form-control-file {
-           background: #2d2d2d;
-           color: #fff;
-           border: none;
-           border-radius: 8px;
-           padding: 8px;
-       }
-   
-       .form-control:focus {
-           box-shadow: 0 0 5px rgba(3, 89, 37, 0.5);
-           background: #333;
-       }
-   
-       .btn-success {
-           background: #035925;
-           border: none;
-           transition: transform 0.2s, background 0.3s;
-       }
-   
-       .btn-success:hover {
-           background: #028a1b;
-           transform: translateY(-2px);
-       }
-   
-       @media (max-width: 768px) {
-           .modal-dialog {
-               margin: 8px auto;
-               max-width: 85%;
-           }
-   
-           .modal-content {
-               border-radius: 8px;
-           }
-   
-           .modal-header {
-               padding: 10px 15px;
-           }
-   
-           .modal-title {
-               font-size: 1.1rem;
-           }
-   
-           .modal-body {
-               padding: 15px;
-           }
-   
-           .form-group {
-               margin-bottom: 12px;
-           }
-   
-           .form-control,
-           .form-control-file {
-               padding: 6px;
-               font-size: 0.85rem;
-           }
-   
-           .btn-success {
-               padding: 6px;
-               font-size: 0.85rem;
-           }
-   
-           .close span {
-               font-size: 1rem;
-           }
-       }
-   
-       @media (max-width: 576px) {
-           .modal-dialog {
-               max-width: 90%;
-           }
-   
-           .modal-title {
-               font-size: 1rem;
-           }
-   
-           .modal-body {
-               padding: 10px;
-           }
-   
-           .form-group {
-               margin-bottom: 10px;
-           }
-   
-           .form-control,
-           .form-control-file {
-               padding: 5px;
-               font-size: 0.8rem;
-           }
-   
-           .btn-success {
-               padding: 5px;
-               font-size: 0.8rem;
-           }
-   
-           label {
-               font-size: 0.85rem;
-           }
-   
-           small {
-               font-size: 0.7rem;
-           }
-       }
-   </style>
+                    <button type="submit" class="btn btn-success btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Mobile Uploads and Preview -->
+<script>
+function previewImages(event) {
+    const input = event.target;
+    const previewContainer = document.getElementById('imagePreview');
+    previewContainer.innerHTML = ''; // Clear previous previews
+
+    const files = input.files;
+    if (!files || files.length === 0) return;
+
+    // Validate file count
+    if (files.length > 10) {
+        alert('You can upload a maximum of 10 images.');
+        input.value = ''; // Reset input
+        return;
+    }
+
+    // Validate file size (10MB)
+    const maxSize = 10 * 1024 * 1024;
+    for (let i = 0; i < files.length; i++) {
+        if (files[i].size > maxSize) {
+            alert(`File "${files[i].name}" exceeds 10MB limit.`);
+            input.value = '';
+            previewContainer.innerHTML = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.style.maxWidth = '80px';
+            img.style.maxHeight = '80px';
+            img.style.borderRadius = '4px';
+            img.style.objectFit = 'cover';
+            img.style.margin = '5px';
+            previewContainer.appendChild(img);
+        };
+        reader.readAsDataURL(files[i]);
+    }
+}
+
+// Enhance mobile touch support for file picker
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('images');
+    if (fileInput) {
+        // Prevent default touch behavior that might trigger camera
+        fileInput.addEventListener('touchstart', function(e) {
+            e.preventDefault(); // Stop any default camera trigger
+            fileInput.click(); // Open file picker
+        }, { passive: false });
+
+        // Ensure click event prioritizes file picker
+        fileInput.addEventListener('click', function(e) {
+            // No additional action needed; browser handles file picker
+        });
+    }
+});
+</script>
+
+<!-- Updated CSS -->
+<style>
+    .modal-content {
+        transition: all 0.3s ease;
+    }
+
+    .form-control,
+    .form-control-file {
+        background: #2d2d2d;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px;
+    }
+
+    .form-control:focus,
+    .form-control-file:focus {
+        box-shadow: 0 0 5px rgba(3, 89, 37, 0.5);
+        background: #333;
+    }
+
+    .btn-success {
+        background: #035925;
+        border: none;
+        transition: transform 0.2s, background 0.3s;
+    }
+
+    .btn-success:hover {
+        background: #028a1b;
+        transform: translateY(-2px);
+    }
+
+    /* Mobile-specific adjustments */
+    @media (max-width: 768px) {
+        .modal-dialog {
+            margin: 8px auto;
+            max-width: 85%;
+        }
+
+        .modal-content {
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            padding: 10px 15px;
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+        }
+
+        .modal-body {
+            padding: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-control,
+        .form-control-file {
+            padding: 10px; /* Larger tap area */
+            font-size: 0.9rem;
+        }
+
+        .btn-success {
+            padding: 6px;
+            font-size: 0.85rem;
+        }
+
+        .close span {
+            font-size: 1rem;
+        }
+
+        #imagePreview img {
+            max-width: 60px;
+            max-height: 60px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .modal-dialog {
+            max-width: 90%;
+        }
+
+        .modal-title {
+            font-size: 1rem;
+        }
+
+        .modal-body {
+            padding: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-control,
+        .form-control-file {
+            padding: 8px;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            padding: 5px;
+            font-size: 0.8rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+        }
+
+        small {
+            font-size: 0.7rem;
+        }
+    }
+</style>
                             </div>
                      </section>
               </div>

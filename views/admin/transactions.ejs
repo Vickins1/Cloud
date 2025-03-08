@@ -151,7 +151,7 @@
                         <div class="container-fluid">
                             <div class="card shadow-lg border-0" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
                                 <div class="card-header border-0 d-flex justify-content-between align-items-center py-2" style="background: transparent;">
-                                    <h3 class="card-title text-white font-weight-bold m-0" style="font-size: 1.25rem;">Transactions</h3>
+                                    <h3 class="card-title text-white font-weight-bold m-0" style="font-size: 1.25rem;">Transaction Cosmos</h3>
                                 </div>
                                 <div class="card-body p-0">
                                     <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
@@ -171,36 +171,42 @@
                                         </div>
                                     <% } %>
                                     <div class="table-responsive">
-                                        <table class="table table-dark table-hover table-sm m-0 rounded-table"> <!-- Added table-sm -->
+                                        <table class="table table-dark table-hover table-sm m-0 rounded-table">
                                             <thead>
                                                 <tr>
                                                     <th class="py-2 pl-3">Order ID</th>
                                                     <th class="py-2">Customer</th>
                                                     <th class="py-2">Total (KES)</th>
                                                     <th class="py-2">Payment Date</th>
+                                                    <th class="py-2">Transaction ID</th>
                                                     <th class="py-2 pr-3">Status</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <% transactions.forEach(transaction => { %>
-                                                    <% if (transaction && transaction.total !== undefined) { %>
-                                                        <tr>
-                                                            <td class="py-2 pl-3"><%= transaction._id %></td>
-                                                            <td class="py-2"><%= transaction.customerName || 'N/A' %></td>
-                                                            <td class="py-2"><%= transaction.total.toFixed(2) %></td>
-                                                            <td class="py-2"><%= transaction.updatedAt ? transaction.updatedAt.toDateString() : transaction.createdAt.toDateString() %></td>
-                                                            <td class="py-2 pr-3">
-                                                                <span class="badge <%= transaction.status === 'Completed' ? 'badge-success' : 'badge-warning' %>">
-                                                                    <%= transaction.status || 'Unknown' %>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                    <% } %>
+                                                    <tr>
+                                                        <td class="py-2 pl-3"><%= transaction.orderId %></td>
+                                                        <td class="py-2"><%= transaction.customerName %></td>
+                                                        <td class="py-2"><%= Number(transaction.total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td><td class="py-2">
+                                                            <%= new Date(transaction.paymentDate).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) %>
+                                                          </td>                                                          
+                                                        <td class="py-2"><%= transaction._id %></td>
+                                                        <td class="py-2 pr-3">
+                                                            <span class="badge <%= transaction.status === 'completed' ? 'badge-success' : transaction.status === 'failed' ? 'badge-danger' : 'badge-warning' %>">
+                                                                <%= transaction.status %>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
                                                 <% }); %>
+                                                <% if (transactions.length === 0) { %>
+                                                    <tr>
+                                                        <td colspan="6" class="py-2 text-center">No transactions in the cosmos yet!</td>
+                                                    </tr>
+                                                <% } %>
                                             </tbody>
                                         </table>
                                     </div>
-                
+                    
                                     <!-- Pagination -->
                                     <div class="pagination-container text-center py-2">
                                         <ul class="pagination justify-content-center m-0">
@@ -221,88 +227,88 @@
                                             <% } %>
                                         </ul>
                                     </div>
-                
+                    
                                     <style>
                                         /* Ensure table scrolls on small screens */
                                         .table-responsive {
                                             overflow-x: auto;
                                         }
-                
+                    
                                         /* Adjust table appearance */
                                         .table-sm th, .table-sm td {
                                             font-size: 0.85rem;
                                             padding: 0.5rem 0.75rem;
-                                            white-space: nowrap; /* Prevent text wrapping */
+                                            white-space: nowrap;
                                         }
-                
+                    
                                         .table-sm .badge {
-                                            font-size: 0.75rem; /* Smaller badge */
+                                            font-size: 0.75rem;
                                             padding: 0.25rem 0.5rem;
                                         }
-                
+                    
                                         /* Rounded corners for better appearance */
                                         .rounded-table {
-                                            border-radius: 8px; /* Slightly smaller radius */
+                                            border-radius: 8px;
                                             overflow: hidden;
                                         }
-                
+                    
                                         /* Customize table header background */
                                         thead {
                                             background: #035925;
                                         }
-                
+                    
                                         /* Pagination styles */
                                         .pagination-container {
                                             background: #1a1a1a;
-                                            padding: 8px 0; /* Reduced padding */
+                                            padding: 8px 0;
                                         }
-                
+                    
                                         .pagination .page-item .page-link {
                                             background: #035925;
                                             border: none;
                                             color: white;
-                                            padding: 0.35rem 0.75rem; /* Smaller padding */
-                                            font-size: 0.85rem; /* Smaller font */
+                                            padding: 0.35rem 0.75rem;
+                                            font-size: 0.85rem;
                                         }
-                
+                    
                                         .pagination .page-item.active .page-link {
                                             background: #2d2d2d;
                                             color: white;
                                         }
-                
+                    
                                         .pagination .page-item .page-link:hover {
                                             background: #058d40;
                                         }
-                
+                    
                                         /* Responsive adjustments */
                                         @media (max-width: 768px) {
                                             .table-sm th, .table-sm td {
                                                 font-size: 0.75rem;
                                                 padding: 0.4rem 0.5rem;
                                             }
-                
+                    
                                             .table-sm .badge {
                                                 font-size: 0.65rem;
                                                 padding: 0.2rem 0.4rem;
                                             }
-                
+                    
                                             .pagination .page-link {
                                                 padding: 0.25rem 0.5rem;
                                                 font-size: 0.75rem;
                                             }
                                         }
-                
+                    
                                         @media (max-width: 576px) {
                                             .table-sm th, .table-sm td {
                                                 font-size: 0.7rem;
                                                 padding: 0.3rem 0.4rem;
                                             }
-                
+                    
                                             .table-sm .badge {
                                                 font-size: 0.6rem;
                                                 padding: 0.15rem 0.3rem;
                                             }
-                
+                    
                                             .pagination .page-link {
                                                 padding: 0.2rem 0.4rem;
                                                 font-size: 0.7rem;

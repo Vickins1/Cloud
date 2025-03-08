@@ -62,6 +62,10 @@
         header.scrolled {
             box-shadow: 0 4px 12px rgba(0, 255, 0, 0.1);
         }
+        nav {
+    background-color: #000000cd;
+    padding: 10px 0;
+}
 
         .navbar-brand img {
             height: 45px;
@@ -111,7 +115,7 @@
         }
 
         .btn-primary {
-            background-color: #003615;
+            background-color: #008011;
             border-color: #003615;
             border-radius: 30px;
             padding: 12px 35px;
@@ -221,169 +225,126 @@
     <!-- Subtle Leaf Overlay -->
     <div class="leaf-bg" id="leafContainer"></div>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <a class="navbar-brand" href="/">
-                <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Logo">
-            </a>
-            <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <style>
-                .custom-toggler {
-                    border: none;
-                    background-color: transparent;
-                    margin-right: 20px;
-                }
-
-                .custom-toggler .navbar-toggler-icon {
-                    width: 30px;
-                    height: 30px;
-                    background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%280, 204, 0, 0.8%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
-                }
-
-                .custom-toggler:focus {
-                    outline: none;
-                    box-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
-                }
-            </style>
-            <!-- Replace or append these within the respective <style> tags in your HTML -->
-
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Store Logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
-                        </li>
-                         <li class="nav-item">
-                        <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
-                            <% if (cartItems> 0) { %>
-                                <span class="badge bg-success" id="cart-count">
-                                    <%= cartItems %>
-                                </span>
+                            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                                <% if (cartItems > 0) { %>
+                                    <span class="badge bg-success" id="cart-count"><%= cartItems %></span>
                                 <% } %>
-                        </a>
-                    </li>
+                            </a>
+                        </li>
                         <% if (isAuthenticated) { %>
+                            <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a></li>
+                            <!-- Creative My Orders Link -->
                             <li class="nav-item">
-                                <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
+                                <a class="nav-link orders-link" href="/cart/my-orders">
+                                    <i class="fas fa-box-open"></i> 
+                                    <span class="orders-text">My Orders</span>
+                                    <span class="orders-sparkle"><i class="fas fa-star sparkle-icon"></i></span>
+                                </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                         <% } else { %>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
                         <% } %>
                     </ul>
                 </div>
+            </div>
         </nav>
     </header>
+    
+    <!-- Add some custom CSS for the creative effect -->
+    <style>
+        .orders-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+    
+        .orders-link:hover {
+            color: #ffd700 !important; /* Golden hover effect */
+            transform: scale(1.05);
+        }
+    
+        .orders-text {
+            margin-left: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    
+        .orders-sparkle {
+            margin-left: 5px;
+            animation: sparkle 1.5s infinite;
+        }
+    
+        .sparkle-icon {
+            color: #ffcc00;
+            font-size: 12px;
+        }
+    
+        @keyframes sparkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.3; transform: scale(0.8); }
+        }
+    
+        /* Optional: Add a subtle glow effect */
+        .orders-link:hover .sparkle-icon {
+            text-shadow: 0 0 8px rgba(255, 204, 0, 0.8);
+        }
+    </style>
 
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="hero-overlay"></div> <!-- For a subtle gradient or texture -->
+    <div class="hero-overlay"></div>
     <div class="hero-content">
-        <h1 class="hero-title animate-fade-in">Unleash the Art of Elevation</h1>
-        <p class="hero-subtitle animate-slide-up">Savor the Finest Cannabis, Curated for the Discerning Soul</p>
+        <h1 class="hero-title animate-fade-in"><strong>Get Higher, Stay Higher With Cloud420</strong></h1>
+        <p class="hero-subtitle animate-slide-up">🌿 Your One-Stop Premium Cannabis Store!</p>
         
-        <!-- Country-wide Delivery Feature -->
-        <div class="delivery-announcement animate-pop-in">
-            <span class="delivery-icon">🚚</span>
-            <span class="delivery-text">We Deliver Country-Wide!</span>
-        </div>
+<!-- Delivery Feature -->
+<div class="delivery-announcement animate-pop-in">
+    <span class="delivery-icon">🚛</span>
+    <span class="delivery-text">Reliable & Discreet Nationwide Delivery 🌿✨</span>
+</div>
+
 
         <div class="hero-cta">
-            <a href="/products" class="btn btn-primary btn-lg btn-glow">Dive Into Bliss</a>
-            <a href="/about" class="btn btn-secondary btn-lg">Our Craft</a>
+            <a href="/products" class="btn btn-primary btn-glow">Explore Cloud420 Galaxy</a>
+            <a href="/about" class="btn btn-secondary">Our Craft</a>
         </div>
     </div>
     <div class="hero-background">
         <video autoplay muted loop class="hero-video">
             <source src="/videos/cannabis-smoke.mp4" type="video/mp4">
-            <!-- Fallback image if video fails -->
-            <img src="/images/cannabis-leaf-bg.jpg" alt="Cannabis Leaf Background">
+            <img src="/images/cannabis-leaf-bg.jpg" alt="Cannabis Leaf Fallback" class="hero-fallback">
         </video>
     </div>
 </section>
-<style>
-    .delivery-announcement {
-    background: rgba(255, 255, 255, 0.9);
-    padding: 10px 20px;
-    border-radius: 25px;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    margin: 20px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.delivery-icon {
-    font-size: 24px;
-    animation: bounce 2s infinite;
-}
-
-.delivery-text {
-    font-weight: bold;
-    color: #333;
-    font-size: 16px;
-}
-
-.delivery-link {
-    color: #007bff;
-    text-decoration: none;
-    font-size: 14px;
-    transition: color 0.3s ease;
-}
-
-.delivery-link:hover {
-    color: #0056b3;
-    text-decoration: underline;
-}
-/* Animations */
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-    }
-    40% {
-        transform: translateY(-10px);
-    }
-    60% {
-        transform: translateY(-5px);
-    }
-}
-
-.animate-pop-in {
-    animation: pop-in 0.5s ease-out;
-}
-
-@keyframes pop-in {
-    0% {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-</style>
 
 <style>
+    /* Hero Section */
     .hero-section {
         position: relative;
-        height: 50vh;
+        height: 70vh;
         display: flex;
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        background-color: #074215; /* Deep forest green base */
+        background: #000000;
     }
 
     .hero-overlay {
@@ -392,7 +353,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(26, 46, 31, 0.7));
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 72, 36, 0.3));
         z-index: 1;
     }
 
@@ -400,60 +361,96 @@
         position: relative;
         z-index: 2;
         text-align: center;
-        color: #fff;
         padding: 20px;
     }
 
     .hero-title {
-        font-size: 4.5rem;
-        font-family: 'Playfair Display', serif; /* Elegant, sophisticated font */
-        text-transform: uppercase;
+        font-size: 2rem;
+        color: #2bb36f;
+        text-shadow: 0 0 10px rgba(0, 72, 36, 0.8);
+        font-weight: 700;
         letter-spacing: 2px;
-        margin-bottom: 20px;
-        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        margin-bottom: 1rem;
     }
 
     .hero-subtitle {
         font-size: 1.5rem;
-        font-family: 'Lora', serif; /* Subtle, refined font */
-        opacity: 0.9;
-        margin-bottom: 40px;
+        color: #f6fff6;
+        text-shadow: 0 0 5px rgba(0, 72, 36, 0.5);
+        margin-bottom: 2rem;
     }
 
-    .hero-cta .btn {
-        margin: 0 15px;
-        padding: 15px 35px;
-        font-size: 1.2rem;
-        border-radius: 50px;
+    /* Delivery Announcement */
+    .delivery-announcement {
+        background: rgba(0, 72, 36, 0.2);
+        padding: 10px 20px;
+        border-radius: 20px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+        border: 1px solid rgba(0, 72, 36, 0.5);
+        backdrop-filter: blur(3px);
+    }
+
+    .delivery-icon {
+        font-size: 1.5rem;
+        color: #004824;
+        animation: pulse 2s infinite;
+    }
+
+    .delivery-text {
+        font-size: 1rem;
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    /* CTA Buttons */
+    .hero-cta {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 1.1rem;
         transition: all 0.3s ease;
     }
 
     .btn-primary {
-        background-color: #1a7105; /* Golden accent for luxury */
+        background: linear-gradient(45deg, #004824, #002b15);
+        color: #ffffff;
         border: none;
     }
 
     .btn-primary.btn-glow:hover {
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
-        transform: translateY(-5px);
+        background: #004824;
+        box-shadow: 0 0 15px rgba(0, 72, 36, 0.8);
+        transform: translateY(-3px);
     }
 
     .btn-secondary {
-        background-color: transparent;
-        border: 2px solid #fff;
-        color: #fff;
+        background: transparent;
+        color: #ffffff;
+        border: 1px solid #004824;
     }
 
     .btn-secondary:hover {
-        background-color: #fff;
-        color: #1a2e1f;
+        background: rgba(0, 72, 36, 0.3);
+        color: #ffffff;
+        box-shadow: 0 0 10px rgba(0, 72, 36, 0.5);
     }
 
+    /* Background Video */
     .hero-background {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
+        height: 100%;
         z-index: 0;
     }
 
@@ -461,18 +458,36 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        opacity: 0.6; /* Subtle visibility for text contrast */
+        opacity: 0.6;
     }
 
-    /* Animation Keyframes */
+    .hero-fallback {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+    }
+
+    /* Animations */
     @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        0% { opacity: 0; }
+        100% { opacity: 1; }
     }
 
     @keyframes slideUp {
-        from { transform: translateY(50px); opacity: 0; }
-        to { transform: translateY(0); opacity: 0.9; }
+        0% { transform: translateY(20px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes popIn {
+        0% { transform: scale(0.9); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
     }
 
     .animate-fade-in {
@@ -480,256 +495,527 @@
     }
 
     .animate-slide-up {
-        animation: slideUp 1.8s ease-in-out;
+        animation: slideUp 1.5s ease-in-out 0.3s forwards;
+        opacity: 0;
     }
 
-    /* Media Queries for Responsiveness */
-    @media (max-width: 1200px) {
-        .hero-title { font-size: 3.5rem; }
-        .hero-subtitle { font-size: 1.2rem; }
+    .animate-pop-in {
+        animation: popIn 0.8s ease-out 0.6s forwards;
+        opacity: 0;
     }
 
-    @media (max-width: 992px) {
-        .hero-section { height: 60vh; }
-        .hero-title { font-size: 3rem; }
-        .hero-subtitle { font-size: 1rem; }
-        .hero-cta .btn { padding: 12px 30px; font-size: 1rem; }
-    }
-
+    /* Responsive Adjustments */
     @media (max-width: 768px) {
-        .hero-section { height: 70vh; }
-        .hero-title { font-size: 2.5rem; }
-        .hero-subtitle { font-size: 1rem; }
-        .hero-cta .btn { display: block; margin: 10px auto; padding: 10px 25px; font-size: 0.9rem; }
+        .hero-title { font-size: 1.5rem; }
+        .hero-subtitle { font-size: 1.2rem; }
+        .delivery-text { font-size: 0.9rem; }
+        .delivery-icon { font-size: 1.2rem; }
+        .btn { font-size: 1rem; padding: 10px 20px; }
+        .hero-cta { flex-direction: column; gap: 10px; }
     }
 
     @media (max-width: 576px) {
-        .hero-section { height: 80vh; }
-        .hero-title { font-size: 2rem; }
-        .hero-subtitle { font-size: 0.9rem; }
-        .hero-cta .btn { padding: 8px 20px; font-size: 0.8rem; }
+        .hero-title { font-size: 0.5rem; }
+        .hero-subtitle { font-size: 1rem; }
+        .delivery-announcement { padding: 8px 15px; }
+        .delivery-text { font-size: 0.8rem; }
+        .btn { font-size: 0.9rem; padding: 8px 15px; }
     }
 </style>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <h2 class="text-center mb-5">The Cloud 420 Difference</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <i class="fas fa-leaf"></i>
-                        <h5>Artisan Quality</h5>
-                        <p>Hand-selected, organic cannabis for a refined experience.</p>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <h2 class="features-title"><strong>The Cloud 420 Constellation</strong></h2>
+        <p class="features-subtitle">Discover What Sets Our Galactic Craft Apart</p>
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-leaf"></i></div>
+                    <h5>Artisan Stardust</h5>
+                    <p>Our cannabis is hand-harvested from organic nebulae—each bud a crystalline jewel, kissed by sunlight and infused with the whispers of ancient growers. Expect a flavor supernova that transcends the ordinary.</p>
+                    <div class="feature-hover">
+                        <p><strong>Terpene Symphony:</strong> Citrus flares, earthy echoes, and a hint of cosmic pine.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <i class="fas fa-shipping-fast"></i>
-                        <h5>Swift Delivery</h5>
-                        <p>Discreet, reliable shipping to your door.</p>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+                    <h5>Warp-Speed Dispatch</h5>
+                    <p>Stealth drones deliver your package faster than a meteor shower—discreet, secure, and cloaked in shadow. From our orbit to your doorstep, the cosmos bends to your will.</p>
+                    <div class="feature-hover">
+                        <p><strong>Quantum Tracking:</strong> Real-time updates via our holo-portal.</p>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card">
-                        <i class="fas fa-award"></i>
-                        <h5>Unmatched Excellence</h5>
-                        <p>Curated from the finest cultivators worldwide.</p>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-award"></i></div>
+                    <h5>Celestial Mastery</h5>
+                    <p>We scour the galaxy for the elite cultivators—masters who coax perfection from the soil. Every strain is a trophy, forged in the crucible of excellence and bathed in starlight.</p>
+                    <div class="feature-hover">
+                        <p><strong>Awarded Strains:</strong> Nebula Haze—Galactic Bud of the Year 2024.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-flask"></i></div>
+                    <h5>Quantum Infusion</h5>
+                    <p>Our labs fuse rare terpenes and cosmic extracts, crafting strains that pulse with otherworldly potency. It’s not just cannabis—it’s alchemy from the edge of the universe.</p>
+                    <div class="feature-hover">
+                        <p><strong>Lab Secret:</strong> Micro-dosed with lunar essence for a smoother lift.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
+                    <h5>Stellar Collective</h5>
+                    <p>Join a tribe of cosmic connoisseurs—exclusive drops, secret strain unveilings, and moonlit gatherings. You’re not just a customer; you’re a star in our constellation.</p>
+                    <div class="feature-hover">
+                        <p><strong>Perk:</strong> Access to the annual Cloud 420 Starfest.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-globe"></i></div>
+                    <h5>Eco-Cosmos</h5>
+                    <p>We orbit with purpose—solar-powered grows, hemp packaging, and zero-waste ethos. Elevate your mind while keeping the galaxy green and thriving.</p>
+                    <div class="feature-hover">
+                        <p><strong>Impact:</strong> 1% of every purchase fuels planetary restoration.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+<style>
+    .features-section {
+        padding: 3rem 1rem;
+        background: linear-gradient(135deg, #000000, #001c04);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .features-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(0, 204, 0, 0.15), transparent);
+        animation: cosmicPulse 12s infinite ease-in-out;
+        z-index: 0;
+    }
+
+    @keyframes cosmicPulse {
+        0% { transform: scale(0.8); opacity: 0.3; }
+        50% { transform: scale(1.2); opacity: 0.5; }
+        100% { transform: scale(0.8); opacity: 0.3; }
+    }
+
+    .features-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(1.8rem, 5vw, 3rem);
+        color: #ffffff;
+        text-shadow: 0 0 15px rgba(0, 204, 0, 0.7);
+        margin-bottom: 1rem;
+        text-align: center;
+        animation: neonFlicker 3s infinite alternate;
+    }
+
+    @keyframes neonFlicker {
+        0% { text-shadow: 0 0 5px rgba(0, 204, 0, 0.5); }
+        100% { text-shadow: 0 0 20px rgba(55, 255, 55, 0.9); }
+    }
+
+    .features-subtitle {
+        font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+        color: #b3ffb3;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .feature-card {
+        background: rgba(0, 204, 0, 0.1);
+        padding: 1.5rem;
+        border-radius: 15px;
+        text-align: center;
+        position: relative;
+        transition: all 0.4s ease;
+        z-index: 1;
+        overflow: hidden;
+        border: 1px solid rgba(0, 204, 0, 0.3);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 204, 0, 0.5);
+        background: rgba(0, 204, 0, 0.2);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        color: #00cc00;
+        margin-bottom: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon {
+        transform: rotate(360deg);
+    }
+
+    .feature-card h5 {
+        font-size: clamp(1rem, 2.5vw, 1.5rem);
+        color: #ffffff;
+        margin-bottom: 0.8rem;
+        text-shadow: 0 0 5px rgba(0, 204, 0, 0.4);
+    }
+
+    .feature-card p {
+        font-size: clamp(0.8rem, 2vw, 1rem);
+        color: #d9ffd9;
+        margin-bottom: 0;
+    }
+
+    .feature-hover {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 72, 36, 0.9);
+        color: #ffffff;
+        padding: 1rem;
+        font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+        opacity: 0;
+        transition: all 0.4s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .feature-card:hover .feature-hover {
+        top: 0;
+        opacity: 1;
+    }
+
+    .features-cta {
+        background: linear-gradient(45deg, #00cc00, #003615);
+        color: #ffffff;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-size: clamp(0.9rem, 2vw, 1.2rem);
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+    }
+
+    .features-cta:hover {
+        background: linear-gradient(45deg, #00ff00, #00cc00);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(0, 204, 0, 0.8);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .features-section { padding: 2rem 0.8rem; }
+        .feature-card { padding: 1rem; }
+        .feature-icon { font-size: 2rem; }
+    }
+
+    @media (max-width: 576px) {
+        .features-section { padding: 1.5rem 0.5rem; }
+        .feature-card { padding: 0.8rem; }
+        .feature-icon { font-size: 1.8rem; }
+        .features-cta { padding: 0.6rem 1.5rem; }
+    }
+</style>
 
     <section class="latest-products">
         <h2>Latest Products</h2>
         <div class="products-container">
-          <% 
+            <% 
             const latestProducts = products.slice(-3);
             latestProducts.forEach(product => { 
-          %>
+            %>
             <div class="product-item">
-              <% if(product.image) { %>
                 <div class="image-wrapper">
-                  <img src="<%= product.image %>" alt="<%= product.name %>">
+                    <img src="<%= product.imageUrl || '/images/placeholder-product.jpg' %>" alt="<%= product.name %>">
+                    <div class="overlay"></div>
                 </div>
-              <% } %>
-              <div class="product-content">
-                <h3><%= product.name %></h3>
-                <p class="description"><%= product.description %></p>
-                <p class="price">Price: <span>$<%= product.price.toFixed(2) %></span></p>
-                <button class="add-to-cart">Add to Cart</button>
-              </div>
+                <div class="product-content">
+                    <h3><%= product.name %></h3>
+                    <p class="price">Price: <span>KES.<%= product.price.toFixed(2) %></span></p>
+                    <button class="add-to-cart" onclick="window.location.href='/auth/login'">Add to Cart</button>
+                </div>
             </div>
-          <% }); %>
+            <% }); %>
         </div>
-      </section>
-      
-      <style>
-      .latest-products {
-        padding: 60px 20px;
-        max-width: 1400px;
-        margin: 0 auto;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 100%);
-      }
-      
-      .latest-products h2 {
-        text-align: center;
-        margin-bottom: 50px;
-        font-size: 2.8rem;
-        color: #2c3e50;
-        font-weight: 700;
-        position: relative;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      
-      .latest-products h2::after {
-        content: '';
-        width: 80px;
-        height: 5px;
-        background: #074215;
-        position: absolute;
-        bottom: -15px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 2px;
-      }
-      
-      .products-container {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        gap: 30px;
-        padding: 0 15px;
-      }
-      
-      .product-item {
-        flex: 1;
-        min-width: 280px;
-        background: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        transition: all 0.3s ease;
-        overflow: hidden;
-      }
-      
-      .product-item:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-      }
-      
-      .image-wrapper {
-        position: relative;
-        overflow: hidden;
-        border-radius: 8px;
-      }
-      
-      .product-item img {
-        width: 100%;
-        height: 220px;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-      }
-      
-      .product-item:hover img {
-        transform: scale(1.05);
-      }
-      
-      .product-content {
-        padding: 15px 0;
-      }
-      
-      .product-item h3 {
-        margin: 0 0 10px;
-        font-size: 1.6rem;
-        color: #2c3e50;
-        font-weight: 600;
-      }
-      
-      .description {
-        margin: 0 0 15px;
-        color: #7f8c8d;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        max-height: 4.8em;
-        overflow: hidden;
-      }
-      
-      .price {
-        margin: 0 0 15px;
-        color: #2c3e50;
-        font-size: 1.1rem;
-        font-weight: 500;
-      }
-      
-      .price span {
-        color: #074215;
-        font-size: 1.3rem;
-        font-weight: 700;
-      }
-      
-      .add-to-cart {
-        display: block;
-        width: 100%;
-        padding: 12px;
-        background: #074215;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.3s ease;
-      }
-      
-      .add-to-cart:hover {
-        background: #074215;
-      }
-      
-      /* Responsive adjustments */
-      @media (max-width: 1024px) {
-        .products-container {
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-        
-        .product-item {
-          flex: 0 1 45%;
-          max-width: 45%;
-        }
-      }
-      
-      @media (max-width: 768px) {
-        .latest-products {
-          padding: 40px 15px;
-        }
-      
-        .latest-products h2 {
-          font-size: 2.2rem;
-        }
-      
-        .product-item {
-          flex: 0 1 100%;
-          max-width: 100%;
-        }
-        
-        .product-item img {
-          height: 200px;
-        }
-      }
-      
-      @media (max-width: 480px) {
-        .latest-products h2 {
-          font-size: 1.8rem;
-        }
-      
-        .product-item h3 {
-          font-size: 1.4rem;
-        }
-      }
-      </style>
+    </section>
+
+
+<style>
+/* Latest Products Section */
+.latest-products {
+    padding: 50px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a2a1e 100%); /* Deep black to dark green-gray */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decorative Background Element */
+.latest-products::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(30, 50, 40, 0.5), transparent); /* Subtle dark green glow */
+    z-index: 0;
+    opacity: 0.7;
+}
+
+.latest-products::after {
+    content: '';
+    position: absolute;
+    bottom: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(20, 30, 25, 0.4), transparent);
+    z-index: 0;
+    opacity: 0.6;
+}
+
+/* Heading */
+.latest-products h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.8rem;
+    color: #d4d4d4; /* Soft off-white */
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 10px rgba(30, 50, 40, 0.8); /* Glowing shadow */
+}
+
+.latest-products h2::after {
+    content: '';
+    width: 80px;
+    height: 4px;
+    background: #3a5a40; /* Muted green-gray */
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+
+.latest-products h2:hover::after {
+    width: 120px;
+    background: #587a60; /* Slightly lighter on hover */
+}
+
+/* Products Container */
+.products-container {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Product Item */
+.product-item {
+    flex: 1;
+    min-width: 300px;
+    background: linear-gradient(135deg, #1c2520 0%, #2a3a32 100%); /* Dark green-gray gradient */
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(58, 90, 64, 0.3); /* Subtle border */
+}
+
+.product-item:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #2a3a32 0%, #3a5a40 100%); /* Lighter gradient on hover */
+}
+
+/* Image Wrapper */
+.image-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #1a1a1a; /* Dark fallback */
+    height: 180px;
+}
+
+.product-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.product-item:hover img {
+    transform: scale(1.08);
+    opacity: 0.8;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(30, 50, 40, 0.5), rgba(58, 90, 64, 0.7)); /* Dark green gradient */
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+}
+
+.product-item:hover .overlay {
+    opacity: 1;
+}
+
+/* Product Content */
+.product-content {
+    padding: 15px 0;
+    text-align: center;
+}
+
+.product-item h3 {
+    margin: 0 0 10px;
+    font-size: 1.6rem;
+    color: #e0e0e0; /* Light gray */
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.description {
+    margin: 0 0 12px;
+    color: #a0a0a0; /* Muted gray */
+    font-size: 0.95rem;
+    line-height: 1.4;
+    max-height: 4.2em;
+    overflow: hidden;
+    transition: color 0.3s ease;
+}
+
+.product-item:hover .description {
+    color: #c0c0c0; /* Slightly lighter gray on hover */
+}
+
+.price {
+    margin: 0 0 15px;
+    color: #e0e0e0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.price span {
+    color: #587a60; /* Muted green for emphasis */
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+/* Add to Cart Button */
+.add-to-cart {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #1a2a1e, #3a5a40); /* Dark green gradient */
+    color: #e0e0e0;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.add-to-cart:hover {
+    background: linear-gradient(90deg, #3a5a40, #587a60);
+    transform: translateY(-2px);
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .products-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .product-item {
+        flex: 0 1 48%;
+        max-width: 48%;
+    }
+}
+
+@media (max-width: 768px) {
+    .latest-products {
+        padding: 40px 15px;
+    }
+
+    .latest-products h2 {
+        font-size: 2.4rem;
+    }
+
+    .product-item {
+        flex: 0 1 100%;
+        max-width: 100%;
+    }
+
+    .image-wrapper {
+        height: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .latest-products h2 {
+        font-size: 2rem;
+    }
+
+    .product-item h3 {
+        font-size: 1.4rem;
+    }
+
+    .price span {
+        font-size: 1.2rem;
+    }
+
+    .add-to-cart {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+</style>
 
 <!-- Testimonials Section -->
 <section class="testimonials-section">
@@ -979,17 +1265,19 @@
 <!-- Blog Section -->
 <section class="blog-section">
     <div class="container">
-        <h2 class="text-center mb-5 blog-header animate-glow">Latest from Our Blog</h2>
+        <h2 class="text-center mb-5 blog-header animate-glow">Latest from Our Stash of Wisdom</h2>
         <div class="row g-4">
             <div class="col-md-4 col-sm-6">
                 <div class="blog-card">
                     <div class="blog-image-wrapper">
                         <img src="/images/blog1.jpg" alt="Organic Cannabis" class="blog-img">
                     </div>
-                    <h5 class="blog-title">The Benefits of Organic Cannabis</h5>
-                    <p class="blog-date">March 1, 2025</p>
-                    <p class="blog-excerpt">Dive into the lush world of organic cannabis—free from pesticides, bursting with terpenes, and crafted by nature’s finest. Elevate your senses with purity you can taste.</p>
-                    <a href="/blog/benefits-of-organic-cannabis" class="blog-link">Read More</a>
+                    <div class="blog-content">
+                        <h5 class="blog-title">Organic Cannabis: Because Chemicals Are So 2020</h5>
+                        <p class="blog-date">March 1, 2025</p>
+                        <p class="blog-excerpt">Pesticides? Nah, we’re too classy for that. Dive into organic weed so pure it’s basically hugging Mother Nature while you toke. Terpenes that slap harder than your ex’s comeback.</p>
+                        <a href="/blog/benefits-of-organic-cannabis" class="blog-link">Read More, Hippie</a>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6">
@@ -997,10 +1285,12 @@
                     <div class="blog-image-wrapper">
                         <img src="/images/blog2.jpg" alt="Relaxation Strains" class="blog-img">
                     </div>
-                    <h5 class="blog-title">Top Cannabis Strains for Relaxation</h5>
-                    <p class="blog-date">February 25, 2025</p>
-                    <p class="blog-excerpt">Unwind with our hand-picked strains: from velvety Indicas to dreamy hybrids. Let stress melt away as you sink into a cloud of calm.</p>
-                    <a href="/blog/top-strains-for-relaxation" class="blog-link">Read More</a>
+                    <div class="blog-content">
+                        <h5 class="blog-title">Strains to Chill So Hard You Forget Your Boss Exists</h5>
+                        <p class="blog-date">February 25, 2025</p>
+                        <p class="blog-excerpt">Indicas that knock you into next week, hybrids that whisper “shhh” to your anxiety—meet your new BFFs for pretending life’s a Netflix binge.</p>
+                        <a href="/blog/top-strains-for-relaxation" class="blog-link">Get Comfy, Loser</a>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6">
@@ -1008,10 +1298,12 @@
                     <div class="blog-image-wrapper">
                         <img src="/images/blog3.jpg" alt="Cannabis Storage" class="blog-img">
                     </div>
-                    <h5 class="blog-title">How to Store Your Cannabis Properly</h5>
-                    <p class="blog-date">February 20, 2025</p>
-                    <p class="blog-excerpt">Master the art of preservation—keep your buds fresh, potent, and aromatic with these pro tips. Your stash deserves the royal treatment!</p>
-                    <a href="/blog/storing-cannabis" class="blog-link">Read More</a>
+                    <div class="blog-content">
+                        <h5 class="blog-title">Storing Weed Like You’re Not a Total Amateur</h5>
+                        <p class="blog-date">February 20, 2025</p>
+                        <p class="blog-excerpt">Your stash isn’t a sad sandwich—stop treating it like one. Pro tips to keep your buds fresher than your excuses for calling in sick.</p>
+                        <a href="/blog/storing-cannabis" class="blog-link">Save Your Bud, Genius</a>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6">
@@ -1019,10 +1311,12 @@
                     <div class="blog-image-wrapper">
                         <img src="/images/blog4.jpg" alt="Cannabis Cocktails" class="blog-img">
                     </div>
-                    <h5 class="blog-title">Infused Elixirs: Cannabis Cocktails 101</h5>
-                    <p class="blog-date">February 15, 2025</p>
-                    <p class="blog-excerpt">Shake up your evenings with THC-infused cocktails! From smoky sours to herbal highballs, sip your way to bliss with these recipes.</p>
-                    <a href="/blog/cannabis-cocktails" class="blog-link">Read More</a>
+                    <div class="blog-content">
+                        <h5 class="blog-title">Weed Cocktails: Because Plain Booze Is Boring</h5>
+                        <p class="blog-date">February 15, 2025</p>
+                        <p class="blog-excerpt">THC in your martini? Yes, please. Sip on smoky sours and herbal highs while your friends chug lame IPAs. Party level: elevated.</p>
+                        <a href="/blog/cannabis-cocktails" class="blog-link">Mix It Up, Snob</a>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6">
@@ -1030,10 +1324,12 @@
                     <div class="blog-image-wrapper">
                         <img src="/images/blog5.jpg" alt="Cannabis Myths" class="blog-img">
                     </div>
-                    <h5 class="blog-title">Debunking Cannabis Myths</h5>
-                    <p class="blog-date">February 10, 2025</p>
-                    <p class="blog-excerpt">Reefer madness or reality? We shatter the wildest myths—couch lock, munchies, and more—with science and a sprinkle of humor.</p>
-                    <a href="/blog/cannabis-myths" class="blog-link">Read More</a>
+                    <div class="blog-content">
+                        <h5 class="blog-title">Cannabis Myths: Your Grandma’s Still Wrong</h5>
+                        <p class="blog-date">February 10, 2025</p>
+                        <p class="blog-excerpt">“Weed makes you lazy”? Tell that to our PhD stoners. We’re debunking myths with facts and a smirk—munchies included.</p>
+                        <a href="/blog/cannabis-myths" class="blog-link">Wake Up, Sheep</a>
+                    </div>
                 </div>
             </div>
             <div class="col-md-4 col-sm-6">
@@ -1041,52 +1337,65 @@
                     <div class="blog-image-wrapper">
                         <img src="/images/blog6.jpg" alt="Terpene Guide" class="blog-img">
                     </div>
-                    <h5 class="blog-title">The Terpene Treasure Map</h5>
-                    <p class="blog-date">February 5, 2025</p>
-                    <p class="blog-excerpt">Unlock the secret scents of cannabis—limonene for zest, myrcene for chill. Explore our guide to terpene magic!</p>
-                    <a href="/blog/terpene-guide" class="blog-link">Read More</a>
+                    <div class="blog-content">
+                        <h5 class="blog-title">Terpenes: Smell Good, Feel Better, Annoy Less</h5>
+                        <p class="blog-date">February 5, 2025</p>
+                        <p class="blog-excerpt">Limonene’s your citrusy therapist, myrcene’s your couch potato enabler. Our guide to sniffing out the good stuff.</p>
+                        <a href="/blog/terpene-guide" class="blog-link">Sniff This, Nerd</a>
+                    </div>
                 </div>
             </div>
+            
         </div>
         <div class="text-center mt-5">
-            <a href="/blog" class="cta-button blog-cta">Explore All Posts</a>
+            <a href="/blog" class="cta-button blog-cta">More Sarcasm Awaits</a>
         </div>
     </div>
     <div class="blog-bg-effect"></div>
 </section>
 
 <style>
-.blog-section {
-    padding: 100px 20px;
-    background-color: #0a0a0a;
+    .blog-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a2a1e 100%); /* Dark weed vibe */
     position: relative;
     overflow: hidden;
 }
 
 .blog-header {
     font-family: 'Playfair Display', serif;
-    font-size: 3rem;
-    text-shadow: 0 0 10px rgba(0, 204, 0, 0.3);
+    font-size: 3.2rem;
+    color: #e0e0e0;
+    text-shadow: 0 0 12px rgba(30, 50, 40, 0.6);
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
 }
 
+/* Blog Card */
 .blog-card {
-    background: #1a1a1a;
-    color: #ffffff;
+    background: linear-gradient(135deg, #1c2520 0%, #2a3a32 100%);
+    color: #e0e0e0;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 12px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
+    height: 100%; /* Ensures uniform height */
+    display: flex;
+    flex-direction: column;
 }
 
 .blog-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 5px 15px rgba(0, 204, 0, 0.2);
+    box-shadow: 0 8px 20px rgba(30, 50, 40, 0.5);
+    background: linear-gradient(135deg, #2a3a32 0%, #3a5a40 100%);
 }
 
+/* Image Wrapper */
 .blog-image-wrapper {
     position: relative;
-    height: 200px; /* Fixed height for uniformity */
+    height: 180px; /* Fixed height for uniformity */
     overflow: hidden;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -1095,61 +1404,84 @@
 .blog-img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ensures images scale uniformly */
-    transition: transform 0.5s ease;
+    object-fit: cover;
+    transition: transform 0.5s ease, opacity 0.3s ease;
 }
 
 .blog-card:hover .blog-img {
-    transform: scale(1.05); /* Subtle zoom on hover */
+    transform: scale(1.08);
+    opacity: 0.9;
+}
+
+/* Blog Content */
+.blog-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensures consistent spacing */
 }
 
 .blog-title {
+    font-family: 'Lora', serif;
     font-size: 1.5rem;
     font-weight: 700;
     margin-bottom: 10px;
-    font-family: 'Lora', serif;
+    color: #d4d4d4;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
 .blog-date {
-    font-size: 0.9rem;
-    color: #cccccc;
+    font-size: 0.85rem;
+    color: #a0a0a0;
     margin-bottom: 10px;
     font-style: italic;
 }
 
 .blog-excerpt {
-    font-size: 1rem;
-    margin-bottom: 15px;
+    font-size: 0.95rem;
+    color: #c0c0c0;
     line-height: 1.5;
+    margin-bottom: 15px;
+    flex-grow: 1; /* Allows excerpt to expand */
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limits to 3 lines */
+    -webkit-box-orient: vertical;
 }
 
 .blog-link {
-    color: #00cc00;
+    color: #587a60; /* Muted green */
     text-decoration: none;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .blog-link:hover {
-    color: #017d01;
-    text-decoration: underline;
+    color: #8aa68e;
+    transform: translateX(5px);
 }
 
+/* CTA Button */
 .blog-cta {
-    background: linear-gradient(45deg, #003615, #00cc00);
-    padding: 12px 30px;
-    border-radius: 30px;
+    background: linear-gradient(45deg, #1a2a1e, #3a5a40);
+    padding: 12px 35px;
+    border-radius: 50px;
     font-size: 1.2rem;
+    color: #e0e0e0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     transition: all 0.3s ease;
 }
 
 .blog-cta:hover {
-    background: linear-gradient(45deg, #00cc00, #003615);
+    background: linear-gradient(45deg, #3a5a40, #587a60);
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 204, 0, 0.4);
+    box-shadow: 0 8px 20px rgba(30, 50, 40, 0.6);
+    color: #fff;
 }
 
+/* Background Effect */
 .blog-bg-effect {
     position: absolute;
     top: 0;
@@ -1157,21 +1489,21 @@
     width: 100%;
     height: 100%;
     background: url('/images/smoke-texture.png') repeat;
-    opacity: 0.05;
+    opacity: 0.08;
     z-index: 0;
-    animation: drift 30s infinite linear;
+    animation: drift 25s infinite linear;
 }
 
 /* Animations */
 @keyframes glow {
-    0% { text-shadow: 0 0 5px rgba(0, 204, 0, 0.2); }
-    50% { text-shadow: 0 0 15px rgba(0, 204, 0, 0.5); }
-    100% { text-shadow: 0 0 5px rgba(0, 204, 0, 0.2); }
+    0% { text-shadow: 0 0 5px rgba(30, 50, 40, 0.3); }
+    50% { text-shadow: 0 0 15px rgba(30, 50, 40, 0.7); }
+    100% { text-shadow: 0 0 5px rgba(30, 50, 40, 0.3); }
 }
 
 @keyframes drift {
     0% { background-position: 0 0; }
-    100% { background-position: 100px 100px; }
+    100% { background-position: 120px 120px; }
 }
 
 .animate-glow {
@@ -1187,16 +1519,13 @@
         font-size: 2.5rem;
     }
     .blog-image-wrapper {
-        height: 150px; /* Slightly smaller for tablets */
+        height: 150px;
     }
     .blog-title {
         font-size: 1.3rem;
     }
     .blog-excerpt {
         font-size: 0.9rem;
-    }
-    .blog-link {
-        font-size: 1rem;
     }
 }
 
@@ -1205,7 +1534,7 @@
         font-size: 2rem;
     }
     .blog-image-wrapper {
-        height: 120px; /* Compact for phones */
+        height: 120px;
     }
     .blog-title {
         font-size: 1.2rem;
@@ -1231,7 +1560,7 @@
         <a href="https://t.me/your-telegram" target="_blank" class="social-link" aria-label="Telegram">
             <i class="fab fa-telegram-plane"></i>
         </a>
-        <a href="https://x.com/your-twitter" target="_blank" class="social-link" aria-label="X (Twitter)">
+        <a href="https://x.com/cloud420_store" target="_blank" class="social-link" aria-label="X (Twitter)">
             <span class="x-icon"><i class="fab fa-twitter"></i></span>
         </a>
         <a href="tel:+1234567890" target="_blank" class="social-link" aria-label="Phone">
@@ -1329,12 +1658,224 @@
 }
 </style>
 
-    <!-- Call to Action Section -->
-    <div class="container-fluid py-5 bg-dark text-white text-center">
-        <h3>Unwind in Style</h3>
-        <p>Elevate your senses with our exclusive cannabis collection.</p>
-        <a href="/products" class="cta-button">Shop the Finest</a>
+<!-- Call to Action Section -->
+<div class="container-fluid py-5 cta-section text-white text-center">
+    <h3>Unwind in Style</h3>
+    <p class="lead">Elevate your senses with our exclusive cannabis collection.</p>
+    <div class="weed-info my-4">
+        <p>Discover the art of relaxation with hand-crafted strains—<strong>Indica</strong> for deep calm, <strong>Sativa</strong> for vibrant energy, and <strong>Hybrids</strong> for the perfect balance. Sourced from the world’s finest cultivators, our THC-rich buds and CBD-infused delights promise a journey of flavor, aroma, and euphoria.</p>
+        <p class="small">From earthy Kush to zesty Haze, every puff is a masterpiece.</p>
     </div>
+    <a href="/products" class="cta-button">Shop the Finest</a>
+    <div class="weed-decor">
+        <span class="leaf left-leaf"></span>
+        <span class="leaf right-leaf"></span>
+    </div>
+</div>
+<style>
+    /* Call to Action Section */
+.cta-section {
+    padding: 60px 0;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a2a1e 100%); /* Dark, weed-inspired gradient */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Background Decorations */
+.cta-section::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: 10%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(30, 50, 40, 0.5), transparent);
+    opacity: 0.6;
+    z-index: 0;
+}
+
+.cta-section::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    right: 15%;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(58, 90, 64, 0.4), transparent);
+    opacity: 0.5;
+    z-index: 0;
+}
+
+/* Heading */
+.cta-section h3 {
+    font-size: 3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #e0e0e0;
+    text-shadow: 0 0 15px rgba(30, 50, 40, 0.8);
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Lead Paragraph */
+.cta-section .lead {
+    font-size: 1.5rem;
+    color: #c0c0c0;
+    font-weight: 300;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Weed Info Content */
+.weed-info {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    padding: 20px;
+    background: rgba(30, 50, 40, 0.3); /* Subtle glass-like effect */
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 1;
+}
+
+.weed-info p {
+    font-size: 1.1rem;
+    color: #a0a0a0;
+    line-height: 1.6;
+    margin: 0 0 10px;
+}
+
+.weed-info strong {
+    color: #587a60; /* Muted green for emphasis */
+    font-weight: 700;
+}
+
+.weed-info .small {
+    font-size: 0.9rem;
+    color: #8a8a8a;
+    font-style: italic;
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(90deg, #1a2a1e, #3a5a40);
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.cta-button:hover {
+    background: linear-gradient(90deg, #3a5a40, #587a60);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Decorative Weed Leaves */
+.weed-decor {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.leaf {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: url('/images/weed-leaf.png') no-repeat center;
+    background-size: contain;
+    opacity: 0.2;
+    animation: float 8s infinite ease-in-out;
+}
+
+.left-leaf {
+    top: 20%;
+    left: 5%;
+    transform: rotate(-20deg);
+}
+
+.right-leaf {
+    bottom: 15%;
+    right: 5%;
+    transform: rotate(30deg);
+    animation-delay: 2s;
+}
+
+/* Float Animation */
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-20deg); }
+    50% { transform: translateY(-20px) rotate(-15deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .cta-section {
+        padding: 40px 15px;
+    }
+
+    .cta-section h3 {
+        font-size: 2.5rem;
+    }
+
+    .cta-section .lead {
+        font-size: 1.3rem;
+    }
+
+    .weed-info {
+        padding: 15px;
+    }
+
+    .weed-info p {
+        font-size: 1rem;
+    }
+
+    .cta-button {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    .leaf {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cta-section h3 {
+        font-size: 2rem;
+    }
+
+    .cta-section .lead {
+        font-size: 1.1rem;
+    }
+
+    .weed-info p {
+        font-size: 0.9rem;
+    }
+
+    .cta-button {
+        padding: 10px 25px;
+    }
+}
+</style>
+
 <!-- Floating WhatsApp Button -->
 <div class="whatsapp-float">
     <a href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank" class="whatsapp-btn">

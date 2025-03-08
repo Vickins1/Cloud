@@ -3,68 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
+    <title><%= title %> - Cloud 420</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icon.png">
     <style>
+        :root {
+            --primary-dark: #000000;
+            --secondary-dark: #001a0d;
+            --accent-dark-green: #004824;
+            --glow-dark: rgba(0, 72, 36, 0.5);
+            --text-muted: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background-color: #000000;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-muted);
+            font-family: 'Orbitron', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .about-container {
-            flex: 1;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #004824, #000000);
-            text-align: center;
-        }
-
-        .about-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.5rem;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(0, 204, 0, 0.3);
-        }
-
-        .about-subtitle {
-            font-size: 1.5rem;
-            color: #cccccc;
-            margin-bottom: 40px;
-        }
-
-        .about-content {
-            max-width: 800px;
-            margin: 0 auto;
-            font-size: 1.2rem;
-            line-height: 1.6;
-        }
-
-        .about-content p {
-            margin-bottom: 20px;
-        }
-
-        .about-cta {
-            background: linear-gradient(45deg, #003615, #00cc00);
-            color: #ffffff;
-            padding: 12px 30px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .about-cta:hover {
-            background: linear-gradient(45deg, #00cc00, #003615);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 204, 0, 0.4);
-        }
-
-        .leaf-bg {
+        /* Cosmic Background */
+        .cosmic-bg {
             position: fixed;
             top: 0;
             left: 0;
@@ -72,150 +42,491 @@
             height: 100%;
             pointer-events: none;
             z-index: -1;
-            opacity: 0.05;
+            background: radial-gradient(circle at center, rgba(0, 72, 36, 0.2), transparent);
+            animation: cosmicShift 25s infinite alternate;
         }
 
-        .leaf {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: url('/images/leaf.png') no-repeat center/cover;
-            animation: drift linear infinite;
+        @keyframes cosmicShift {
+            0% { transform: translate(-5%, -5%) scale(1); }
+            100% { transform: translate(5%, 5%) scale(1.05); }
         }
 
-        @keyframes drift {
-            0% { transform: translateY(-50vh) translateX(-10vw); opacity: 0; }
-            50% { opacity: 0.2; }
-            100% { transform: translateY(50vh) translateX(10vw); opacity: 0; }
+        /* Header */
+        header {
+            background: linear-gradient(90deg, var(--primary-dark), var(--secondary-dark), var(--primary-dark));
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--glow-dark);
+            padding: 0.5rem 1rem;
         }
 
-        footer {
-            background-color: #000000;
-            color: #999999;
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+            transition: transform 0.4s ease;
+            filter: drop-shadow(0 0 6px var(--glow-dark));
+        }
+
+        .navbar-brand img:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 10px var(--accent-dark-green));
+        }
+
+        .nav-link {
+            color: var(--accent-dark-green) !important;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-muted) !important;
+            text-shadow: 0 0 6px var(--glow-dark);
+        }
+
+        /* About Section */
+        .about-container {
+            padding: 80px 15px;
+            background: var(--secondary-dark);
             text-align: center;
-            padding: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--glow-dark);
+        }
+
+        .about-title {
+            font-size: 3rem;
+            color: var(--accent-dark-green);
+            text-shadow: 0 0 8px var(--glow-dark);
+            animation: neonPulse 3s infinite alternate;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes neonPulse {
+            0% { text-shadow: 0 0 6px var(--glow-dark); }
+            100% { text-shadow: 0 0 12px var(--accent-dark-green); }
+        }
+
+        .about-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInGlow 2s ease forwards;
+        }
+
+        @keyframes fadeInGlow {
+            0% { opacity: 0; }
+            100% { opacity: 1; text-shadow: 0 0 4px var(--glow-dark); }
+        }
+
+        .about-content {
+            max-width: 90%;
+            margin: 0 auto;
+            font-size: 1rem;
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px var(--glow-dark);
+            border: 1px solid var(--glow-dark);
+        }
+
+        .about-cta {
+            background: linear-gradient(45deg, var(--accent-dark-green), #002b15);
+            color: var(--text-muted);
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .about-cta:hover {
+            background: var(--accent-dark-green);
+            transform: translateY(-3px);
+            box-shadow: 0 0 10px var(--glow-dark);
+        }
+
+        /* Timeline Section */
+        .timeline-section {
+            margin: 60px 15px;
+            padding: 2rem;
+            background: rgba(0, 26, 13, 0.4);
+            border-radius: 15px;
+        }
+
+        .timeline-item {
+            padding-left: 40px;
+            position: relative;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideIn 0.8s ease forwards;
+            animation-delay: calc(0.2s * var(--order));
+        }
+
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-dark-green);
+            box-shadow: 0 0 5px var(--glow-dark);
+        }
+
+        .timeline-item h3 {
+            color: var(--accent-dark-green);
+            font-size: 1.6rem;
+            text-shadow: 0 0 6px var(--glow-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item p {
             font-size: 0.9rem;
         }
 
+        @keyframes slideIn {
+            0% { transform: translateX(-30px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Vision Section */
+        .vision-section {
+            padding: 50px 15px;
+            background: linear-gradient(180deg, var(--primary-dark), var(--secondary-dark));
+        }
+
+        .vision-card {
+            background: rgba(0, 72, 36, 0.1);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glow-dark);
+        }
+
+        .vision-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px var(--glow-dark);
+            background: rgba(0, 72, 36, 0.2);
+        }
+
+        .vision-card h3 {
+            font-size: 1.4rem;
+            color: var(--accent-dark-green);
+        }
+
+        .vision-card p {
+            font-size: 0.9rem;
+        }
+
+        /* Strain Section */
+        .strain-section {
+            padding: 50px 15px;
+            background: linear-gradient(45deg, var(--primary-dark), #002b15);
+        }
+
+        .strain-card {
+            background: rgba(0, 72, 36, 0.15);
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            transition: transform 0.4s ease;
+        }
+
+        .strain-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 12px var(--glow-dark);
+        }
+
+        .strain-card h3 {
+            font-size: 1.3rem;
+            color: var(--accent-dark-green);
+        }
+
+        .strain-card p {
+            font-size: 0.85rem;
+        }
+
+        /* Social Media Section */
+        .social-section {
+            padding: 60px 20px;
+            background: var(--primary-dark);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid var(--glow-dark);
+        }
+
+        .social-title {
+            font-size: 2rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 6px var(--glow-dark);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .social-link {
+            color: var(--accent-dark-green);
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-link i {
+            font-size: 1.8rem;
+        }
+
+        .social-link:hover {
+            color: #006633;
+            transform: translateY(-5px);
+        }
+
+        .x-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 1.8rem;
+            height: 1.8rem;
+            font-size: 1.8rem;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary-dark);
+            color: var(--text-muted);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid var(--glow-dark);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--accent-dark-green);
+            text-decoration: none;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--text-muted);
+            text-shadow: 0 0 6px var(--glow-dark);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .navbar-brand img { height: 35px; }
+            .nav-link { font-size: 0.85rem; padding: 0.4rem 0.8rem; }
+            .about-title { font-size: 2.5rem; }
+            .about-subtitle { font-size: 1.2rem; }
+            .about-content { padding: 1.5rem; font-size: 0.95rem; }
+            .about-cta { font-size: 1.1rem; padding: 0.7rem 1.5rem; }
+            .timeline-item h3 { font-size: 1.4rem; }
+            .vision-card h3, .strain-card h3 { font-size: 1.2rem; }
+            .social-title { font-size: 1.8rem; }
+            .social-link i, .x-icon { font-size: 1.6rem; }
+        }
+
         @media (max-width: 768px) {
-            .about-title {
-                font-size: 2.5rem;
-            }
-            .about-subtitle {
-                font-size: 1.2rem;
-            }
-            .about-content {
-                font-size: 1rem;
-            }
-            .about-cta {
-                padding: 10px 25px;
-                font-size: 1rem;
-            }
+            .about-container { padding: 60px 10px; }
+            .about-title { font-size: 2rem; }
+            .about-subtitle { font-size: 1rem; }
+            .about-content { padding: 1.2rem; font-size: 0.9rem; }
+            .about-cta { font-size: 1rem; padding: 0.6rem 1.2rem; }
+            .timeline-section { margin: 40px 10px; padding: 1.5rem; }
+            .timeline-item { padding-left: 30px; }
+            .timeline-item h3 { font-size: 1.3rem; }
+            .vision-section, .strain-section, .social-section { padding: 40px 10px; }
+            .vision-card, .strain-card { padding: 1rem; }
+            .vision-card h3, .strain-card h3 { font-size: 1.1rem; }
+            .social-title { font-size: 1.5rem; }
+            .social-icons { gap: 20px; }
+            .social-link i, .x-icon { font-size: 1.4rem; }
+            footer { font-size: 0.8rem; }
         }
 
         @media (max-width: 576px) {
-            .about-title {
-                font-size: 2rem;
-            }
-            .about-subtitle {
-                font-size: 1rem;
-            }
-            .about-content {
-                font-size: 0.9rem;
-            }
-            .about-cta {
-                padding: 8px 20px;
-                font-size: 0.9rem;
-            }
+            .navbar-brand img { height: 30px; }
+            .nav-link { font-size: 0.8rem; }
+            .about-container { padding: 40px 10px; }
+            .about-title { font-size: 1.8rem; }
+            .about-subtitle { font-size: 0.9rem; }
+            .about-content { padding: 1rem; font-size: 0.85rem; }
+            .about-cta { font-size: 0.9rem; padding: 0.5rem 1rem; }
+            .timeline-item h3 { font-size: 1.2rem; }
+            .timeline-item p { font-size: 0.8rem; }
+            .vision-card h3, .strain-card h3 { font-size: 1rem; }
+            .vision-card p, .strain-card p { font-size: 0.8rem; }
+            .social-title { font-size: 1.3rem; }
+            .social-icons { gap: 15px; flex-wrap: wrap; }
+            .social-link i, .x-icon { font-size: 1.2rem; }
         }
     </style>
 </head>
 <body>
-    <div class="leaf-bg" id="leafContainer"></div>
+    <div class="cosmic-bg"></div>
     <header>
-       <nav class="navbar navbar-expand-lg navbar-dark">
-           <a class="navbar-brand" href="/">
-               <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Logo">
-           </a>
-           <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-               <span class="navbar-toggler-icon"></span>
-           </button>
-           <style>
-               .custom-toggler {
-                   border: none;
-                   background-color: transparent;
-                   margin-right: 20px;
-               }
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="/">
+                <img src="/images/Cloud.png" alt="Cloud 420 Logo">
+            </a>
+            <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart <% if (cartItems > 0) { %><span class="badge bg-success"><%= cartItems %></span><% } %></a></li>
+                    <% if (isAuthenticated) { %>
+                        <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <% } else { %>
+                        <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </nav>
+    </header>
 
-               .custom-toggler .navbar-toggler-icon {
-                   width: 30px;
-                   height: 30px;
-                   background-image: url('data:image/svg+xml;charset=utf8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"%3E%3Cpath stroke="rgba%280, 204, 0, 0.8%29" stroke-width="2" stroke-linecap="round" stroke-miterlimit="10" d="M4 7h22M4 15h22M4 23h22"/%3E%3C/svg%3E');
-               }
-
-               .custom-toggler:focus {
-                   outline: none;
-                   box-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
-               }
-           </style>
-           <!-- Replace or append these within the respective <style> tags in your HTML -->
-
-               <div class="collapse navbar-collapse" id="navbarNav">
-                   <ul class="navbar-nav ms-auto">
-                       <li class="nav-item">
-                           <a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a>
-                       </li>
-                       <li class="nav-item">
-                           <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart <% if (cartItems > 0) { %><span class="badge bg-success"><%= cartItems %></span><% } %></a>
-                       </li>
-                       <% if (isAuthenticated) { %>
-                           <li class="nav-item">
-                               <a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard </a>
-                           </li>
-                           <li class="nav-item">
-                               <a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a>
-                           </li>
-                           <li class="nav-item">
-                               <a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                           </li>
-                       <% } else { %>
-                           <li class="nav-item">
-                               <a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a>
-                           </li>
-                           <li class="nav-item">
-                               <a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a>
-                           </li>
-                       <% } %>
-                   </ul>
-               </div>
-       </nav>
-   </header>
     <div class="about-container">
-        <h1 class="about-title">About Cloud 420</h1>
-        <p class="about-subtitle">Crafting Elevated Experiences Since 2737 BCE </p>
+        <h1 class="about-title" style="color: #ffffff;"><strong>Cloud 420: Cosmic Cannabis</strong></h1>
+        <p class="about-subtitle">Igniting Galactic Bliss Since 2737 BCE</p>
         <div class="about-content">
-            <p>At Cloud 420, we’re more than just a cannabis brand—we’re curators of bliss, artisans of elevation. Born from a passion for purity and potency, our journey began with a simple mission: to bring the finest organic cannabis to discerning souls worldwide.</p>
-            <p>Every bud we offer is hand-selected, cultivated with care, and infused with the spirit of nature’s finest. From the rolling hills of our partner farms to your doorstep, we ensure a seamless, discreet experience that honors the plant and its legacy.</p>
-            <p>Join us as we redefine relaxation, one exquisite strain at a time. Today’s date: <%= currentDate %>.</p>
-            <a href="/products" class="about-cta">Explore Our Collection</a>
+            <p>Dive into Cloud 420, where ancient stardust meets cosmic innovation. We craft strains that transcend time.</p>
+            <p>Sativas ignite like solar flares, indicas hum with lunar calm—each a gateway to the infinite.</p>
+            <p>March 07, 2025: Join us to explore the extraordinary.</p>
+            <a href="/products" class="about-cta">Launch Your Journey</a>
         </div>
     </div>
 
+    <div class="timeline-section">
+        <h2 class="about-title">Our Stellar Saga</h2>
+        <div class="timeline-item" style="--order: 1;">
+            <h3>2737 BCE: Genesis</h3>
+            <p>Emperor Shen Nung sparks the cannabis flame.</p>
+        </div>
+        <div class="timeline-item" style="--order: 2;">
+            <h3>420 CE: Sacred Rites</h3>
+            <p>Mystics weave hemp into divine tales.</p>
+        </div>
+        <div class="timeline-item" style="--order: 3;">
+            <h3>1969: Revolution</h3>
+            <p>Woodstock’s haze inspires Cloud 420.</p>
+        </div>
+        <div class="timeline-item" style="--order: 4;">
+            <h3>2025: Cosmic Apex</h3>
+            <p>Today, we unite dreamers in euphoria.</p>
+        </div>
+    </div>
+
+    <div class="vision-section">
+        <h2 class="about-title">Our Astral Vows</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 vision-card">
+                <h3>Eco-Nebula</h3>
+                <p>Sustainable cultivation, zero-waste ethos.</p>
+            </div>
+            <div class="col-md-4 vision-card">
+                <h3>Quantum Blends</h3>
+                <p>Rare genetics fused into cosmic strains.</p>
+            </div>
+            <div class="col-md-4 vision-card">
+                <h3>Starborn Tribe</h3>
+                <p>Join our collective for exclusive experiences.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="strain-section">
+        <h2 class="about-title">Celestial Strains</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-3 strain-card">
+                <h3>Nebula Haze</h3>
+                <p>Sativa starburst with citrus vibes.</p>
+            </div>
+            <div class="col-md-3 strain-card">
+                <h3>Midnight Kush</h3>
+                <p>Indica calm with berry depths.</p>
+            </div>
+            <div class="col-md-3 strain-card">
+                <h3>Stardust Hybrid</h3>
+                <p>Balanced fusion of pine and spice.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Social Media Section -->
+    <section class="social-section">
+        <h3 class="social-title">Connect with Us</h3>
+        <div class="social-icons">
+            <a href="https://wa.me/your-number" target="_blank" class="social-link" aria-label="WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="https://t.me/your-telegram" target="_blank" class="social-link" aria-label="Telegram">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
+            <a href="https://x.com/cloud420_store" target="_blank" class="social-link" aria-label="X (Twitter)">
+                <span class="x-icon"><i class="fab fa-twitter"></i></span>
+            </a>
+            <a href="tel:+1234567890" target="_blank" class="social-link" aria-label="Phone">
+                <i class="fas fa-phone"></i>
+            </a>
+        </div>
+    </section>
+
     <footer>
-        <p>© 2025 Cloud 420. All Rights Reserved. Crafted for Excellence.</p>
+        <p>© 2025 Cloud 420. All Rights Reserved.</p>
     </footer>
 
     <script>
-        const leafContainer = document.getElementById('leafContainer');
-        function createLeaf() {
-            const leaf = document.createElement('div');
-            leaf.classList.add('leaf');
-            leaf.style.left = Math.random() * 100 + 'vw';
-            leaf.style.animationDuration = Math.random() * 10 + 10 + 's';
-            leafContainer.appendChild(leaf);
-            setTimeout(() => leaf.remove(), 20000);
+        // Particle Animation
+        const cosmicBg = document.querySelector('.cosmic-bg');
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: var(--accent-dark-green);
+                border-radius: 50%;
+                left: ${Math.random() * 100}vw;
+                top: ${Math.random() * 100}vh;
+                animation: twinkle ${Math.random() * 3 + 1.5}s infinite;
+            `;
+            cosmicBg.appendChild(particle);
+            setTimeout(() => particle.remove(), 4000);
         }
-        setInterval(createLeaf, 2000);
+        setInterval(createParticle, 400);
+
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = `
+            @keyframes twinkle {
+                0% { opacity: 0; transform: scale(0); }
+                50% { opacity: 1; transform: scale(1.2); }
+                100% { opacity: 0; transform: scale(0); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
 </html>

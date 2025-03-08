@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const orderSchema = new mongoose.Schema({
     customerName: { type: String, required: true },
     customerEmail: { type: String, required: true },
@@ -8,24 +9,24 @@ const orderSchema = new mongoose.Schema({
     total: { type: Number, required: true },
     items: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        quantity: { type: Number, required: true }
+        quantity: { type: Number, required: true },
+        price: { type: Number }
     }],
     paymentStatus: { 
         type: String, 
-        default: 'Pending', 
-        enum: ['Pending', 'completed', 'Failed', 'Refunded'] 
+        enum: ['pending', 'completed', 'failed', 'refunded'],
+        default: 'pending' 
     },
     shippingStatus: { 
         type: String, 
-        default: 'Processing', 
-        enum: ['Not Shipped', 'Processing', 'Shipped', 'Delivered', 'Cancelled'] 
+        enum: ['Not Shipped', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+        default: 'Processing' 
     },
     transactionRequestId: { type: String },
     paymentDetails: { type: Object },
     estimatedDeliveryDate: { 
         type: Date,
-        default: () => new Date(+new Date() + 48*60*60*1000),
-        required: false
+        default: () => new Date(+new Date() + 48*60*60*1000)
     },
     createdAt: { type: Date, default: Date.now }
 });

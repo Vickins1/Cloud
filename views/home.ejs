@@ -3,241 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud 420 - Home</title>
+    <title>Cloud 420 - Cosmic Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="/images/icon.png">
     <style>
-        /* General Reset */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Poppins', sans-serif;
-            background: #f4f7f6;
-            color: #333;
+            background: #121212;
+            color: #e0e0e0;
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Dark Cosmic Background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #121212, #1a1a1a);
+            z-index: -1;
+            animation: cosmicShift 15s infinite ease-in-out;
+        }
+
+        @keyframes cosmicShift {
+            0%, 100% { background-position: 0 0; }
+            50% { background-position: 100% 100%; }
         }
 
         /* Navbar */
         .navbar {
             background: #1a1a1a;
             padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            transition: background 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .navbar-brand img {
-            height: 60px;
+            height: 50px;
+            width: 230px;
             transition: transform 0.3s ease;
         }
 
-        .navbar-brand:hover img { transform: scale(1.05); }
+        .navbar-brand:hover img { transform: rotate(3deg) scale(1.05); }
 
         .navbar-nav .nav-link {
-            color: #fff !important;
+            color: #e0e0e0 !important;
             font-weight: 500;
             padding: 0.75rem 1.5rem;
-            transition: color 0.3s ease, background 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .navbar-nav .nav-link:hover {
             color: #1eff47 !important;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            text-shadow: 0 0 10px rgba(30, 255, 71, 0.5);
         }
 
-        .badge.bg-success {
-            position: relative;
-            top: -5px;
-            font-size: 0.8rem;
-        }
+        .badge.bg-success { font-size: 0.8rem; margin-left: 5px; }
 
-        /* Hero Section */
-        .hero-section {
-            margin-top: 76px; /* Adjusted for fixed navbar */
-            position: relative;
-            background: linear-gradient(135deg, rgba(3, 89, 37, 0.85), rgba(0, 0, 0, 0.9)), 
-                        url('/images/420.png') no-repeat center/cover;
-            height: 70vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            animation: fadeIn 1s ease-out;
-        }
+/* Hero Section */
+.hero-section {
+    margin-top: 76px;
+    position: relative;
+    background: linear-gradient(135deg, rgba(0, 97, 0, 0.741), rgba(0, 0, 0, 0.748)), 
+                url('/images/420.png') no-repeat center/cover;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    animation: fadeIn 1s ease-out;
+}
+
 
         .hero-content {
             z-index: 2;
             text-align: center;
-            color: #fff;
+            color: #e0e0e0;
             padding: 2rem;
         }
 
         .hero-title {
-            font-size: 4.5rem;
-            font-weight: 900;
+            font-size: 4rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
+            color: #129600;
+            text-shadow: 0 0 15px rgba(4, 62, 0, 0.7);
             animation: fadeInDown 1.5s ease-out;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
         .highlight { color: #1eff47; }
         .spin-text { 
             display: inline-block; 
-            color: #fff; 
             animation: spin 10s infinite linear; 
             font-size: 1.8rem; 
         }
 
         .hero-subtitle {
-            font-size: 1.6rem;
-            margin: 1.5rem 0;
-            font-style: italic;
+            font-size: 1.5rem;
+            margin: 1rem 0;
             opacity: 0;
             animation: fadeIn 2s ease-in forwards 0.8s;
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
         }
 
-        .cta-button {
-            background: #035925;
-            color: #fff;
-            padding: 1rem 2.5rem;
-            border-radius: 50px;
-            font-size: 1.4rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease;
-        }
-
-        .cta-button:hover {
-            background: #028e39;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-            color: #fff;
-        }
-
-        .cta-icon { font-size: 1.2rem; transition: transform 0.3s ease; }
-        .cta-button:hover .cta-icon { transform: translateX(8px); }
-
-        .particle-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.7;
-        }
-
-        /* Order Tracking Section */
-        .order-tracking-section {
-            background: linear-gradient(135deg, #ffffff 0%, #e9ecef 100%);
-            border-radius: 20px;
-            padding: 3.5rem 2rem;
+        /* Dashboard Sections */
+        .dashboard-section {
+            max-width: 1100px;
             margin: 3rem auto;
-            max-width: 900px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            padding: 0 2rem;
         }
 
-        .order-tracking-section:hover { transform: translateY(-5px); }
+        .dashboard-card {
+            background: #1e1e1e;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-        .order-tracking-section h2 {
-            color: #035925;
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(30, 255, 71, 0.2);
+        }
+
+        .dashboard-card h2, .dashboard-card h3 {
+            color: #00b421;
             font-weight: 700;
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .order-tracking-section p { font-size: 1.1rem; color: #666; }
-
-        .form-control {
-            border: 2px solid #035925;
-            padding: 0.75rem;
-            font-size: 1.1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .form-control:focus {
-            border-color: #028e39;
-            box-shadow: 0 0 10px rgba(2, 142, 57, 0.3);
-            outline: none;
-        }
-
-        .btn-track {
-            background: #035925;
-            border: none;
-            padding: 0.75rem 2rem;
-            font-size: 1.2rem;
-            font-weight: 600;
+        .action-card {
+            background: #252525;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
             transition: all 0.3s ease;
         }
 
-        .btn-track:hover {
-            background: #028e39;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        .action-card:hover {
+            background: #2d2d2d;
+            transform: scale(1.05);
         }
 
-        /* Modal */
-        .modal-content {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        .action-card i {
+            font-size: 2.5rem;
+            color: #00df29;
+            margin-bottom: 0.75rem;
         }
 
-        .modal-header {
-            background: #035925;
-            color: #fff;
-            border-bottom: none;
+        .action-card a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-weight: 500;
         }
 
-        .modal-body { padding: 2rem; }
-        .progress-tracker::before { background: #e0e0e0; height: 6px; top: 22px; }
-        .step-circle {
-            width: 50px;
-            height: 50px;
-            line-height: 50px;
-            font-size: 1.2rem;
-            background: #e0e0e0;
-        }
+        .action-card a:hover { color: #1eff47; }
 
-        .step.completed .step-circle { background: #035925; }
-        .step-label { font-size: 1rem; font-weight: 500; }
-        .step.completed .step-label { color: #035925; }
-
-        /* CTA Section */
-        .cta-section {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 4rem 2rem;
-            text-align: center;
-            animation: slideUp 1s ease-out;
-            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .cta-section h3 {
-            font-size: 2rem;
-            font-weight: 700;
+        /* Recent Orders */
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #252525;
+            border-radius: 8px;
             margin-bottom: 1rem;
+            transition: background 0.3s ease;
         }
 
-        .cta-section p { font-size: 1.2rem; color: #ccc; }
+        .order-item:hover { background: #2d2d2d; }
 
-        /* Back to Top Button */
+        .order-item span { font-size: 1rem; color: #b0b0b0; }
+        .order-item .badge { font-size: 0.9rem; }
+
+        /* Loyalty Section */
+        .loyalty-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loyalty-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(30, 255, 71, 0.15), transparent 70%);
+            animation: orbitGlow 15s infinite linear;
+            z-index: 0;
+        }
+
+        .loyalty-points {
+            font-size: 3rem;
+            color: #00b606;
+            font-weight: 900;
+            text-shadow: 0 0 15px rgba(0, 20, 4, 0.5);
+            margin: 1rem 0;
+        }
+
+/* Featured Products Section Styling */
+.featured-products.dashboard-section {
+    padding: 50px 30px;
+    background: linear-gradient(135deg, #000000 10%, #008000 90%);
+    border-radius: 18px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    margin: 30px auto;
+    overflow: hidden;
+}
+
+/* Section Heading */
+.featured-products h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #e6ffe6;
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 5px rgba(0, 255, 0, 0.5);
+}
+
+/* Carousel Container */
+#productCarousel {
+    max-width: 95%;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Image Styling */
+.carousel-item img {
+    width: 500px;
+    height: 400px;
+    object-fit: cover;
+    transition: transform 0.4s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* Hover Effect for Image */
+.carousel-item:hover img {
+    transform: scale(1.08);
+    box-shadow: 0 5px 20px rgba(0, 255, 0, 0.5);
+}
+
+/* Caption Styling - Glass Effect */
+.carousel-caption {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    padding: 20px;
+    border-radius: 10px;
+    bottom: 20px;
+    left: 10%;
+    right: 10%;
+    transition: all 0.3s ease;
+}
+
+/* Caption Text */
+.carousel-caption h5 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #003b00;
+    text-shadow: 1px 1px 5px rgba(0, 255, 0, 0.7);
+}
+
+.carousel-caption p {
+    font-size: 1.3rem;
+    color: #fff;
+    font-weight: 500;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover effect for caption */
+.carousel-item:hover .carousel-caption {
+    background: rgba(0, 0, 0, 0.7);
+    transform: translateY(-10px);
+}
+
+/* Carousel Navigation Arrows */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+    opacity: 0.9;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #003c00;
+    border-radius: 50%;
+    padding: 20px;
+    background-size: 50%;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+.featured-products{
+    max-width: 100%;
+}
+    .carousel-item img {
+        height: 300px;
+    }
+
+    .carousel-caption h5 {
+        font-size: 1.3rem;
+    }
+
+    .carousel-caption p {
+        font-size: 1.1rem;
+    }
+
+    .featured-products h3 {
+        font-size: 1.6rem;
+    }
+    
+}
+
+
+
+        /* WhatsApp-Style Chat Widget */
+        #chatWidget {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .chat-header {
+            background: #075e54;
+            color: #fff;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h6 { font-size: 1rem; margin: 0; }
+        .chat-header i { cursor: pointer; }
+
+        .chat-body {
+            background: #121212;
+            height: calc(100% - 110px);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .chat-message.received { justify-content: flex-start; }
+        .chat-message.sent { justify-content: flex-end; }
+
+        .chat-message .message-content {
+            max-width: 70%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .chat-message.received .message-content {
+            background: #252525;
+            color: #e0e0e0;
+        }
+
+        .chat-message.sent .message-content {
+            background: #1eff47;
+            color: #121212;
+        }
+
+        .chat-footer {
+            background: #1e1e1e;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        #chatInput {
+            flex-grow: 1;
+            background: #252525;
+            border: none;
+            border-radius: 20px;
+            padding: 0.75rem;
+            color: #e0e0e0;
+            margin-right: 0.5rem;
+        }
+
+        #chatInput:focus { outline: none; background: #2d2d2d; }
+
+        #sendChat {
+            background: #1eff47;
+            color: #121212;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        #sendChat:hover { transform: scale(1.1); }
+
+        #chatToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #075e54;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        #chatToggle:hover { transform: scale(1.1); background: #135700; }
+
+        /* Back to Top */
         #backToTop {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #035925;
-            color: #fff;
+            bottom: 20px;
+            right: 90px;
+            background: #118200;
+            color: #121212;
             width: 50px;
             height: 50px;
             border-radius: 50%;
@@ -248,198 +473,249 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
-            z-index: 1000;
+            z-index: 999;
         }
 
         #backToTop.visible { opacity: 1; }
-        #backToTop:hover { transform: scale(1.1); background: #028e39; }
-
-        /* Live Chat Widget */
-        #chatWidget {
-            position: fixed;
-            bottom: 90px;
-            right: 30px;
-            background: #035925;
-            color: #fff;
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            display: none;
-            z-index: 1000;
-            max-width: 300px;
-        }
-
-        #chatToggle {
-            position: fixed;
-            bottom: 30px;
-            right: 90px;
-            background: #035925;
-            color: #fff;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-
-        #chatToggle:hover { transform: scale(1.1); background: #028e39; }
+        #backToTop:hover { transform: scale(1.1); }
 
         /* Animations */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes fadeInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes orbitGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-title { font-size: 3rem; }
+            .quick-actions { grid-template-columns: 1fr 1fr; }
+            .dashboard-section { padding: 0 1rem; }
+            #chatWidget { width: 300px; }
+        }
+
         @media (max-width: 767px) {
             .navbar { padding: 1rem; }
-            .navbar-brand img { height: 50px; }
-            .hero-section { height: 60vh; }
-            .hero-title { font-size: 2.8rem; }
+            .hero-section { height: 40vh; }
+            .hero-title { font-size: 2.5rem; }
             .hero-subtitle { font-size: 1.2rem; }
-            .cta-button { padding: 0.8rem 2rem; font-size: 1.2rem; }
-            .order-tracking-section { padding: 2rem 1rem; margin: 2rem 1rem; }
-            .cta-section { padding: 2.5rem 1rem; }
-            .cta-section h3 { font-size: 1.6rem; }
+            .quick-actions { grid-template-columns: 1fr; }
+            .order-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            #chatWidget { width: 90%; max-width: 350px; right: 10px; }
+            #chatToggle { right: 10px; }
+            #backToTop { right: 80px; }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title { font-size: 2rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .dashboard-card { padding: 1.5rem; }
+            .loyalty-points { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Navbar (unchanged) -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <img src="/images/Cloud.png" alt="Cloud 420 Store Logo">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a></li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
-                                <% if (cartItems > 0) { %>
-                                    <span class="badge bg-success" id="cart-count"><%= cartItems %></span>
-                                <% } %>
-                            </a>
-                        </li>
-                        <% if (isAuthenticated) { %>
-                            <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                        <% } else { %>
-                            <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
-                        <% } %>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <div class="cosmic-bg"></div>
 
-    <!-- Hero Section (unchanged structurally) -->
-    <section class="hero-section" id="hero">
-        <div class="hero-content">
-            <h1 class="hero-title"><span class="highlight">Cloud 420</span> <span class="spin-text">Vibes</span> Store</h1>
-            <p class="hero-subtitle" id="rotating-subtitle"></p>
-            <a href="/products" class="btn cta-button"><span class="cta-text">Your Order Awaits!</span><i class="fas fa-cloud cta-icon"></i></a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/"><img src="/images/Cloud.png" alt="Cloud 420 Logo"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                            <% if (cartItems > 0) { %>
+                                <span class="badge bg-success"><%= cartItems %></span>
+                            <% } %>
+                        </a>
+                    </li>
+                    <% if (isAuthenticated) { %>
+                        <li class="nav-item"><a class="nav-link" href="/home"><i class="fas fa-home"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/cart/my-orders"><i class="fas fa-box-open"></i> Orders</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/profile"><i class="fas fa-user"></i> Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <% } else { %>
+                        <li class="nav-item"><a class="nav-link" href="/auth/login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/auth/signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+                    <% } %>
+                </ul>
+            </div>
         </div>
-        <canvas id="particle-canvas" class="particle-bg"></canvas>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title"><span class="highlight">Cloud 420 Store</span> <span class="spin-text">Vibes</span></h1>
+            <p class="hero-subtitle" id="rotating-subtitle"></p>
+        </div>
     </section>
 
-    <!-- Order Tracking Section -->
-    <div class="container order-tracking-section">
-        <h2 class="text-center mb-4">Track Your Order</h2>
-        <p class="text-center mb-4">Enter your Order ID to see the status of your delivery.</p>
-        <form id="trackOrderForm" class="d-flex justify-content-center align-items-center flex-column flex-md-row gap-3">
-            <div class="col-md-6">
-                <input type="text" name="orderId" id="orderIdInput" class="form-control" placeholder="Enter Order ID (e.g., CLOUD654321)" required>
-            </div>
-            <div class="col-md-3">
-                <button type="submit" class="btn btn-track" id="trackOrderBtn">
-                    <span class="button-text">Track Now</span>
-                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!-- Order Tracking Modal -->
-    <div class="modal fade" id="orderTrackingModal" tabindex="-1" aria-labelledby="orderTrackingModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="orderTrackingModalLabel">Order Tracking</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <% if (isAuthenticated) { %>
+    <!-- Personalized Welcome -->
+    <section class="dashboard-section dashboard-welcome">
+        <div class="dashboard-card">
+            <h2>Welcome, <%= userName || 'Cosmic Explorer' %>!</h2>
+            <p>Unleash your vibes—shop, track, and earn cosmic rewards!</p>
+            <div class="quick-actions">
+                <div class="action-card">
+                    <i class="fas fa-shopping-bag"></i>
+                    <a href="/products">Shop Now</a>
                 </div>
-                <div class="modal-body">
-                    <div id="orderDetails">
-                        <div id="loadingSpinner" class="spinner-border" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div id="trackingContent" class="d-none">
-                            <h4 class="mb-3">Order #<span id="orderIdDisplay"></span></h4>
-                            <p class="text-muted mb-4">Status: <strong id="orderStatus"></strong></p>
-                            <div class="progress-tracker">
-                                <ul class="list-unstyled d-flex justify-content-between position-relative">
-                                    <li class="step" data-step="Ordered"><span class="step-circle">1</span><span class="step-label">Ordered</span></li>
-                                    <li class="step" data-step="Processing"><span class="step-circle">2</span><span class="step-label">Processing</span></li>
-                                    <li class="step" data-step="Shipped"><span class="step-circle">3</span><span class="step-label">Shipped</span></li>
-                                    <li class="step" data-step="Delivered"><span class="step-circle">4</span><span class="step-label">Delivered</span></li>
-                                </ul>
-                            </div>
-                            <p class="mt-3 text-muted" id="orderDetailsText"></p>
-                            <div class="mt-4" id="additionalInfo">
-                                <p><strong>Payment Status:</strong> <span id="paymentStatus"></span></p>
-                                <p><strong>Location:</strong> <span id="customerLocation"></span></p>
-                            </div>
-                        </div>
-                        <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
-                    </div>
+                <div class="action-card">
+                    <i class="fas fa-box-open"></i>
+                    <a href="/cart/my-orders">Orders</a>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="action-card">
+                    <i class="fas fa-star"></i>
+                    <a href="#loyalty">Loyalty</a>
+                </div>
+                <div class="action-card">
+                    <i class="fas fa-user-astronaut"></i>
+                    <a href="/profile">Profile</a>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- CTA Section -->
-    <div class="cta-section">
-        <h3>Get the Best Weed Products Online</h3>
-        <p>Order now and experience the highest quality with fast delivery!</p>
-        <a href="/products" class="cta-button">Shop Our Collection</a>
-    </div>
+    <section class="dashboard-section recent-orders">
+        <div class="dashboard-card">
+            <h3>Recent Orders</h3>
+            <% if (recentOrders && recentOrders.length > 0) { %>
+                <% recentOrders.forEach(order => { %>
+                    <div class="order-item">
+                        <span>Order #<%= order.orderId.toString().slice(-6) %></span>
+                        <span><%= new Date(order.createdAt).toLocaleDateString() %></span>
+                        <span class="badge <%= order.status === 'completed' ? 'bg-success' : order.status === 'failed' ? 'bg-danger' : 'bg-warning' %>">
+                            <%= order.status %>
+                        </span>
+                    </div>
+                <% }); %>
+                <div class="text-center mt-3">
+                    <a href="/cart/my-orders" class="btn cta-button">View All Orders</a>
+                </div>
+            <% } else { %>
+                <p>No orders yet—start your cosmic journey!</p>
+                <div class="text-center mt-3">
+                    <a href="/products" class="btn cta-button">Shop Now</a>
+                </div>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Featured Products Carousel -->
+    <section class="featured-products dashboard-section">
+        <h3>Featured Products</h3>
+        <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <% if (products && products.length > 0) { %>
+                    <% products.slice(0, 3).forEach((product, index) => { %>
+                        <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                            <img src="<%= product.imageUrl || '/images/placeholder.png' %>" class="d-block w-100" alt="<%= product.name %>">
+                            <div class="carousel-caption">
+                                <h5><%= product.name %></h5>
+                                <p>KES <%= product.price.toFixed(2) %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="carousel-item active">
+                        <img src="/images/placeholder.png" class="d-block w-100" alt="No Products">
+                        <div class="carousel-caption">
+                            <h5>No Featured Products</h5>
+                            <p>Check back soon!</p>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Loyalty Section -->
+    <section class="dashboard-section loyalty-section">
+        <div class="dashboard-card">
+            <h3>Loyalty Rewards</h3>
+            <p>Earn points with every order—unlock cosmic perks!</p>
+            <div class="loyalty-points"><%= userPoints || 0 %> Points</div>
+            <div class="text-center">
+                <a href="/profile#rewards" class="btn cta-button">Redeem Now</a>
+            </div>
+        </div>
+    </section>
+    <% } %>
 
     <!-- Back to Top Button -->
     <button id="backToTop" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
 
-    <!-- Live Chat Widget -->
+    <!-- WhatsApp-Style Chat Widget -->
     <div id="chatWidget">
-        <h6 class="mb-2">Live Chat</h6>
-        <p class="mb-2">Need help? Chat with us!</p>
-        <textarea id="chatInput" rows="3" class="form-control mb-2" placeholder="Type your message..."></textarea>
-        <button id="sendChat" class="btn btn-light btn-sm">Send</button>
+        <div class="chat-header">
+            <h6><i class="fas fa-headset"></i> Cloud 420 Support</h6>
+            <i class="fas fa-times" id="closeChat"></i>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-message received">
+                <div class="message-content">Hey there! How can we assist you today?</div>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chatInput" placeholder="Type a message...">
+            <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
+        </div>
     </div>
-    <div id="chatToggle" title="Chat with Us"><i class="fas fa-comment-dots"></i></div>
-
-    <!-- Scripts -->
+    <div id="chatToggle" title="Chat with Us"><i class="fas fa-headset"></i></div>
+    <footer class="dashboard-footer">
+        <p>&copy; 2025 Cloud 420. All rights reserved. | <a href="https//:cloud420.store" style="color: #fff; text-decoration: none;">Privacy Policy</a> | <a href="#" style="color: #fff; text-decoration: none;">Terms of Service</a></p>
+        </footer>
+        <style>
+        .dashboard-footer {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        background: #000;
+        color: #fff;
+        text-align: center;
+        font-size: 1rem;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        margin-top: 20px;
+        }
+        
+        /* Footer Links */
+        .dashboard-footer a {
+        color: #00ff00;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease-in-out;
+        
+        }
+        
+        .dashboard-footer a:hover {
+        color: #00cc00;
+        }
+        
+        </style>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Rotating subtitle
+        // Rotating Subtitle
         const subtitles = [
-            "We deliver in minutes to your doorstep!",
-            "Premium vibes, haraka-faster service!",
-            "Your chill spot, just a click away!",
-            "Elevate your day with Cloud 420!"
+            "Your cosmic vibes are ready!",
+            "Fast delivery, premium quality!",
+            "Explore the Cloud 420 galaxy!",
+            "Elevate your day with us!"
         ];
         let subtitleIndex = 0;
         const subtitleElement = document.getElementById('rotating-subtitle');
@@ -454,112 +730,7 @@
         setInterval(rotateSubtitle, 3000);
         rotateSubtitle();
 
-        // Particle effect
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const particles = [];
-        for (let i = 0; i < 50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 3 + 1,
-                speedX: Math.random() * 0.5 - 0.25,
-                speedY: Math.random() * 0.5 - 0.25
-            });
-        }
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(111, 255, 169, 0.5)';
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-                p.x += p.speedX;
-                p.y += p.speedY;
-                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-            });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-
-        // Order Tracking
-        document.addEventListener('DOMContentLoaded', () => {
-            const trackOrderForm = document.getElementById('trackOrderForm');
-            const trackOrderBtn = document.getElementById('trackOrderBtn');
-            const orderIdInput = document.getElementById('orderIdInput');
-            const modal = new bootstrap.Modal(document.getElementById('orderTrackingModal'));
-            const orderDetails = document.getElementById('orderDetails');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const trackingContent = document.getElementById('trackingContent');
-            const errorMessage = document.getElementById('errorMessage');
-            const orderIdDisplay = document.getElementById('orderIdDisplay');
-            const orderStatus = document.getElementById('orderStatus');
-            const orderDetailsText = document.getElementById('orderDetailsText');
-            const paymentStatus = document.getElementById('paymentStatus');
-            const customerLocation = document.getElementById('customerLocation');
-
-            trackOrderForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                trackOrderBtn.querySelector('.button-text').classList.add('d-none');
-                trackOrderBtn.querySelector('.spinner-border').classList.remove('d-none');
-                trackOrderBtn.disabled = true;
-
-                const orderId = orderIdInput.value.trim();
-
-                try {
-                    const response = await fetch('/track-order', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ orderId }),
-                    });
-
-                    const data = await response.json();
-
-                    loadingSpinner.classList.remove('d-none');
-                    trackingContent.classList.add('d-none');
-                    errorMessage.classList.add('d-none');
-                    modal.show();
-
-                    if (data.success) {
-                        orderIdDisplay.textContent = data.order.cloudOrderId || orderId;
-                        orderStatus.textContent = data.order.shippingStatus;
-                        orderDetailsText.textContent = `Estimated Delivery: ${data.order.estimatedDelivery || 'N/A'}`;
-                        paymentStatus.textContent = data.order.paymentStatus;
-                        customerLocation.textContent = data.order.customerLocation;
-
-                        const steps = document.querySelectorAll('.step');
-                        steps.forEach(step => {
-                            step.classList.remove('completed');
-                            const statusOrder = ['Ordered', 'Processing', 'Shipped', 'Delivered'];
-                            if (statusOrder.indexOf(step.dataset.step) <= statusOrder.indexOf(data.order.shippingStatus)) {
-                                step.classList.add('completed');
-                            }
-                        });
-
-                        loadingSpinner.classList.add('d-none');
-                        trackingContent.classList.remove('d-none');
-                    } else {
-                        errorMessage.textContent = data.message || 'Order not found.';
-                        errorMessage.classList.remove('d-none');
-                        loadingSpinner.classList.add('d-none');
-                    }
-                } catch (error) {
-                    console.error('Tracking error:', error);
-                    errorMessage.textContent = 'An error occurred while tracking your order.';
-                    errorMessage.classList.remove('d-none');
-                    loadingSpinner.classList.add('d-none');
-                } finally {
-                    trackOrderBtn.querySelector('.button-text').classList.remove('d-none');
-                    trackOrderBtn.querySelector('.spinner-border').classList.add('d-none');
-                    trackOrderBtn.disabled = false;
-                }
-            });
-        });
-
-        // Back to Top Button
+        // Back to Top
         const backToTop = document.getElementById('backToTop');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 300) backToTop.classList.add('visible');
@@ -567,21 +738,143 @@
         });
         backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
-        // Live Chat Widget (Basic Demo)
+        // WhatsApp-Style Chat
         const chatToggle = document.getElementById('chatToggle');
         const chatWidget = document.getElementById('chatWidget');
+        const closeChat = document.getElementById('closeChat');
         const sendChat = document.getElementById('sendChat');
         const chatInput = document.getElementById('chatInput');
+        const chatBody = document.getElementById('chatBody');
+
+        let isFirstMessage = true;
+
         chatToggle.addEventListener('click', () => {
             chatWidget.style.display = chatWidget.style.display === 'block' ? 'none' : 'block';
-        });
-        sendChat.addEventListener('click', () => {
-            const message = chatInput.value.trim();
-            if (message) {
-                console.log('Chat message:', message); // Replace with actual chat logic
-                chatInput.value = '';
+            if (chatWidget.style.display === 'block') {
+                isFirstMessage = true;
             }
         });
+
+        closeChat.addEventListener('click', () => {
+            chatWidget.style.display = 'none';
+        });
+
+        sendChat.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        function sendMessage() {
+            const message = chatInput.value.trim().toLowerCase();
+            if (message) {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = 'chat-message sent';
+                msgDiv.innerHTML = `<div class="message-content">${message}</div>`;
+                chatBody.appendChild(msgDiv);
+                chatInput.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                setTimeout(() => {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'chat-message received';
+                    const botResponse = getBotResponse(message);
+                    replyDiv.innerHTML = `<div class="message-content">${botResponse}</div>`;
+                    chatBody.appendChild(replyDiv);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        function getBotResponse(message) {
+            message = message.toLowerCase();
+
+            if (isFirstMessage && (message.includes('hi') || message.includes('hello') || message.includes('hey') || message.includes('yo'))) {
+                const greetings = [
+                    "Greetings, fellow traveler! Welcome to Cloud 420—how may I elevate your day?",
+                    "Hello, esteemed guest! Step into our green haven—what’s sparking your curiosity?",
+                    "Hey there, kind soul! Cloud 420 is at your service—ready to blaze a trail together?",
+                    "Yo, welcome to the high life! I’m your budtender—how can I make your day even doper?",
+                    "Salutations, my friend! You’ve found Cloud 420—what’s the vibe you’re chasing today?"
+                ];
+                const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+                isFirstMessage = false;
+                return randomGreeting;
+            }
+
+            if (message.includes('strain') || message.includes('bud') || message.includes('weed')) {
+                return "Greetings, connoisseur! Seeking the perfect strain? Let me know your desired experience—relaxation, inspiration, or a balanced blend—and I’ll curate something exquisite for you.";
+            } else if (message.includes('order') || message.includes('track') || message.includes('delivery')) {
+                return "Let’s track your treasure! Please share your order number, and I’ll ensure you’re updated on its journey to your doorstep—arriving with discretion and delight.";
+            } else if (message.includes('edible') || message.includes('gummies') || message.includes('brownies')) {
+                return "A refined choice! Our edibles range from delicate gummies to decadent brownies. Any flavor or potency preference? I’ll find the perfect treat for your palate.";
+            } else if (message.includes('bong') || message.includes('pipe') || message.includes('vape')) {
+                return "Elevate your experience! We offer premium bongs, sleek pipes, and cutting-edge vapes. Are you after bold clouds or discreet enjoyment? I’ve got the ideal piece for you.";
+            } else if (message.includes('price') || message.includes('cost') || message.includes('how much')) {
+                return "Let’s talk value! Are you interested in our fine flowers, gourmet edibles, or stylish accessories? Share your focus, and I’ll present the perfect price point.";
+            } else if (message.includes('high') || message.includes('stoned') || message.includes('baked')) {
+                return "Riding the wave already? Delightful! Tell me what’s lifting your spirits, and I’ll recommend a companion to prolong the bliss.";
+            } else if (message.includes('help') || message.includes('what') || message.includes('how')) {
+                return "Your personal budtender at your service! Whether it’s strains, orders, or advice, I’m here to assist with elegance and enthusiasm. What’s on your mind?";
+            } else if (message.includes('420') || message.includes('smoke') || message.includes('toke')) {
+                return "A nod to the 420 lifestyle—splendid! Are you here to indulge or restock? Let’s make it a memorable experience.";
+            } else if (message.includes('indica') || message.includes('chill') || message.includes('relax')) {
+                return "Seeking serenity? Indica is your muse—think Purple Kush or Northern Lights for a luxurious unwind. How deep a relaxation are you craving today?";
+            } else if (message.includes('sativa') || message.includes('energy') || message.includes('uplift')) {
+                return "Energize your day! Sativas like Sour Diesel or Durban Poison offer a vibrant lift. What’s inspiring your zest today?";
+            } else if (message.includes('hybrid') || message.includes('balance') || message.includes('both')) {
+                return "A harmonious hybrid, perhaps? Blue Dream or Girl Scout Cookies deliver the best of both worlds. What balance are you seeking?";
+            } else if (message.includes('og kush') || message.includes('kush')) {
+                return "OG Kush—a timeless classic with earthy elegance. Are you a devotee, or shall I introduce you to its kin?";
+            } else if (message.includes('sour diesel') || message.includes('diesel')) {
+                return "Sour Diesel, the spirited sativa! Its bold zest is perfect for daytime pursuits. Is this your go-to, or a new adventure?";
+            } else if (message.includes('grow') || message.includes('plant') || message.includes('cultivate')) {
+                return "A cultivator’s spirit! Are you tending indoors or under the sun? Share your setup, and I’ll offer tailored tips for a bountiful harvest.";
+            } else if (message.includes('thc') || message.includes('cbd') || message.includes('potency')) {
+                return "Potency is the name of the game! THC for euphoria, CBD for calm—what’s your ideal blend? I’ll match you with perfection.";
+            } else if (message.includes('deal') || message.includes('sale') || message.includes('discount')) {
+                return "A savvy seeker! Enjoy our current offer: an eighth with a complimentary pre-roll, or 20% off edibles. Shall I detail more specials for you?";
+            } else if (message.includes('pre-roll') || message.includes('joint') || message.includes('blunt')) {
+                return "Pre-rolls, crafted for convenience! Choose from indica, sativa, or hybrid—ready to spark. How many shall I reserve for you?";
+            } else if (message.includes('legal') || message.includes('law') || message.includes('allowed')) {
+                return "A prudent question! Tell me your location, and I’ll provide the latest on local regulations—ensuring your enjoyment is fully compliant.";
+            } else if (message.includes('munchies') || message.includes('hungry') || message.includes('food')) {
+                return "The munchies call! Pair your high with our sweet edibles, or perhaps a savory snack suggestion? What tempts your taste buds?";
+            } else if (message.includes('dab') || message.includes('wax') || message.includes('shatter')) {
+                return "Dabbing in style! Wax, shatter, or live resin—we’ve got the concentrates for a potent punch. Do you have a rig, or need a recommendation?";
+            } else if (message.includes('first time') || message.includes('newbie') || message.includes('beginner')) {
+                return "Welcome to the fold! For a gentle introduction, try a low-THC strain like Harlequin or 5mg gummies. How can I ease you into this journey?";
+            } else if (message.includes('strongest') || message.includes('potent') || message.includes('fire')) {
+                return "Craving the ultimate? Gorilla Glue #4 or Death Star at 30% THC will ignite your senses. Are you ready for this elevated adventure?";
+            } else if (message.includes('flavor') || message.includes('taste') || message.includes('terpenes')) {
+                return "A flavor aficionado! Fruity, earthy, or spicy—name your preference, and I’ll select a strain bursting with terpene brilliance.";
+            } else if (message.includes('sleep') || message.includes('insomnia') || message.includes('night')) {
+                return "Dreams await! Indicas like Granddaddy Purple or Bubba Kush promise restful slumber. What’s keeping you up, my friend?";
+            } else if (message.includes('party') || message.includes('social') || message.includes('friends')) {
+                return "Let’s spark the festivities! Jack Herer or Pineapple Express will keep the group buzzing. How grand is your gathering?";
+            } else if (message.includes('discreet') || message.includes('stealth') || message.includes('private')) {
+                return "Privacy is paramount! Our packaging is discreet—odor-proof and unassuming. How else can I ensure your comfort?";
+            } else if (message.includes('payment') || message.includes('pay') || message.includes('cash')) {
+                return "Smooth transactions await! We accept cash on delivery, cryptocurrency, or secure card payments online. Your preferred method?";
+            } else if (message.includes('quality') || message.includes('premium') || message.includes('best')) {
+                return "Only the finest for you! Lab-tested, hand-trimmed, and top-tier—our quality is unmatched. What’s your standard of excellence?";
+            } else if (message.includes('organic') || message.includes('natural') || message.includes('clean')) {
+                return "Purely organic options available! Grown with care, free of pesticides—nature’s finest. Interested in our clean green lineup?";
+            } else if (message.includes('gift') || message.includes('present') || message.includes('surprise')) {
+                return "A thoughtful gesture! We offer gift packs—pre-rolls, edibles, or a curated strain sampler. Who’s the lucky recipient?";
+            } else if (message.includes('storage') || message.includes('keep') || message.includes('fresh')) {
+                return "Keep it fresh! Store in a cool, dark place with an airtight jar—humidity packs work wonders. Need a pro storage tip?";
+            } else if (message.includes('travel') || message.includes('trip') || message.includes('vacation')) {
+                return "Toking on the go? Discreet vapes or pre-rolls are travel-friendly—just check local laws. Where’s your next destination?";
+            } else if (message.includes('recipe') || message.includes('cook') || message.includes('infuse')) {
+                return "Culinary cannabis! Infuse butter or oil for delectable dishes—want a simple recipe to whip up something dank?";
+            } else if (message.includes('pain') || message.includes('relief') || message.includes('ache')) {
+                return "Seeking relief? CBD-rich strains or indica-heavy options like Afghan Kush can soothe. What’s ailing you today?";
+            } else if (message.includes('history') || message.includes('origin') || message.includes('story')) {
+                return "A curious mind! Want the tale of a strain’s origins? Name one—like OG Kush—and I’ll weave its legacy for you.";
+            } else {
+                return "I’m delighted to assist, though I may need a nudge! Are we discussing strains, accessories, or something else? Let’s refine the conversation.";
+            }
+        }
     </script>
 </body>
 </html>

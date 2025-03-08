@@ -1,123 +1,126 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmation</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        .container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-        .success { color: green; font-size: 20px; font-weight: bold; }
-        .error { color: red; font-size: 20px; font-weight: bold; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <% if (order) { %>
-            <h2 class="success">Thank you for your order!</h2>
-            <p>Order ID: <strong><%= order._id %></strong></p>
-            <p>Payment Status: <strong><%= order.paymentStatus %></strong></p>
-            <p>Total Amount: <strong>$<%= order.totalAmount %></strong></p>
-            <p>Your order has been successfully placed.</p>
-            <a href="/">Return to Home</a>
-        <% } else { %>
-            <h2 class="error">Error: <%= error %></h2>
-            <a href="/">Go Back</a>
-        <% } %>
-    </div>
-</body>
-</html>
-=======
-<!-- views/order-confirmation.hbs -->
-<!DOCTYPE html>
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Confirmation | Cloud420</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="/css/style.css"> <!-- Your custom CSS -->
-</head>
-
-<body>
-
+    <link rel="stylesheet" href="/css/style.css"> <!-- Your custom CSS if applicable -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="/images/icon.png">
     <style>
-        /* Order Confirmation Page Styles */
         body {
-            background: #f0f2f5;
-            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #00401e, #027300);
+            font-family: 'Poppins', sans-serif;
             color: #333;
+            overflow-x: hidden;
         }
 
         .order-confirmation-container {
             min-height: 100vh;
-            padding-top: 80px;
-            padding-bottom: 40px;
+            padding: 60px 20px;
+            position: relative;
         }
 
         .order-card {
-            background: linear-gradient(135deg, #ffffff 0%, #e9ecef 100%);
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            position: relative;
+            z-index: 1;
         }
 
         .order-header {
-            background: #035925;
-            color: white;
-            padding: 20px;
+            padding: 30px;
             text-align: center;
-            border-bottom: 4px solid #02401b;
+            position: relative;
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #035925 0%, #028a1b 100%);
+        }
+
+        .error-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .warning-header {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
         }
 
         .order-header h2 {
-            margin: 0;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
         }
 
         .order-header i {
-            margin-right: 10px;
+            margin-right: 15px;
+            font-size: 2.2rem;
+        }
+
+        .order-header .lead {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: url('https://i.imgur.com/7X7X7X7.png') repeat;
+            animation: confettiFall 5s infinite;
         }
 
         .order-body {
-            padding: 30px;
+            padding: 40px;
+            background: #fff;
         }
 
-        .order-body h4 {
+        .greeting {
             color: #035925;
+            font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 20px;
         }
 
         .order-details {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
         }
 
         .order-details p {
-            margin: 5px 0;
-            font-size: 0.95rem;
-        }
-
-        .order-details .badge {
-            font-size: 0.85rem;
-            padding: 6px 12px;
+            margin: 8px 0;
+            font-size: 1rem;
+            color: #555;
         }
 
         .order-items-table {
-            margin-top: 20px;
+            margin-top: 30px;
+        }
+
+        .order-items-table h5 {
+            color: #035925;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .order-items-table table {
             background: #fff;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
         .order-items-table thead {
@@ -126,58 +129,98 @@
         }
 
         .order-items-table th {
-            padding: 12px;
+            padding: 15px;
             font-weight: 600;
         }
 
         .order-items-table td {
             padding: 15px;
-            vertical-align: middle;
-        }
-
-        .order-items-table img {
-            border-radius: 5px;
-            transition: transform 0.2s ease;
-        }
-
-        .order-items-table img:hover {
-            transform: scale(1.1);
+            font-size: 0.95rem;
         }
 
         .order-items-table tfoot td {
+            background: #f1f3f5;
             font-weight: 600;
-            background: #f8f9fa;
         }
 
         .order-actions {
-            margin-top: 30px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
 
-        .btn-primary {
+        .btn-primary, .btn-track {
             background: #035925;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 30px;
+            font-size: 1rem;
             font-weight: 600;
-            transition: background 0.3s ease;
+            border-radius: 25px;
+            transition: all 0.3s ease;
         }
 
-        .btn-primary:hover {
+        .btn-primary:hover, .btn-track:hover {
             background: #02401b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .btn-secondary {
             background: #6c757d;
             border: none;
-            padding: 10px 25px;
+            padding: 12px 30px;
+            font-size: 1rem;
             font-weight: 600;
-            transition: background 0.3s ease;
+            border-radius: 25px;
+            transition: all 0.3s ease;
         }
 
         .btn-secondary:hover {
             background: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Notification Styles (consistent with previous) */
+        .btn i {
+            margin-right: 8px;
+        }
+
+        /* Animations */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.7s ease-out;
+        }
+
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        @keyframes confettiFall {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 1000px; }
+        }
+
+        /* Notification Styles */
         .notification-container {
             position: fixed;
             top: 20px;
@@ -220,177 +263,344 @@
             font-size: 0.9rem;
         }
 
-        /* Animation */
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* Responsive Adjustments */
-        @media (max-width: 768px) {
+        @media (max-width: 992px) { /* Tablets and Smaller */
             .order-confirmation-container {
-                padding-top: 60px;
+                padding: 40px 15px;
             }
-
             .order-card {
-                margin: 0 15px;
+                margin: 0 10px;
             }
+            .order-header {
+                padding: 20px;
+            }
+            .order-header h2 {
+                font-size: 1.8rem;
+            }
+            .order-header i {
+                font-size: 2rem;
+            }
+            .order-header .lead {
+                font-size: 1rem;
+            }
+            .order-body {
+                padding: 30px;
+            }
+            .greeting {
+                font-size: 1.3rem;
+            }
+            .order-details {
+                padding: 20px;
+            }
+            .order-details p {
+                font-size: 0.95rem;
+            }
+            .order-items-table th, .order-items-table td {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .order-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .btn-primary, .btn-track, .btn-secondary {
+                width: 100%;
+                padding: 10px;
+            }
+            .notification-container {
+                width: 280px;
+                right: 15px;
+            }
+        }
 
+        @media (max-width: 768px) { /* Phones */
+            .order-confirmation-container {
+                padding: 30px 10px;
+            }
+            .order-card {
+                margin: 0 5px;
+                border-radius: 15px;
+            }
+            .order-header {
+                padding: 15px;
+            }
+            .order-header h2 {
+                font-size: 1.5rem;
+            }
+            .order-header i {
+                font-size: 1.8rem;
+                margin-right: 10px;
+            }
+            .order-header .lead {
+                font-size: 0.9rem;
+            }
             .order-body {
                 padding: 20px;
             }
-
+            .greeting {
+                font-size: 1.2rem;
+            }
             .order-details {
                 padding: 15px;
             }
-
-            .order-items-table td,
-            .order-items-table th {
+            .order-details p {
+                font-size: 0.9rem;
+                margin: 6px 0;
+            }
+            .order-items-table {
+                margin-top: 20px;
+            }
+            .order-items-table h5 {
+                font-size: 1.1rem;
+            }
+            .order-items-table table {
+                font-size: 0.85rem;
+            }
+            .order-items-table th, .order-items-table td {
                 padding: 10px;
+            }
+            .order-actions {
+                margin-top: 30px;
+            }
+            .btn-primary, .btn-track, .btn-secondary {
+                padding: 8px;
                 font-size: 0.9rem;
             }
-
-            .order-actions .btn {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
             .notification-container {
                 width: 90%;
-                right: 5%;
+                max-width: 300px;
+                right: 10px;
                 top: 10px;
+            }
+            .notification {
+                padding: 12px 15px;
+            }
+            .notification-title {
+                font-size: 1rem;
+            }
+            .notification-message {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 576px) { /* Small Phones */
+            .order-confirmation-container {
+                padding: 20px 5px;
+            }
+            .order-card {
+                margin: 0;
+                border-radius: 10px;
+            }
+            .order-header {
+                padding: 10px;
+            }
+            .order-header h2 {
+                font-size: 1.3rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .order-header i {
+                font-size: 1.6rem;
+                margin-right: 0;
+            }
+            .order-header .lead {
+                font-size: 0.85rem;
+            }
+            .order-body {
+                padding: 15px;
+            }
+            .greeting {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+            .order-details {
+                padding: 10px;
+            }
+            .order-details p {
+                font-size: 0.85rem;
+                margin: 5px 0;
+            }
+            .order-items-table h5 {
+                font-size: 1rem;
+            }
+            .order-items-table table {
+                font-size: 0.8rem;
+            }
+            .order-items-table th, .order-items-table td {
+                padding: 8px;
+                display: block; /* Stack table cells */
+                width: 100%;
+                text-align: left;
+            }
+            .order-items-table thead {
+                display: none; /* Hide header on very small screens */
+            }
+            .order-items-table tr {
+                margin-bottom: 10px;
+                border-bottom: 1px solid #dee2e6;
+            }
+            .order-items-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: inline-block;
+                width: 40%;
+            }
+            .order-items-table tfoot td {
+                text-align: right;
+            }
+            .order-actions {
+                margin-top: 20px;
+                gap: 8px;
+            }
+            .btn-primary, .btn-track, .btn-secondary {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+            .notification-container {
+                width: 95%;
+                max-width: 260px;
+                right: 5px;
+            }
+            .notification {
+                padding: 10px 12px;
+            }
+            .notification-title {
+                font-size: 0.9rem;
+            }
+            .notification-message {
+                font-size: 0.8rem;
             }
         }
     </style>
+</head>
+<body>
+    <div class="order-confirmation-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8">
+                    <div class="order-card">
+                        <!-- Dynamic Header -->
+                        <% if (status === 'success') { %>
+                        <div class="order-header success-header">
+                            <h2><i class="fas fa-check-circle animate-bounce"></i> Order Confirmed!</h2>
+                            <p class="lead text-light mt-2">Thank you for shopping with Cloud420!</p>
+                            <div class="confetti"></div>
+                        </div>
+                        <% } else if (status === 'error') { %>
+                        <div class="order-header error-header">
+                            <h2><i class="fas fa-exclamation-triangle"></i> Payment Failed</h2>
+                            <p class="lead text-light mt-2">Something went wrong, but we’re here to help.</p>
+                        </div>
+                        <% } else { %>
+                        <div class="order-header warning-header">
+                            <h2><i class="fas fa-clock"></i> Payment Status Pending</h2>
+                            <p class="lead text-light mt-2">We’re still processing your payment.</p>
+                        </div>
+                        <% } %>
 
-    <div class="container my-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-                    <div class="card-header bg-success text-white text-center py-3">
-                        <h2><i class="fas fa-check-circle mr-2"></i> Order Confirmation</h2>
-                    </div>
-                    <div class="card-body p-4">
-                        <% if (status==='success' ) { %>
-                            <p class="text-success">
-                                <%= message %>
-                            </p>
-                            <p>Order ID: <%= orderId %>
-                            </p>
-                            <% } else if (status==='error' ) { %>
-                                <p class="text-danger">
-                                    <%= message %>
-                                </p>
-                                <% } else { %>
-                                    <p class="text-warning">
-                                        <%= message %>
-                                    </p>
-                                    <% } %>
+                        <!-- Order Body -->
+                        <div class="order-body">
+                            <!-- Status Messages -->
+                            <% if (status === 'success') { %>
+                            <div class="alert alert-success animate-fade-in"><%= message %></div>
+                            <% } else if (status === 'error') { %>
+                            <div class="alert alert-danger animate-fade-in"><%= message %></div>
+                            <% } else if (status === 'warning') { %>
+                            <div class="alert alert-warning animate-fade-in"><%= message %></div>
+                            <% } %>
 
-                                        <h4 class="mb-4">Thank You, {{order.customerName}}!</h4>
-                                        <p>Your order has been successfully placed. Here are the details:</p>
+                            <!-- Order Details -->
+                            <% if (order) { %>
+                            <div class="order-details animate-slide-up">
+                                <h4 class="greeting">Hey <%= order.customerName %>, your order is on its way!</h4>
+                                <p class="text-muted mb-4">Here’s everything you need to know:</p>
 
-                                        <div class="row mb-3">
-                                            <div class="col-md-6">
-                                                <strong>Order ID:</strong> {{order.orderId}}<br>
-                                                <strong>Date:</strong> {{order.createdAt}}<br>
-                                                <strong>Email:</strong> {{order.customerEmail}}<br>
-                                                <strong>Phone:</strong> {{order.customerPhone}}
-                                            </div>
-                                            <div class="col-md-6">
-                                                <strong>Shipping to:</strong> {{order.customerLocation}}<br>
-                                                <strong>Payment Status:</strong>
-                                                <span
-                                                    class="badge {{#ifEquals order.paymentStatus 'completed'}}bg-success{{else}}bg-warning{{/ifEquals}}">
-                                                    {{order.paymentStatus}}
-                                                </span><br>
-                                                <strong>Shipping Status:</strong>
-                                                <span class="badge bg-info">{{order.shippingStatus}}</span><br>
-                                                <strong>Transaction ID:</strong> {{order.transactionRequestId}}
-                                            </div>
-                                        </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <p><strong>Order ID:</strong> <%= order._id %></p>
+                                        <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                                        <p><strong>Email:</strong> <%= order.customerEmail %></p>
+                                        <p><strong>Phone:</strong> <%= order.customerPhone %></p>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <p><strong>Shipping to:</strong> <%= order.customerLocation %></p>
+                                        <p><strong>Payment Status:</strong>
+                                            <span class="badge <%= order.paymentStatus === 'completed' ? 'bg-success' : 'bg-warning' %>">
+                                                <%= order.paymentStatus %>
+                                            </span>
+                                        </p>
+                                        <p><strong>Shipping Status:</strong>
+                                            <span class="badge bg-info"><%= order.shippingStatus %></span>
+                                        </p>
+                                        <p><strong>Transaction ID:</strong> <%= order.transactionRequestId || 'N/A' %></p>
+                                    </div>
+                                </div>
+                            </div>
 
-                                        <h5 class="mt-4">Order Items</h5>
-                                        <table class="table table-bordered">
-                                            <thead class="thead-light">
-                                                <tr>
-                                                    <th>Product</th>
-                                                    <th>Quantity</th>
-                                                    <th>Price</th>
-                                                    <th>Subtotal</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {{#each order.items}}
-                                                <tr>
-                                                    <td>{{this.quantity}}</td>
-                                                    <td>KES {{this.price}}</td>
-                                                    <td>KES {{this.subtotal}}</td>
-                                                </tr>
-                                                {{/each}}
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
-                                                    <td>KES {{order.subtotal}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3" class="text-right"><strong>Delivery Fee:</strong>
-                                                    </td>
-                                                    <td>KES {{order.deliveryFee}}</td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="3" class="text-right"><strong>Total:</strong></td>
-                                                    <td>KES {{order.total}}</td>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
+                            <!-- Order Items -->
+                            <div class="order-items-table animate-slide-up">
+                                <h5>Your Items</h5>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Qty</th>
+                                            <th>Price</th>
+                                            <th>Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% order.items.forEach(item => { %>
+                                        <tr>
+                                            <td data-label="Product"><%= item.productName %></td>
+                                            <td data-label="Qty"><%= item.quantity %></td>
+                                            <td data-label="Price">KES <%= Number(item.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
+                                            <td data-label="Subtotal">KES <%= Number(item.subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
+                                        </tr>
+                                        <% }); %>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3"><strong>Subtotal:</strong></td>
+                                            <td>KES <%= Number(order.subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><strong>Delivery Fee:</strong></td>
+                                            <td>KES <%= Number(order.deliveryFee).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3"><strong>Total:</strong></td>
+                                            <td>KES <%= Number(order.total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
 
-                                        <div class="text-center mt-4">
-                                            <a href="/cart" class="btn btn-primary">Return to Cart</a>
-                                            <a href="/" class="btn btn-secondary ml-2">Continue Shopping</a>
-                                        </div>
+                            <!-- Actions -->
+                            <div class="order-actions text-center animate-fade-in">
+                                <a href="/track-order/<%= order._id %>" class="btn btn-track"><i class="fas fa-map-marker-alt"></i> Track Order</a>
+                                <a href="/products" class="btn btn-primary"><i class="fas fa-shopping-bag"></i> Shop More</a>
+                            </div>
+                            <% } else { %>
+                            <div class="order-details animate-slide-up">
+                                <p class="text-muted">No order details available right now. Please check back later or contact support.</p>
+                            </div>
+                            <div class="order-actions text-center animate-fade-in">
+                                <a href="/cart" class="btn btn-primary"><i class="fas fa-cart-arrow-down"></i> Back to Cart</a>
+                                <a href="/products" class="btn btn-secondary"><i class="fas fa-shopping-bag"></i> Continue Shopping</a>
+                            </div>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <style>
-        .notification-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-            width: 300px;
-        }
-
-        .notification {
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .notification-success {
-            background-color: #28a745;
-        }
-
-        .notification-danger {
-            background-color: #dc3545;
-        }
-
-        .notification-warning {
-            background-color: #ffc107;
-        }
-    </style>
 
     <!-- Notification Container -->
     <div class="notification-container"></div>
@@ -399,28 +609,26 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Notification function (same as before)
-        function showNotification(title, message, type, persistent = false) {
+        document.addEventListener('DOMContentLoaded', () => {
+            const status = '<%= status %>';
+            const message = '<%= message %>';
+
+            if (status && message) {
+                showNotification(
+                    status === 'success' ? 'Success' : status === 'error' ? 'Error' : 'Warning',
+                    message,
+                    status === 'success' ? 'success' : status === 'error' ? 'danger' : 'warning'
+                );
+            }
+        });
+
+        function showNotification(title, message, type) {
             const container = document.querySelector('.notification-container') || createNotificationContainer();
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
             notification.innerHTML = `<strong class="notification-title">${title}</strong><br><span class="notification-message">${message}</span>`;
-
             container.appendChild(notification);
-
-            if (!persistent) {
-                setTimeout(() => notification.remove(), 5000);
-            }
-
-            return {
-                element: notification,
-                update: (newTitle, newMessage, newType) => {
-                    notification.querySelector('.notification-title').textContent = newTitle;
-                    notification.querySelector('.notification-message').innerHTML = newMessage;
-                    notification.className = `notification notification-${newType}`;
-                },
-                remove: () => notification.remove()
-            };
+            setTimeout(() => notification.remove(), 5000);
         }
 
         function createNotificationContainer() {
@@ -429,24 +637,6 @@
             document.body.appendChild(container);
             return container;
         }
-
-        // Handle payment message from sessionStorage
-        window.addEventListener('load', () => {
-            const paymentMessage = sessionStorage.getItem('paymentMessage');
-            if (paymentMessage) {
-                const { type, title, message } = JSON.parse(paymentMessage);
-                showNotification(title, message, type);
-                sessionStorage.removeItem('paymentMessage');
-            }
-        });
-
-        // Handlebars helper for comparison (if using Handlebars)
-        Handlebars.registerHelper('ifEquals', function (arg1, arg2, options) {
-            return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
-        });
-
     </script>
 </body>
-
 </html>
->>>>>>> origin/main

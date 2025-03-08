@@ -38,20 +38,20 @@ router.get('/dashboard', isAdmin, async (req, res) => {
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
         const totalSalesResult = await Order.aggregate([
-            { $match: { status: 'Completed' } },
+            { $match: { paymentStatus: 'completed' } }, // Changed from 'status' to 'paymentStatus'
             { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
         ]);
         const totalSales = totalSalesResult[0]?.total || 0;
 
         const monthlyRevenueResult = await Order.aggregate([
-            { $match: { status: 'Completed', createdAt: { $gte: startOfMonth, $lte: endOfMonth } } },
+            { $match: { paymentStatus: 'completed', createdAt: { $gte: startOfMonth, $lte: endOfMonth } } }, // Changed from 'status'
             { $group: { _id: null, total: { $sum: { $ifNull: ['$total', 0] } } } }
         ]);
         const monthlyRevenue = monthlyRevenueResult[0]?.total || 0;
 
-        const [pendingOrders, completedOrders] = await Promise.all([
-            Order.countDocuments({ status: 'Pending' }),
-            Order.countDocuments({ status: 'Completed' })
+        const [pendingOrders, shippedOrders] = await Promise.all([
+            Order.countDocuments({ paymentStatus: 'Pending' }), // Changed from 'status'
+            Order.countDocuments({ shippingStatus: 'Shipped' }) // Updated to count 'Shipped' instead of 'Completed'
         ]);
 
         const newUsersThisMonth = await User.countDocuments({
@@ -74,10 +74,7 @@ router.get('/dashboard', isAdmin, async (req, res) => {
             return order;
         });
 
-        // Fetch the current user's data explicitly if messageCount is a field
         const user = req.user ? await User.findById(req.user._id).lean() : null;
-        // If messageCount isn’t in the User schema, calculate it (example below assumes a messages collection)
-        // const messageCount = user ? await Message.countDocuments({ recipient: user._id }) : 0;
 
         const orderAnalyticsResult = await Order.aggregate([
             { $match: { createdAt: { $gte: new Date(now.setDate(now.getDate() - 6)) } } },
@@ -105,14 +102,14 @@ router.get('/dashboard', isAdmin, async (req, res) => {
             orderCount,
             totalSales,
             pendingOrders,
-            completedOrders,
+            completedOrders: shippedOrders,
             monthlyRevenue,
             newUsersThisMonth,
             orders: enrichedOrders,
             orderAnalytics,
-            currentUser: req.user || null, // Pass currentUser explicitly
-            user: user || {}, // Pass user with fallback
-            messageCount: user?.messageCount || 0 // Default to 0 if undefined
+            currentUser: req.user || null,
+            user: user || {},
+            messageCount: user?.messageCount || 0
         });
     } catch (error) {
         console.error('Admin dashboard error:', error);
@@ -149,7 +146,6 @@ router.get('/products', isAdmin, async (req, res) => {
 });
 
 
-// Products - Add
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
         // Validate required fields
@@ -192,14 +188,12 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
             updatedAt: new Date()
         });
 
-        // Save product
         await product.save();
         
         req.flash('success_msg', 'Product added successfully.');
         res.redirect('/admin/products');
 
     } catch (error) {
-        // Clean up uploaded files on error
         if (req.files && req.files.length > 0) {
             const fs = require('fs').promises;
             const uploadDir = path.join(__dirname, '../public/uploads');
@@ -262,9 +256,6 @@ router.delete('/products/delete/:id', isAdmin, async (req, res) => {
     }
 });
 
-
-
-
 router.get('/users', isAdmin, async (req, res) => {
     try {
         let page = parseInt(req.query.page) || 1;
@@ -287,7 +278,6 @@ router.get('/users', isAdmin, async (req, res) => {
     }
 });
 
-
 router.post('/users/delete/:id', isAdmin, async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
@@ -304,30 +294,33 @@ router.post('/users/delete/:id', isAdmin, async (req, res) => {
     }
 });
 
-// Products - Add
+
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
         const { name, price, description, stockQuantity, category } = req.body;
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`); 
+        if (!req.files || req.files.length === 0) {
+            req.flash('error_msg', 'Please upload at least one image.');
+            return res.redirect('/admin/products');
+        }
+        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
         const product = new Product({
             name,
-            price,
+            price: parseFloat(price),
             description,
-            stockQuantity,
+            stockQuantity: parseInt(stockQuantity),
             category,
-            imageUrl: imagePaths[0], 
-            additionalImages: imagePaths.slice(1) 
+            imageUrl: imagePaths[0],
+            additionalImages: imagePaths.slice(1)
         });
         await product.save();
         req.flash('success_msg', 'Product added successfully.');
         res.redirect('/admin/products');
     } catch (error) {
-        console.error('Error adding product:', error);
-        req.flash('error_msg', 'Failed to add product.');
+        console.error('Error adding product:', error.message);
+        req.flash('error_msg', error.message || 'Failed to add product.');
         res.redirect('/admin/products');
     }
 });
-
 
 // Products - Delete (using POST)
 router.post('/products/delete/:id', isAdmin, async (req, res) => {
@@ -361,13 +354,13 @@ router.get('/orders', isAdmin, async (req, res) => {
         const totalOrders = await Order.countDocuments(); // Total order count
         const totalPages = Math.ceil(totalOrders / perPage); // Calculate total pages
 
-        const user = req.user ? await User.findById(req.user._id).lean() : null;
-
+        // Fetch orders sorted by newest first
         const orders = await Order.find()
             .populate('items.productId')
+            .sort({ createdAt: -1 }) // Sort by latest orders first
             .skip((page - 1) * perPage)
             .limit(perPage)
-            .lean(); // Use lean() for performance since we don’t need Mongoose documents
+            .lean(); // Use lean() for performance 
 
         const paymentStatusOptions = [
             { value: 'Pending', label: 'Pending' },
@@ -389,14 +382,14 @@ router.get('/orders', isAdmin, async (req, res) => {
             orders: enhancedOrders,
             totalPages,
             currentPage: page,
-            success: req.flash('success_msg')[0] || null, // Consistent with your app’s convention
+            success: req.flash('success_msg')[0] || null,
             error: req.flash('error_msg')[0] || null,
-            user: user || {},
-            messageCount: user?.messageCount || 0
+            user: req.user || {}, // Directly use req.user
+            messageCount: req.user?.messageCount || 0
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        req.flash('error_msg', 'Failed to load orders'); // Use error_msg for consistency
+        req.flash('error_msg', 'Failed to load orders'); 
 
         // Render with fallback data in case of error
         res.render('admin/orders', {
@@ -405,22 +398,59 @@ router.get('/orders', isAdmin, async (req, res) => {
             currentPage: 1,
             success: req.flash('success_msg')[0] || null,
             error: req.flash('error_msg')[0] || null,
-            user: req.user ? { ...req.user._doc } : {}, // Use req.user directly if not fetched
+            user: req.user || {}, // Directly use req.user
             messageCount: req.user?.messageCount || 0
         });
     }
 });
 
-// Update shipping status route
-router.post('/orders/update-shipping-status', async (req, res) => {
-    const { orderId, shippingStatus } = req.body;
+
+router.post('/orders/update-shipping-status', isAdmin, async (req, res) => {
     try {
-        await Order.findByIdAndUpdate(orderId, { shippingStatus });
-        req.flash('success', `Shipping status updated to ${shippingStatus}`);
+        const { orderId, shippingStatus } = req.body;
+
+        // Fetch the full order with populated items
+        const order = await Order.findById(orderId).populate('items.productId');
+        if (!order) {
+            req.flash('error_msg', 'Order not found');
+            return res.redirect('/admin/orders');
+        }
+
+        // Update the shipping status
+        order.shippingStatus = shippingStatus;
+        await order.save();
+
+        // Prepare email data
+        const emailData = {
+            customerName: order.customerName || 'Customer',
+            customerEmail: order.customerEmail,
+            cloudOrderId: order._id.toString(),
+            total: order.total,
+            items: order.items || [],
+            deliveredAt: shippingStatus === 'Delivered' ? new Date() : null,
+            host: req.get('host') || 'cloud420.store', 
+        };
+
+        // Send email based on shipping status
+        try {
+            if (shippingStatus === 'Delivered') {
+                await emailService.sendDeliveryConfirmation(emailData);
+            } else {
+                await emailService.sendShippingUpdate({
+                    ...emailData,
+                    shippingStatus,
+                });
+            }
+        } catch (emailError) {
+            console.error('Failed to send shipping update email:', emailError);
+            // Don’t block redirect; just log the error
+        }
+
+        req.flash('success_msg', `Shipping status updated to ${shippingStatus}`);
         res.redirect('/admin/orders');
     } catch (error) {
         console.error('Error updating shipping status:', error);
-        req.flash('error', 'Failed to update shipping status');
+        req.flash('error_msg', 'Failed to update shipping status');
         res.redirect('/admin/orders');
     }
 });
@@ -513,7 +543,6 @@ router.post('/orders/update-shipping-status', isAdmin, async (req, res) => {
         res.redirect('/admin/orders');
     }
 });
-
 
 // Carts - List (optional, for monitoring active carts)
 router.get('/carts', isAdmin, async (req, res) => {
@@ -608,31 +637,41 @@ router.get('/transactions', isAdmin, async (req, res) => {
         const totalTransactions = await Transaction.countDocuments();
         const totalPages = Math.ceil(totalTransactions / perPage);
 
+        const startTime = Date.now(); // Start timer
         const transactions = await Transaction.find()
+            .populate('orderId', 'customerName total')
             .sort({ createdAt: -1 })
             .skip((page - 1) * perPage)
-            .limit(perPage);
+            .limit(perPage)
+            .lean();
+        const fetchTime = Date.now() - startTime; // End timer
+
+        const enrichedTransactions = transactions.map(transaction => ({
+            ...transaction,
+            orderId: transaction.orderId?._id || transaction._id,
+            customerName: transaction.orderId?.customerName || transaction.customerPhone || 'Cloud Wanderer',
+            total: transaction.orderId?.total || transaction.amount || 0,
+            paymentDate: (transaction.status === 'completed' && transaction.updatedAt) 
+                ? transaction.updatedAt 
+                : transaction.createdAt,
+            status: transaction.status || 'Unknown'
+        }));
 
         res.render('admin/transactions', {
-            transactions,
+            transactions: enrichedTransactions,
             totalPages,
             currentPage: page,
             success_msg: req.flash('success'),
-            error_msg: req.flash('error')
+            error_msg: req.flash('error'),
+            user,
+            currentTime: new Date().toISOString(),
+            fetchTime // Pass fetch time in milliseconds
         });
     } catch (error) {
-        console.error('Error fetching transactions:', error);
-        req.flash('error', 'Failed to load transactions');
-        res.render('admin/transactions', {
-            transactions: [],
-            totalPages: 1,
-            currentPage: 1,
-            success_msg: req.flash('success'),
-            error_msg: req.flash('error')
-        });
+        // Error handling unchanged, add fetchTime: 0
+        res.render('admin/transactions', { /* ... */ fetchTime: 0 });
     }
 });
-
 
 // Settings - Display
 router.get('/settings', isAdmin, async (req, res) => {

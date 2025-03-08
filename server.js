@@ -133,27 +133,42 @@ app.use('/admin', adminRouter);
 // Home page route
 app.get('/home', isLoggedIn, async (req, res) => {
   try {
-    const products = await Product.find();
+    // Fetch all required data in parallel for better performance
+    const [products, cart, user, recentOrders] = await Promise.all([
+      Product.find().lean(), // Fetch all products
+      Cart.findOne({ userId: req.user._id }).lean(), // Fetch user's cart
+      User.findById(req.user._id).lean(), // Fetch user details
+      Order.find({ userId: req.user._id })
+        .sort({ createdAt: -1 }) // Most recent first
+        .limit(5) // Fetch top 5 recent orders
+        .lean()
+        .select('orderId createdAt status') // Only fetch necessary fields
+    ]);
+
+    // Process fetched data
+    const cartItems = cart ? cart.products.length : 0;
+    const userName = user.name || user.username || 'Cloud Explorer';
+    const userPoints = user.points || 0;
+
+    // Fetch flash messages
     const success = req.flash('success_msg')[0] || null;
     const error = req.flash('error_msg')[0] || null;
 
-    let cartItems = 0;
-    if (req.user) {
-      const cart = await Cart.findOne({ userId: req.user._id });
-      cartItems = cart ? cart.products.length : 0;
-    }
-
+    // Render the home page with all required data
     res.render('home', { 
       products,
       cartItems,
-      user: req.user,
-      isAuthenticated: req.isAuthenticated(),
+      userName,
+      recentOrders,
+      userPoints,
+      isAuthenticated: true, // Ensured by isLoggedIn middleware
       success,
-      error
+      error,
+      user: req.user // Pass full user object if needed in template
     });
   } catch (err) {
-    console.error('Error fetching products:', err);
-    req.flash('error_msg', 'Server Error');
+    console.error('Error in /home route:', err);
+    req.flash('error_msg', 'Oops! Something went wrong on our end. Please try again.');
     res.status(500).redirect('/home');
   }
 });

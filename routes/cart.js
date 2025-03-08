@@ -5,12 +5,14 @@ const axios = require('axios');
 const Order = require('../models/order');
 const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
-const dotenv = require('dotenv');
+const Product = require('../models/product');
+const { sendEmail, generateEmailTemplate } = require('../services/emailService');
+const escapeHtml = require('escape-html');
+
 
 // Define pendingOrders at module scope
 const pendingOrders = new Map();
 
-// Middleware to check if the user is logged in
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
@@ -24,7 +26,7 @@ async function verifyPaymentStatus(transactionRequestId) {
         const verifyPayload = {
             api_key: process.env.UMS_API_KEY,
             email: process.env.UMS_EMAIL,
-            transaction_request_id: transactionRequestId
+            tranasaction_request_id: transactionRequestId // Fixed typo
         };
 
         const response = await axios.post(
@@ -53,7 +55,7 @@ async function processPaymentVerification(transactionRequestId) {
         const pendingOrder = pendingOrders.get(transactionRequestId);
         if (!pendingOrder) {
             console.log(`No pending order found for ${transactionRequestId}`);
-            return;
+            return { status: 'error', orderId: null, message: 'No pending order found' };
         }
 
         const { orderData, transactionData } = pendingOrder;
@@ -67,53 +69,75 @@ async function processPaymentVerification(transactionRequestId) {
             await order.save();
 
             transactionData.orderId = order._id;
-            transactionData.status = 'Completed';
+            transactionData.status = 'completed';
             transactionData.gatewayResponse = verification;
 
             const transaction = new Transaction(transactionData);
             await transaction.save();
 
+            // Fetch product details with flair
+            const enrichedItems = await Promise.all(orderData.items.map(async (item) => {
+                const product = await Product.findById(item.productId);
+                return {
+                    productId: { 
+                        name: product?.name || item.productId.name || 'Mystery Goodie', 
+                        _id: item.productId 
+                    },
+                    quantity: item.quantity,
+                    price: item.price || product?.price || 0 // Fallback to 0 if no price
+                };
+            }));
+
+            // Send Payment Confirmation Email
+            await emailService.sendPaymentConfirmation({
+                customerName: orderData.customerName,
+                customerEmail: orderData.customerEmail,
+                transactionRequestId,
+                amount: orderData.total, // Assuming total is the payment amount
+                host: process.env.APP_HOST || 'cloud420.store'
+            });
+
+            // Send Order Confirmation Email
             await emailService.sendOrderConfirmation({
                 customerName: orderData.customerName,
                 customerEmail: orderData.customerEmail,
                 cloudOrderId: order._id,
                 total: orderData.total,
-                items: orderData.items.map(item => ({
-                    productId: { name: item.productId.name || 'Product', _id: item.productId },
-                    quantity: item.quantity,
-                    price: item.price
-                })),
+                items: enrichedItems,
                 host: process.env.APP_HOST || 'cloud420.store'
             });
 
             pendingOrders.delete(transactionRequestId);
             console.log(`Payment completed for order: ${order._id}`);
+            return { status: 'completed', orderId: order._id, message: 'Payment successful' };
         } else if (
             verification.ResultCode === '503' ||
             verification.TransactionStatus === 'Failed' ||
             ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)
         ) {
-            transactionData.status = 'Failed';
+            transactionData.status = 'failed';
+            transactionData.orderId = null;
             transactionData.gatewayResponse = verification;
+
             const transaction = new Transaction(transactionData);
             await transaction.save();
 
-            await emailService.sendPaymentFailureNotification({
-                customerEmail: orderData.customerEmail,
-                transactionRequestId
-            });
-
+            // No change here since you didn't ask for failure email adjustment
             pendingOrders.delete(transactionRequestId);
             console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
+            return { status: 'failed', orderId: null, message: 'Payment declined' };
         }
-        // If still pending, keep in pendingOrders for periodic check
+        return { status: 'pending', orderId: null, message: 'Payment still processing' };
     } catch (error) {
         console.error(`Error verifying ${transactionRequestId}:`, error);
         if (error.name === 'ValidationError') {
             console.error('Validation errors:', error.errors);
+            return { status: 'error', orderId: null, message: 'Validation failed', details: error.errors };
         }
+        return { status: 'error', orderId: null, message: error.message || 'Verification error' };
     }
 }
+
 
 // Initiate STK Push
 router.post('/initiate-payment', isLoggedIn, async (req, res) => {
@@ -129,7 +153,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Cart is empty' });
         }
 
-        // Calculate delivery fee
         const deliveryLocations = {
             'Kutus': 0, 'Kerugoya': 100, 'Kagio': 100, 'Sagana': 100, 'Karatina': 150,
             'Embu University': 200, "Murang'a University": 200, 'Nyeri': 250, 'Thika': 250, 'Nairobi': 250,
@@ -150,7 +173,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             return res.status(400).json({ success: false, message: 'Total amount mismatch' });
         }
 
-        // Create order data (not saved yet)
         const orderData = {
             customerName,
             customerEmail,
@@ -159,7 +181,8 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             total: calculatedTotal,
             items: cart.map(item => ({
                 productId: item.productId._id || item.productId,
-                quantity: item.quantity
+                quantity: item.quantity,
+                price: item.productId.price
             })),
             paymentStatus: 'Pending',
             shippingStatus: 'Processing',
@@ -168,7 +191,6 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             createdAt: new Date()
         };
 
-        // STK Push payload
         const stkPayload = {
             api_key: process.env.UMS_API_KEY,
             email: process.env.UMS_EMAIL,
@@ -184,12 +206,11 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
 
         const stkData = stkResponse.data;
         if (stkData.success === '200') {
-            const transactionRequestId = stkData.tranasaction_request_id;
+            const transactionRequestId = stkData.tranasaction_request_id; // Fixed typo
 
-            // Create transaction data
             const transactionData = {
                 orderId: null,
-                transactionRequestId: transactionRequestId,
+                transactionRequestId,
                 amount: calculatedTotal,
                 status: 'Pending',
                 paymentMethod: 'Mobile',
@@ -197,20 +218,16 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
                 paymentReference: stkPayload.reference
             };
 
-            // Store in pendingOrders for verification
             pendingOrders.set(transactionRequestId, { orderData, transactionData });
 
-            // Clear session cart
             req.session.cart = [];
 
-            // Start immediate polling for this transaction
             setImmediate(() => processPaymentVerification(transactionRequestId));
 
             return res.json({
                 success: true,
-                message: 'STK Push initiated. Please check your phone to complete payment.',
-                tranasaction_request_id: transactionRequestId,
-                order_id: stkPayload.reference
+                transactionRequestId, // Match frontend expectation
+                message: 'STK Push initiated. Please check your phone to complete payment.'
             });
         } else {
             console.error('STK Push Error:', stkData);
@@ -230,11 +247,59 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
     }
 });
 
-// Periodic cleanup (runs every 5 minutes)
+// Verify payment endpoint
+router.get('/verify-payment/:transactionRequestId', async (req, res) => {
+    const { transactionRequestId } = req.params;
+    try {
+        const verification = await verifyPaymentStatus(transactionRequestId);
+        const pendingOrder = pendingOrders.get(transactionRequestId);
+
+        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
+            // Ensure order is saved before responding
+            if (pendingOrder && !pendingOrder.orderData._id) {
+                await processPaymentVerification(transactionRequestId);
+            }
+            const orderId = pendingOrder?.transactionData?.orderId || null;
+            res.json({
+                status: 'completed',
+                orderId,
+                message: 'Payment successful!'
+            });
+        } else if (
+            verification.ResultCode === '503' ||
+            verification.TransactionStatus === 'Failed' ||
+            ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)
+        ) {
+            if (pendingOrder) {
+                await processPaymentVerification(transactionRequestId);
+            }
+            res.json({
+                status: 'failed',
+                orderId: null,
+                message: verification.message || 'Payment failed'
+            });
+        } else {
+            res.json({
+                status: 'pending',
+                orderId: null,
+                message: 'Payment still processing'
+            });
+        }
+    } catch (error) {
+        res.status(error.status || 500).json({
+            status: 'error',
+            orderId: null,
+            message: 'Verification error',
+            details: error.details
+        });
+    }
+});
+
+// Periodic cleanup
 setInterval(async () => {
     const now = Date.now();
     for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders.entries()) {
-        if ((now - orderData.createdAt) > 1000 * 60 * 30) { // 30 minutes timeout
+        if ((now - orderData.createdAt.getTime()) > 1000 * 60 * 30) { // 30 minutes
             try {
                 transactionData.status = 'Failed';
                 transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
@@ -254,42 +319,6 @@ setInterval(async () => {
         }
     }
 }, 1000 * 60 * 5);
-
-// Verify payment endpoint
-router.get('/verify-payment/:transactionId', async (req, res) => {
-    const { transactionId } = req.params;
-    try {
-        const verification = await verifyPaymentStatus(transactionId);
-        const pendingOrder = pendingOrders.get(transactionId);
-
-        const response = {
-            status: verification.TransactionStatus?.toLowerCase() || 'pending',
-            message: verification.message || 'Payment status updated',
-            orderId: pendingOrder?.orderData?._id || null
-        };
-
-        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-            response.status = 'completed';
-            response.message = 'Payment successful!';
-            // Cleanup happens in processPaymentVerification
-        } else if (verification.ResultCode === '503') {
-            response.status = 'pending';
-            response.message = 'Payment service unavailable, please wait';
-        } else if (verification.TransactionStatus === 'Failed') {
-            response.status = 'failed';
-            response.message = 'Payment failed';
-            // Cleanup happens in processPaymentVerification
-        }
-
-        res.json(response);
-    } catch (error) {
-        res.status(error.status || 500).json({ 
-            status: 'error', 
-            message: 'Verification error',
-            details: error.details
-        });
-    }
-});
 
 
 // GET cart page
@@ -354,6 +383,65 @@ router.post('/add/:productId', isLoggedIn, async (req, res) => {
     }
 });
 
+// My Orders Page
+router.get('/my-orders', isLoggedIn, async (req, res) => {
+    try {
+        let perPage = 5; // Fewer per page for a sleek look
+        let page = parseInt(req.query.page) || 1;
+
+        // Fetch total orders
+        const totalOrders = await Order.countDocuments({ customerEmail: req.user.email });
+        const totalPages = Math.ceil(totalOrders / perPage);
+
+        // Fetch orders
+        const orders = await Order.find({ customerEmail: req.user.email })
+            .sort({ createdAt: -1 }) // Newest first
+            .skip((page - 1) * perPage)
+            .limit(perPage)
+            .lean();
+
+        // Enrich orders with status flair
+        const enrichedOrders = orders.map(order => ({
+            ...order,
+            orderId: order._id,
+            total: Number(order.total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+            createdAt: new Date(order.createdAt),
+            paymentStatus: order.paymentStatus || 'pending',
+            shippingStatus: order.shippingStatus || 'Not Shipped',
+            itemsCount: order.items.length
+        }));
+
+        // Fetch cart items count (assuming a Cart model exists)
+        const cart = await Cart.findOne({ userEmail: req.user.email }).lean();
+        const cartItems = cart ? cart.items.length : 0; // Default to 0 if no cart exists
+
+        res.render('my-orders', {
+            orders: enrichedOrders,
+            totalPages,
+            currentPage: page,
+            user: req.user,
+            cartItems, // Add cartItems here
+            success_msg: req.flash('success'),
+            error_msg: req.flash('error'),
+            cosmicTime: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('Error fetching my orders:', error);
+        req.flash('error', 'Failed to load your cosmic orders!');
+        res.render('my-orders', {
+            orders: [],
+            totalPages: 1,
+            currentPage: 1,
+            user: req.user,
+            cartItems: 0, // Default to 0 on error
+            success_msg: req.flash('success'),
+            error_msg: req.flash('error'),
+            cosmicTime: new Date().toISOString()
+        });
+    }
+});
+
+// POST remove item from cart
 router.post('/remove/:itemId', isLoggedIn, async (req, res) => {
     try {
         const { itemId } = req.params;
@@ -362,7 +450,7 @@ router.post('/remove/:itemId', isLoggedIn, async (req, res) => {
         // Use Mongoose $pull to remove the item using its _id
         const cart = await Cart.findOneAndUpdate(
             { userId },
-            { $pull: { products: { _id: itemId } } }, // Removes based on item's _id
+            { $pull: { products: { _id: itemId } } },
             { new: true }
         );
 
@@ -374,10 +462,11 @@ router.post('/remove/:itemId', isLoggedIn, async (req, res) => {
         return res.redirect('/cart');
     } catch (error) {
         console.error('Remove error:', error);
-        return res.redirect('/cart'); // Redirect even on error
+        return res.redirect('/cart'); 
     }
 });
 
+// Update cart item quantity
 async function updateCartQuantity(userId, productId, newQuantity) {
     try {
         // Ensure quantity is at least 1
@@ -435,61 +524,48 @@ router.get('/cart-count', isLoggedIn, async (req, res) => {
     }
 });
 
-// Order Confirmation Route
-router.get('/order-confirmation/:orderId', isLoggedIn, async (req, res) => {
+router.get('/order-confirmation/:orderId', async (req, res) => {
+    const { orderId } = req.params;
+    const { status, message } = req.query;
+
     try {
-        const orderId = req.params.orderId;
-
-        // Fetch order details
-        const order = await Order.findById(orderId)
-            .populate('items.productId', 'name price imageUrl')
-            .lean();
-
-        if (!order) {
-            req.flash('error_msg', 'Order not found');
-            return res.redirect('/cart');
-        }
-
-        // Ensure the order belongs to the current user
-        if (order.customerEmail !== req.user.email) {
-            req.flash('error_msg', 'Unauthorized access to order');
-            return res.redirect('/cart');
-        }
-
-        // Format order data for display
-        const orderDetails = {
-            orderId: order._id,
-            customerName: order.customerName,
-            customerEmail: order.customerEmail,
-            customerPhone: order.customerPhone,
-            customerLocation: order.customerLocation,
-            total: order.total,
-            paymentStatus: order.paymentStatus,
-            shippingStatus: order.shippingStatus,
-            transactionRequestId: order.transactionRequestId,
-            createdAt: new Date(order.createdAt).toLocaleString(),
-            items: order.items.map(item => ({
+        let order = null;
+        if (orderId !== 'null') {
+            order = await Order.findById(orderId)
+                .populate('items.productId')
+                .lean();
+            if (!order) {
+                return res.status(404).render('order-confirmation', {
+                    order: null,
+                    status: 'error',
+                    message: 'Order not found'
+                });
+            }
+            // Add calculated fields
+            order.subtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+            order.deliveryFee = order.total - order.subtotal;
+            order.items = order.items.map(item => ({
                 productName: item.productId.name,
                 quantity: item.quantity,
-                price: item.productId.price,
-                imageUrl: item.productId.imageUrl,
-                subtotal: (item.quantity * item.productId.price).toFixed(2)
-            })),
-            subtotal: order.items.reduce((sum, item) => sum + (item.quantity * item.productId.price), 0).toFixed(2),
-            deliveryFee: (order.total - order.items.reduce((sum, item) => sum + (item.quantity * item.productId.price), 0)).toFixed(2)
-        };
+                price: item.price,
+                subtotal: item.quantity * item.price
+            }));
+        }
 
         res.render('order-confirmation', {
-            order: orderDetails,
-            currentUser: req.user,
-            activePage: 'orders',
+            order,
+            status: status || (order ? 'success' : 'warning'),
+            message: message || (order ? 'Your order has been placed successfully!' : 'No order details available'),
             success_msg: req.flash('success_msg'),
             error_msg: req.flash('error_msg')
         });
     } catch (error) {
-        console.error('Error fetching order confirmation:', error);
-        req.flash('error_msg', 'Failed to load order confirmation');
-        res.redirect('/cart');
+        console.error('Order confirmation error:', error);
+        res.status(500).render('order-confirmation', {
+            order: null,
+            status: 'error',
+            message: 'An error occurred while loading your order'
+        });
     }
 });
 

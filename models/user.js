@@ -8,10 +8,11 @@ const userSchema = new mongoose.Schema({
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   isAdmin: { type: Boolean, default: false },
-  verificationToken: { type: String }, // Token for email verification
+  verificationCode: String,
+  verificationCodeExpires: Date,
+  isVerified: { type: Boolean, default: false },
 });
 
-// Add passport-local-mongoose plugin for authentication
 userSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model('User', userSchema);

@@ -25,44 +25,52 @@ router.post('/signup', async (req, res) => {
   try {
     // Validate input
     if (!username || !email || !password) {
-      return res.render('error', { message: 'All fields (username, email, password) are required.' });
+      req.flash('error_msg', 'All fields (username, email, password) are required.');
+      return res.redirect('/auth/signup');
     }
 
     // Additional validation
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
-      return res.render('error', { message: 'Please provide a valid email address.' });
+      req.flash('error_msg', 'Please provide a valid email address.');
+      return res.redirect('/auth/signup');
     }
-    if (password.length < 6) {
-      return res.render('error', { message: 'Password must be at least 6 characters long.' });
+    if (password.length < 8) {
+      req.flash('error_msg', 'Password must be at least 8 characters long.');
+      return res.redirect('/auth/signup');
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      return res.render('error', { message: 'Username or email already in use.' });
+      req.flash('error_msg', 'Username or email already in use.');
+      return res.redirect('/auth/signup');
     }
 
-    // Generate verification token
-    const verificationToken = crypto.randomBytes(20).toString('hex');
+    // Generate verification code (6-character code instead of token)
+    const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase(); // e.g., "A1B2C3"
 
-    // Create and register new user
+    // Create new user
     const newUser = new User({
       username,
       email,
-      verificationToken,
+      verificationCode,
+      verificationCodeExpires: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      isVerified: false
     });
+
+    // Register user with password (assuming passport-local-mongoose)
     await User.register(newUser, password);
 
     // Send verification email
-    await emailService.sendVerificationEmail(req, {
+    await emailService.sendEmailVerification({
       userName: username,
       userEmail: email,
-      verificationToken
+      verificationCode,
+      host: req.headers.host
     });
 
-req.flash('success', 'Registration successful! Please check your email to verify your account.');
-return res.redirect('/auth/login');
-
+    req.flash('success_msg', 'Registration successful! Please check your email for your verification code.');
+    return res.redirect('/auth/verify');
 
   } catch (error) {
     console.error('Signup error:', error);
@@ -76,7 +84,8 @@ return res.redirect('/auth/login');
       errorMessage = 'Username or email already in use.';
     }
 
-    return res.render('error', { message: errorMessage });
+    req.flash('error_msg', errorMessage);
+    return res.redirect('/auth/signup');
   }
 });
 
@@ -119,55 +128,78 @@ router.get('/logout', (req, res, next) => {
   });
 });
 
-// Forgot Password Route (GET) - Render form
-router.get('/forgot-password', (req, res) => {
-  const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
-  const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
-  res.render('forgot-password', { 
-    title: 'Forgot Password', 
-    success, 
-    error 
+// Verification Page (GET)
+router.get('/verify', (req, res) => {
+  const success = req.flash('success_msg')[0] || null;
+  const error = req.flash('error_msg')[0] || null;
+  res.render('verify', { 
+      title: 'Verify Email | Cloud 420',
+      success,
+      error
   });
 });
 
-// Forgot Password Route (POST) - Send reset email
-router.post('/forgot-password', async (req, res) => {
-  const { email } = req.body;
+// Verification Submission
+router.post('/verify', async (req, res) => {
+  const { code } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      req.flash('error_msg', 'No account with that email address exists.');
-      return res.redirect('/auth/forgot-password');
-    }
+      const user = await User.findOne({
+          verificationCode: code,
+          verificationCodeExpires: { $gt: Date.now() }
+      });
 
-    const resetToken = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = resetToken;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-    await user.save();
+      if (!user) {
+          req.flash('error_msg', 'Invalid or expired verification code.');
+          return res.redirect('/auth/verify');
+      }
 
-    const resetUrl = `http://${req.headers.host}/auth/reset-password/${resetToken}`;
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: user.email,
-      subject: 'Password Reset Request',
-      text: `You are receiving this because you (or someone else) requested a password reset for your account.\n\n
-             Please click the following link to reset your password:\n\n
-             ${resetUrl}\n\n
-             If you did not request this, please ignore this email and your password will remain unchanged.`
-    };
+      user.isVerified = true;
+      user.verificationCode = undefined;
+      user.verificationCodeExpires = undefined;
+      await user.save();
 
-    await transporter.sendMail(mailOptions);
-    req.flash('success_msg', 'A password reset link has been sent to your email.');
-    res.redirect('/auth/forgot-password');
+      req.flash('success_msg', 'Email verified successfully! Please log in.');
+      res.redirect('/auth/login');
   } catch (err) {
-    console.error('Error in forgot-password route:', err);
-    req.flash('error_msg', 'An error occurred while sending the reset email.');
-    res.redirect('/auth/forgot-password');
+      console.error('Error in verification:', err);
+      req.flash('error_msg', 'Verification failed. Please try again.');
+      res.redirect('/auth/verify');
   }
 });
 
-// Reset Password Route (GET) - Render reset form
+
+// Forgot Password Route (POST) - Handle modal form submission
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      req.flash('error_msg', 'No account with that email exists.');
+      return res.redirect('/auth/login');
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000;
+    await user.save();
+
+    await emailService.sendPasswordResetEmail({
+      userName: user.name || 'Cloud 420 User',
+      userEmail: email,
+      resetToken,
+      host: req.headers.host
+    });
+
+    req.flash('success_msg', 'A password reset link has been sent to your email.');
+    res.redirect('/auth/login');
+  } catch (err) {
+    console.error('Error in forgot-password route:', err);
+    req.flash('error_msg', 'Failed to send reset email. Please try again.');
+    res.redirect('/auth/login');
+  }
+});
+
 router.get('/reset-password/:token', async (req, res) => {
   try {
     const user = await User.findOne({
@@ -176,22 +208,23 @@ router.get('/reset-password/:token', async (req, res) => {
     });
 
     if (!user) {
-      req.flash('error_msg', 'Password reset token is invalid or has expired.');
-      return res.redirect('/auth/forgot-password');
+      req.flash('error_msg', 'Password reset link is invalid or has expired.');
+      return res.redirect('/auth/login');
     }
 
-    const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
-    const error = req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null;
+    const success = req.flash('success_msg')[0] || null;
+    const error = req.flash('error_msg')[0] || null;
+    
     res.render('reset-password', { 
-      title: 'Reset Password', 
-      token: req.params.token, 
-      success, 
-      error 
+      title: 'Reset Password | Cloud 420',
+      token: req.params.token,
+      success,
+      error
     });
   } catch (err) {
     console.error('Error in reset-password GET route:', err);
-    req.flash('error_msg', 'Server error');
-    res.redirect('/auth/forgot-password');
+    req.flash('error_msg', 'Something went wrong. Please try again.');
+    res.redirect('/auth/login');
   }
 });
 
@@ -206,8 +239,14 @@ router.post('/reset-password/:token', async (req, res) => {
     });
 
     if (!user) {
-      req.flash('error_msg', 'Password reset token is invalid or has expired.');
-      return res.redirect('/auth/forgot-password');
+      req.flash('error_msg', 'Password reset link is invalid or has expired.');
+      return res.redirect('/auth/login');
+    }
+
+    // Password validation
+    if (!newPassword || !confirmPassword) {
+      req.flash('error_msg', 'Please fill in both password fields.');
+      return res.redirect(`/auth/reset-password/${req.params.token}`);
     }
 
     if (newPassword !== confirmPassword) {
@@ -215,26 +254,29 @@ router.post('/reset-password/:token', async (req, res) => {
       return res.redirect(`/auth/reset-password/${req.params.token}`);
     }
 
-    if (newPassword.length < 6) {
-      req.flash('error_msg', 'Password must be at least 6 characters.');
+    if (newPassword.length < 8) { // Increased minimum length to 8
+      req.flash('error_msg', 'Password must be at least 8 characters long.');
       return res.redirect(`/auth/reset-password/${req.params.token}`);
     }
 
+    // Assuming User model uses passport-local-mongoose or similar
     await new Promise((resolve, reject) => {
       user.setPassword(newPassword, (err) => {
         if (err) reject(err);
         else resolve();
       });
     });
+
+    // Clear reset token fields
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    req.flash('success_msg', 'Password has been reset successfully. Please log in.');
+    req.flash('success_msg', 'Password reset successful! Please log in with your new password.');
     res.redirect('/auth/login');
   } catch (err) {
     console.error('Error in reset-password POST route:', err);
-    req.flash('error_msg', 'Server error');
+    req.flash('error_msg', 'Failed to reset password. Please try again.');
     res.redirect(`/auth/reset-password/${req.params.token}`);
   }
 });
