@@ -34,9 +34,8 @@
         .logo {
             display: block;
             margin: 0 auto 1.5rem;
-            max-width: 150px;
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(86, 207, 225, 0.5);
+            max-width: 250px;
+            box-shadow: 0 0 15px rgba(9, 171, 0, 0.5);
             transition: transform 0.3s ease;
         }
         .logo:hover {
@@ -205,7 +204,9 @@
 </head>
 <body>
     <div class="login-box">
-        <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="logo">
+        <a href="/">
+            <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="logo">
+          </a>
         <h2>Welcome Back</h2>
         <% if (typeof error_msg !== 'undefined' && error_msg.length > 0) { %>
             <div class="alert alert-danger"><%= error_msg %></div>
