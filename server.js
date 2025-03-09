@@ -258,6 +258,12 @@ app.get('/about', (req, res) => {
   });
 });
 
+app.get('/terms', (req, res) => {
+  res.render('terms', {
+      cartItems: req.session.cart ? req.session.cart.length : 0
+  });
+});
+
 // Profile Route (GET)
 app.get('/profile', isLoggedIn, async (req, res) => {
   try {
