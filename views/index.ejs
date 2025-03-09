@@ -529,7 +529,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Store Logo">
+                    <img src="/images/Cloud.png" style="height: 50px; width: 200px;" alt="Cloud 420 Store Logo">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -1368,10 +1368,55 @@
                     </div>
                 </div>
             </div>
+            <!-- New Testimonials -->
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>Cloud 420’s strains are a cosmic symphony—each puff ignites my senses like a supernova. Pure artistry from soil to soul.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Lunar Blaze</strong> <span class="author-tag">— Celestial Connoisseur</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>Discreet, swift, and flawless—my order arrived like a stealth comet. These folks have mastered the art of elevation.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Orbiting Owl</strong> <span class="author-tag">— Galactic Voyager</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>A curated galaxy of flavors—Nebula Haze is my new orbit. Cloud 420 turns every session into a stellar journey.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Starlit Sage</strong> <span class="author-tag">— Terpene Taster</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-slide">
+                <div class="testimonial-card animate-card">
+                    <div class="testimonial-quote">
+                        <span class="quote-icon">“</span>
+                        <p>From the first whiff to the final exhale, it’s premium perfection. Cloud 420 isn’t just a store—it’s a lifestyle constellation.</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <p><strong>Ether Puff</strong> <span class="author-tag">— High Society Scribe</span></p>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="carousel-controls">
-            <button class="carousel-prev">&larr;</button>
-            <button class="carousel-next">&rarr;</button>
+            <button class="carousel-prev">←</button>
+            <button class="carousel-next">→</button>
         </div>
     </div>
     <div class="testimonials-bg-effect"></div>
@@ -1857,7 +1902,7 @@
         <a href="https://wa.me/your-number" target="_blank" class="social-link" aria-label="WhatsApp">
             <i class="fab fa-whatsapp"></i>
         </a>
-        <a href="https://https://t.me/+4Pjah4rdOvMzZDk0" target="_blank" class="social-link" aria-label="Telegram">
+        <a href="https://t.me/+4Pjah4rdOvMzZDk0" target="_blank" class="social-link" aria-label="Telegram">
             <i class="fab fa-telegram-plane"></i>
         </a>
         <a href="https://x.com/cloud420_store" target="_blank" class="social-link" aria-label="X (Twitter)">
@@ -2179,134 +2224,135 @@
 }
 </style>
 
-<!-- Floating WhatsApp Button -->
-<div class="whatsapp-float">
-    <a href="https://chat.whatsapp.com/YOUR_GROUP_LINK" target="_blank" class="whatsapp-btn">
-        <i class="fab fa-whatsapp whatsapp-icon"></i>
+<!-- Floating Telegram Button -->
+<div class="telegram-float">
+    <a href="https://t.me/+4Pjah4rdOvMzZDk0" target="_blank" class="telegram-btn">
+        <i class="fab fa-telegram-plane telegram-icon"></i>
     </a>
-    <div class="whatsapp-message">
-        <span>Hi! How can I help you?</span>
+    <div class="telegram-message">
+        <span>Hi! How can I assist you?</span>
     </div>
 </div>
 
 <style>
-    /* WhatsApp Float Styles */
-.whatsapp-float {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1000;
-}
-
-.whatsapp-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    background-color: #25D366; /* WhatsApp green */
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-decoration: none;
-}
-
-.whatsapp-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
-.whatsapp-icon {
-    font-size: 36px;
-    color: white;
-}
-
-.whatsapp-message {
-    position: absolute;
-    bottom: 70px;
-    right: 0;
-    background-color: #fff;
-    color: #333;
-    padding: 8px 15px;
-    border-radius: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    font-size: 14px;
-    white-space: nowrap;
-    animation: popMessage 4s infinite;
-    display: none; /* Hidden by default, shown with JS */
-}
-
-.whatsapp-message::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    right: 20px;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #fff;
-}
-
-/* Animation for message pop */
-@keyframes popMessage {
-    0% {
-        transform: scale(0.8);
-        opacity: 0;
+    /* Telegram Float Styles */
+    .telegram-float {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
     }
-    20% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    80% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-}
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .whatsapp-btn {
-        width: 50px;
-        height: 50px;
+    .telegram-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        background-color: #0088cc; /* Telegram blue */
+        border-radius: 50%;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none;
     }
-    
-    .whatsapp-icon {
-        font-size: 28px;
+
+    .telegram-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     }
-    
-    .whatsapp-message {
-        font-size: 12px;
-        padding: 6px 12px;
+
+    .telegram-icon {
+        font-size: 36px;
+        color: white;
     }
-}
+
+    .telegram-message {
+        position: absolute;
+        bottom: 70px;
+        right: 0;
+        background-color: #fff;
+        color: #333;
+        padding: 8px 15px;
+        border-radius: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        font-size: 14px;
+        white-space: nowrap;
+        animation: popMessage 4s infinite;
+        display: none; /* Hidden by default, shown with JS */
+    }
+
+    .telegram-message::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        right: 20px;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #fff;
+    }
+
+    /* Animation for message pop */
+    @keyframes popMessage {
+        0% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+        20% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        80% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(0.8);
+            opacity: 0;
+        }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .telegram-btn {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .telegram-icon {
+            font-size: 28px;
+        }
+        
+        .telegram-message {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+    }
 </style>
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-    const whatsappFloat = document.querySelector('.whatsapp-float');
-    const whatsappMessage = document.querySelector('.whatsapp-message');
+        const telegramFloat = document.querySelector('.telegram-float');
+        const telegramMessage = document.querySelector('.telegram-message');
 
-    whatsappMessage.style.display = 'block';
+        telegramMessage.style.display = 'block';
 
-    setInterval(() => {
-        whatsappMessage.style.display = 
-            whatsappMessage.style.display === 'block' ? 'none' : 'block';
-    }, 4000);
+        setInterval(() => {
+            telegramMessage.style.display = 
+                telegramMessage.style.display === 'block' ? 'none' : 'block';
+        }, 4000);
 
-    // Show message on hover
-    whatsappFloat.addEventListener('mouseenter', () => {
-        whatsappMessage.style.display = 'block';
-        whatsappMessage.style.animation = 'none';
+        // Show message on hover
+        telegramFloat.addEventListener('mouseenter', () => {
+            telegramMessage.style.display = 'block';
+            telegramMessage.style.animation = 'none';
+        });
+
+        telegramFloat.addEventListener('mouseleave', () => {
+            telegramMessage.style.animation = 'popMessage 4s infinite';
+        });
     });
-
-    whatsappFloat.addEventListener('mouseleave', () => {
-        whatsappMessage.style.animation = 'popMessage 4s infinite';
-    });
-});
 </script>
 
 <!-- Footer -->
