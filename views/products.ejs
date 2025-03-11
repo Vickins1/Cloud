@@ -395,19 +395,26 @@
         </div>
         
         <h1 class="hero-title"><strong>Explore Our Cloud Treasures</strong></h1>
-        
         <div class="filter-container">
             <input type="text" id="searchInput" class="filter-input" placeholder="Search products...">
             <select id="categoryFilter" class="filter-select">
                 <option value="">All Categories</option>
-                <option value="Flower">Flower</option>
-                <option value="Edibles">Edibles</option>
+                <option value="Flower">Indica 🌙</option>
+                <option value="Edibles">Sativa ☀️</option>
+                <option value="Hybrid">Hybrid 🔄</option>
+                <option value="CBD">CBD 🌿</option>
+                <option value="THC">High-THC 🔥</option>
+                <option value="Exotic">Exotic Strains 🏝️</option>
+                <option value="Cigarettes">Cigarettes 🚬</option>
+                <option value="Cigars">Cigars 🏆</option>
+                <option value="Rolling-Tobacco">Rolling Tobacco 🌀</option>
+                <option value="Hookah">Hookah/Shisha 💨</option>
+                <option value="Nicotine-Pouches">Nicotine Pouches 🏁</option>
                 <option value="Vapes">Vapes</option>
-                <option value="Concentrates">Concentrates</option>
                 <option value="Accessories">Accessories</option>
-                <option value="CBD">CBD</option>
             </select>
         </div>
+
         <div id="resultsContainer" class="results-container"></div>
     
         <style>
@@ -629,43 +636,46 @@
 
 
     <div class="container mt-5">
-        <div class="row">
-            <% products.forEach(product => { %>
-                <div class="col-md-3 mb-4"> <!-- Changed from col-md-4 to col-md-3 -->
-                    <div class="card h-100" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
-                        <!-- Professional Image Carousel with Click to Open Modal -->
-                        <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
-                            <div class="carousel-inner" data-bs-toggle="modal"
-                                data-bs-target="#productModal-<%= product._id %>" style="cursor: pointer;">
-                                <div class="carousel-item active">
-                                    <img src="<%= product.imageUrl %>" class="d-block w-100" alt="Main Product Image">
+        <div class="container mt-5">
+            <div class="row">
+                <% products.forEach(product => { %>
+                    <div class="col-md-3 mb-4"> <!-- Changed from col-md-4 to col-md-3 -->
+                        <div class="card h-100" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
+                            <!-- Professional Image Carousel with Click to Open Modal -->
+                            <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
+                                <div class="carousel-inner" data-bs-toggle="modal"
+                                    data-bs-target="#productModal-<%= product._id %>" style="cursor: pointer;">
+                                    <div class="carousel-item active">
+                                        <img src="<%= product.imageUrl %>" class="d-block w-100" alt="Main Product Image">
+                                    </div>
+                                    <% if (product.additionalImages && product.additionalImages.length > 0) { %>
+                                        <% product.additionalImages.forEach((img, index) => { %>
+                                            <div class="carousel-item">
+                                                <img src="<%= img %>" class="d-block w-100"
+                                                    alt="Product Image <%= index + 1 %>">
+                                            </div>
+                                        <% }) %>
+                                    <% } %>
                                 </div>
-                                <% if (product.additionalImages && product.additionalImages.length > 0) { %>
-                                    <% product.additionalImages.forEach((img, index) => { %>
-                                        <div class="carousel-item">
-                                            <img src="<%= img %>" class="d-block w-100"
-                                                alt="Product Image <%= index + 1 %>">
-                                        </div>
-                                    <% }) %>
-                                <% } %>
+                            </div>
+        
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <%= product.name %>
+                                </h5>
+                                <p class="card-text">
+                                    <%= product.shortDescription %>
+                                </p>
+                                <p class="card-text text-success">KES <%= product.price.toFixed(2) %>
+                                </p>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy
+                                    Now!</button>
+                                <button class="btn btn-dark add-to-cart">Add to Cart</button>
                             </div>
                         </div>
-        
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <%= product.name %>
-                            </h5>
-                            <p class="card-text">
-                                <%= product.shortDescription %>
-                            </p>
-                            <p class="card-text text-success">KES <%= product.price.toFixed(2) %>
-                            </p>
-                        </div>
-                        <div class="card-footer text-center">
-                            <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy Now!</button>
-                            <button class="btn btn-dark add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
+
 <!-- Product Details Modal -->
 <div class="modal fade" id="productModal-<%= product._id %>" tabindex="-1" aria-labelledby="productModalLabel-<%= product._id %>" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -1026,7 +1036,7 @@
 
         function filterProducts() {
             const searchText = searchInput.value.toLowerCase().trim();
-            const selectedCategory = categoryFilter.value;
+            const selectedCategory = categoryFilter.value.toLowerCase(); // Normalize case
             const productCards = document.querySelectorAll('.card.h-100');
 
             let hasResults = false;
@@ -1034,12 +1044,13 @@
             productCards.forEach(card => {
                 const productName = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
                 const productDescription = card.querySelector('.card-text')?.textContent.toLowerCase() || '';
-                const productCategory = card.dataset.category || '';
+                const productCategory = (card.dataset.category || '').toLowerCase(); // Normalize case
 
                 const matchesSearch = productName.includes(searchText) || productDescription.includes(searchText);
                 const matchesCategory = !selectedCategory || productCategory === selectedCategory;
 
-                const cardColumn = card.closest('.col-md-4');
+                // Use col-md-3 instead of col-md-4 to match the updated layout
+                const cardColumn = card.closest('.col-md-3');
                 if (cardColumn) {
                     if (matchesSearch && matchesCategory) {
                         cardColumn.style.display = 'block';
@@ -1050,14 +1061,18 @@
                 }
             });
 
+            // Update results container message
             resultsContainer.innerHTML = hasResults ? '' : '<p>No products found.</p>';
         }
 
+        // Attach event listeners
         searchInput.addEventListener('input', filterProducts);
         categoryFilter.addEventListener('change', filterProducts);
+
+        // Initial call to apply any default filter settings
+        filterProducts();
     });
 </script>
-
     <script>
         // Buy Now functionality
         document.querySelectorAll('.buy-now').forEach(button => {
