@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Cart = require('../models/cart');
+const PDFDocument = require('pdfkit');
 const axios = require('axios');
 const Order = require('../models/order');
 const Transaction = require('../models/transaction');
@@ -79,9 +80,9 @@ async function processPaymentVerification(transactionRequestId) {
             const enrichedItems = await Promise.all(orderData.items.map(async (item) => {
                 const product = await Product.findById(item.productId);
                 return {
-                    productId: { 
-                        name: product?.name || item.productId.name || 'Mystery Goodie', 
-                        _id: item.productId 
+                    productId: {
+                        name: product?.name || item.productId.name || 'Mystery Goodie',
+                        _id: item.productId
                     },
                     quantity: item.quantity,
                     price: item.price || product?.price || 0 // Fallback to 0 if no price
@@ -105,6 +106,25 @@ async function processPaymentVerification(transactionRequestId) {
                 total: orderData.total,
                 items: enrichedItems,
                 host: process.env.APP_HOST || 'cloud420.store'
+            });
+
+            // Generate receipt for successful payment
+            const receiptBuffer = await generateReceiptPDF({
+                transactionRequestId,
+                customerName: pendingOrder?.orderData?.customerName,
+                amount: pendingOrder?.orderData?.amount || verification.amount
+            });
+
+            // Send JSON response with receipt info
+            res.json({
+                status: 'completed',
+                orderId,
+                message: 'Payment successful!',
+                receipt: {
+                    filename: `receipt-${transactionRequestId}.pdf`,
+                    data: receiptBuffer.toString('base64'),
+                    contentType: 'application/pdf'
+                }
             });
 
             pendingOrders.delete(transactionRequestId);
@@ -154,17 +174,197 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
         }
 
         const deliveryLocations = {
-            'Kutus': 0, 'Kerugoya': 100, 'Kagio': 100, 'Sagana': 100, 'Karatina': 150,
-            'Embu University': 200, "Murang'a University": 200, 'Nyeri': 250, 'Thika': 250, 'Nairobi': 250,
-            'Machakos': 350, 'Meru': 350, 'Nanyuki': 400, 'Mwea': 100, 'Kiambu': 250, 'Ruiru': 250, 'Kikuyu': 250,
-            'Karatina University': 50, 'Mombasa': 1000, 'Kisumu': 1000, 'Eldoret': 1000, 'Nakuru': 500, 'Kisii': 1000,
-            'Kakamega': 1000, 'Kabarnet': 1000, 'Kericho': 1000, 'Kitale': 1000, 'Bungoma': 1000, 'Busia': 1000,
-            'Kapsabet': 1000, 'Kisii University': 1000, 'Kisumu University': 1000, 'Maseno University': 1000,
-            'Moi University': 1000, 'Egerton University': 1000, 'Masinde Muliro University': 1000,
-            'Kirinyaga University': 50, 'Kangai': 50, 'Kiamutugu': 50, 'Baricho': 100,
-            "Wang'uru": 100, 'Makutano': 150
+            'Kutus': 0,
+            'Kerugoya': 50,
+            'Kagio': 100,
+            'Sagana': 100,
+            'Karatina': 150,
+            'Embu University': 200,
+            "Murang'a University": 200,
+            'Nyeri': 250,
+            'Thika': 250,
+            'Nairobi': 300,
+            'Machakos': 350,
+            'Meru': 350,
+            'Nanyuki': 400,
+            'Mwea': 100,
+            'Kiambu': 250,
+            'Ruiru': 250,
+            'Kikuyu': 300,
+            'Karatina University': 150,
+            'Mombasa': 1200,
+            'Kisumu': 1200,
+            'Eldoret': 1200,
+            'Nakuru': 600,
+            'Kisii': 1200,
+            'Kakamega': 1200,
+            'Kabarnet': 1000,
+            'Kericho': 1000,
+            'Kitale': 1200,
+            'Bungoma': 1200,
+            'Busia': 1200,
+            'Kapsabet': 1000,
+            'Kisii University': 1200,
+            'Kisumu University': 1200,
+            'Maseno University': 1200,
+            'Moi University': 1200,
+            'Egerton University': 600,
+            'Masinde Muliro University': 1200,
+            'Kirinyaga University': 50,
+            'Kangai': 50,
+            'Kiamutugu': 50,
+            'Baricho': 100,
+            "Wang'uru": 100,
+            'Makutano': 150,
+            'Juja': 250,
+            'Embu': 200,
+            "Murang'a": 200,
+            'Kangema': 250,
+            'Othaya': 200,
+            'Mukurweini': 200,
+            'Naromoru': 350,
+            'Isiolo': 500,
+            'Kitui': 500,
+            'Wote': 500,
+            'Gilgil': 500,
+            'Naivasha': 500,
+            'Limuru': 300,
+            'Ngong': 350,
+            'Ongata Rongai': 350,
+            'Kitengela': 350,
+            'Athi River': 350,
+            'Malindi': 1200,
+            'Lamu': 1500,
+            'Voi': 1000,
+            'Taveta': 1200,
+            'Iten': 1000,
+            'Kapenguria': 1200,
+            'Lodwar': 1500,
+            'Maralal': 600,
+            'Rumuruti': 500,
+            'Siaya': 1200,
+            'Homa Bay': 1200,
+            'Migori': 1200,
+            'Keroka': 1000,
+            'Nyamira': 1000,
+            'Kilifi': 1200,
+            'University of Nairobi': 300,
+            'KCA University': 300,
+            'Mount Kenya University': 250,
+            'Kabarak University': 600,
+            'Kaimosi Friends University': 1200,
+            'Tom Mboya University': 1200,
+            'Kenyatta University': 300,
+            'Jomo Kenyatta University (JKUAT)': 250,
+            'Technical University of Kenya': 300,
+            'Technical University of Mombasa': 1200,
+            'Dedan Kimathi University': 250,
+            'Chuka University': 300,
+            'Meru University': 350,
+            'Multimedia University': 300,
+            'South Eastern Kenya University': 500,
+            'Pwani University': 1200,
+            'Maasai Mara University': 1000,
+            'University of Eldoret': 1200,
+            'Kibabii University': 1200,
+            'Rongo University': 1200,
+            'Jaramogi Oginga Odinga University': 1200,
+            'Laikipia University': 400,
+            'Garissa University': 1200,
+            'Taita Taveta University': 1200,
+            'Bomet University College': 1000,
+            'Strathmore University': 300,
+            'USIU Africa': 300,
+            'Gatundu': 250,
+            'Kajiado': 400,
+            'Namanga': 600,
+            'Molo': 600,
+            'Njoro': 600,
+            'Ol Kalou': 500,
+            'Nyandarua': 500,
+            'Kinangop': 400,
+            'Matuu': 350,
+            'Mwingi': 500,
+            'Nkubu': 350,
+            'Chogoria': 300,
+            'Timau': 400,
+            'Marsabit': 1200,
+            'Moyale': 1500,
+            'Wajir': 1500,
+            'Mandera': 1500,
+            'Hola': 1200,
+            'Mtwapa': 1200,
+            'Ukunda': 1200,
+            'Diani': 1200,
+            'Msambweni': 1200,
+            'Lunga Lunga': 1200,
+            'Bondo': 1200,
+            'Ugunja': 1200,
+            'Mbale': 1200,
+            'Webuye': 1200,
+            'Kimilili': 1200,
+            'Malaba': 1200,
+            'Luanda': 1200,
+            'Sotik': 1000,
+            'Bomet': 1000,
+            'Litein': 1000,
+            'Londiani': 600,
+            'Muhoroni': 1000,
+            'Ahero': 1000,
+            'Nyansiongo': 1000,
+            'Oyugis': 1200,
+            'Rachuonyo': 1200,
+            'Kendubay': 1200,
+            'Kehancha': 1200,
+            'Isebania': 1200,
+            'Suna': 1200,
+            'Kapchorua': 1000,
+            'Kapsowar': 1000,
+            'Chepkorio': 1000,
+            'Cheptais': 1200,
+            'Kiminini': 1200,
+            'Kaptumo': 1000,
+            'Nandi Hills': 1000,
+            'Kakuma': 1500,
+            'Lokichoggio': 1500,
+            'Archers Post': 600,
+            'Laisamis': 1000,
+            'Loiyangalani': 1500,
+            'North Horr': 1500,
+            'Sololo': 1500,
+            'Kenya Methodist University': 350,
+            'Pan Africa Christian University': 300,
+            'Daystar University': 350,
+            'Africa Nazarene University': 350,
+            'Catholic University of Eastern Africa': 300,
+            'KAG East University': 300,
+            'Gretsa University': 250,
+            'Zetech University': 300,
+            'Riara University': 300,
+            'Pioneer International University': 300,
+            'Adventist University of Africa': 350,
+            'Management University of Africa': 300,
+            'Africa International University': 300,
+            "St. Paul’s University": 300,
+            'Presbyterian University of East Africa': 300,
+            'Co-operative University of Kenya': 300,
+            'Umma University': 500,
+            'Lukenya University': 350,
+            'Scott Christian University': 500,
+            'Karatina Town': 150,
+            'Kianyaga': 100,
+            'Ngariama': 100,
+            'Kibirigwi': 50,
+            'Kagumo': 100,
+            'Kamacharia': 200,
+            'Kiganjo': 250,
+            'Karaba': 150,
+            'Diffathas': 100,
+            'Mutira': 50,
+            'Kithumbu': 50,
+            'Kiamwathi': 50
         };
-
+        
         const calculatedDeliveryFee = deliveryLocations[customerLocation] || 0;
         const calculatedSubtotal = cart.reduce((sum, item) => sum + (item.productId.price * item.quantity), 0);
         const calculatedTotal = calculatedSubtotal + calculatedDeliveryFee;
@@ -462,7 +662,7 @@ router.post('/remove/:itemId', isLoggedIn, async (req, res) => {
         return res.redirect('/cart');
     } catch (error) {
         console.error('Remove error:', error);
-        return res.redirect('/cart'); 
+        return res.redirect('/cart');
     }
 });
 

@@ -17,7 +17,7 @@
     "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "mongodb": "^6.14.0",
     "mongose": "^0.0.2-security",
     "multer": "^1.4.5-lts.1",
@@ -26,6 +26,7 @@
     "nodemon": "^3.1.7",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
+    "pdfkit": "^0.16.0",
     "winston": "^3.17.0"
   }
 }

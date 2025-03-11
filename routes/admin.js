@@ -6,22 +6,47 @@ const Order = require('../models/order');
 const Cart = require('../models/cart');
 const multer = require('multer');
 const path = require('path');
-const nodemailer = require('nodemailer');
 const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
 const fs = require('fs');
 
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'public/uploads/'),
-    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage: storage });
-
 function isAdmin(req, res, next) {
     if (req.isAuthenticated() && req.user.isAdmin) return next();
     req.flash('error_msg', 'Unauthorized access. Admins only.');
     res.redirect('/auth/login');
+}
+
+
+// Get product details (for modal population)
+router.get("/products/:id", async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+});
+
+async function countNewUsersThisMonth() {
+    try {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1); // 1st day of the month
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999); // Last day, last millisecond of the month
+
+        const newUsersThisMonth = await User.countDocuments({
+            createdAt: { 
+                $gte: startOfMonth, 
+                $lte: endOfMonth 
+            }
+        });
+
+        return newUsersThisMonth;
+    } catch (error) {
+        console.error("Error counting new users:", error);
+        return 0;
+    }
 }
 
 
@@ -35,7 +60,7 @@ router.get('/dashboard', isAdmin, async (req, res) => {
 
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
         const totalSalesResult = await Order.aggregate([
             { $match: { paymentStatus: 'completed' } },
@@ -54,20 +79,8 @@ router.get('/dashboard', isAdmin, async (req, res) => {
             Order.countDocuments({ shippingStatus: 'Shipped' })
         ]);
 
-        let newUsersThisMonth;
-        try {
-            newUsersThisMonth = await User.countDocuments({
-                createdAt: { 
-                    $gte: startOfMonth, 
-                    $lte: endOfMonth 
-                }
-            }).exec();
-            
-            console.log(`New users from ${startOfMonth} to ${endOfMonth}: ${newUsersThisMonth}`);
-        } catch (userCountError) {
-            console.error('Error counting new users:', userCountError);
-            newUsersThisMonth = 0; 
-        }
+        // Use the refactored function for counting new users
+        const newUsersThisMonth = await countNewUsersThisMonth();
 
         const orders = await Order.find()
             .sort({ createdAt: -1 })
@@ -130,25 +143,38 @@ router.get('/dashboard', isAdmin, async (req, res) => {
 });
 
 
+
 router.get('/products', isAdmin, async (req, res) => {
     try {
         let perPage = 10;
         let page = parseInt(req.query.page) || 1;
 
+        // Fetch user data if logged in
         const user = req.user ? await User.findById(req.user._id).lean() : null;
+
+        // Get total product count and calculate pages
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / perPage);
 
+        // Fetch products with pagination and ensure all required fields are included
         const products = await Product.find()
             .skip((page - 1) * perPage)
-            .limit(perPage);
+            .limit(perPage)
+            .lean(); // Use .lean() for plain JS objects
+
+
+        if (!products || products.length === 0) {
+            console.warn('No products found for page:', page);
+        }
 
         res.render('admin/products', {
-            products,
+            products: products || [], // Fallback to empty array if no products
             totalPages,
             currentPage: page,
             user: user || {}, // Pass user with fallback
-            messageCount: user?.messageCount || 0
+            messageCount: user?.messageCount || 0,
+            success_msg: req.flash('success_msg'), // Include flash messages
+            error_msg: req.flash('error_msg')
         });
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -157,12 +183,19 @@ router.get('/products', isAdmin, async (req, res) => {
     }
 });
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'public/uploads/'),
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+});
+
+const upload = multer({ storage: storage });
+
 
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
         // Validate required fields
         const { name, price, description, stockQuantity, category } = req.body;
-        
+
         if (!name || !price || !stockQuantity || !category) {
             throw new Error('Missing required fields');
         }
@@ -170,7 +203,7 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         // Validate numeric fields
         const parsedPrice = parseFloat(price);
         const parsedStock = parseInt(stockQuantity, 10);
-        
+
         if (isNaN(parsedPrice) || isNaN(parsedStock)) {
             throw new Error('Price and stock quantity must be valid numbers');
         }
@@ -178,7 +211,6 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         if (parsedPrice < 0 || parsedStock < 0) {
             throw new Error('Price and stock quantity cannot be negative');
         }
-
         // Handle image uploads
         let imagePaths = [];
         if (req.files && req.files.length > 0) {
@@ -201,7 +233,7 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         });
 
         await product.save();
-        
+
         req.flash('success_msg', 'Product added successfully.');
         res.redirect('/admin/products');
 
@@ -209,10 +241,10 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         if (req.files && req.files.length > 0) {
             const fs = require('fs').promises;
             const uploadDir = path.join(__dirname, '../public/uploads');
-            
+
             try {
                 await Promise.all(
-                    req.files.map(file => 
+                    req.files.map(file =>
                         fs.unlink(path.join(uploadDir, file.filename))
                     )
                 );
@@ -227,23 +259,98 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
     }
 });
 
-router.post('/products/edit', async (req, res) => {
+// Edit Product Route
+router.post('/products/edit', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
+        // Validate required fields
         const { id, name, price, description, stockQuantity, category } = req.body;
-        await Product.findByIdAndUpdate(id, {
-            name,
-            price,
-            description,
-            stockQuantity,
-            category
-        });
+
+        if (!id || !name || !price || !stockQuantity || !category) {
+            throw new Error('Missing required fields');
+        }
+
+        // Validate numeric fields
+        const parsedPrice = parseFloat(price);
+        const parsedStock = parseInt(stockQuantity, 10);
+
+        if (isNaN(parsedPrice) || isNaN(parsedStock)) {
+            throw new Error('Price and stock quantity must be valid numbers');
+        }
+
+        if (parsedPrice < 0 || parsedStock < 0) {
+            throw new Error('Price and stock quantity cannot be negative');
+        }
+
+        // Find the product
+        const product = await Product.findById(id);
+        if (!product) {
+            throw new Error('Product not found');
+        }
+
+        // Handle image uploads (optional)
+        let imagePaths = [product.imageUrl, ...product.additionalImages]; // Keep existing images by default
+        if (req.files && req.files.length > 0) {
+            imagePaths = req.files.map(file => `/uploads/${file.filename}`);
+        }
+
+        if (imagePaths.length === 0) {
+            throw new Error('At least one image is required');
+        }
+
+        // Update product
+        product.name = name.trim();
+        product.price = parsedPrice;
+        product.description = description ? description.trim() : '';
+        product.stockQuantity = parsedStock;
+        product.category = category.trim();
+        product.imageUrl = imagePaths[0];
+        product.additionalImages = imagePaths.slice(1);
+        product.updatedAt = new Date();
+
+        await product.save();
+
+        // Clean up old images if new ones were uploaded
+        if (req.files && req.files.length > 0 && (product.imageUrl !== imagePaths[0] || product.additionalImages.length !== imagePaths.slice(1).length)) {
+            const fs = require('fs').promises;
+            const uploadDir = path.join(__dirname, '../public/uploads');
+            const oldImages = [product.imageUrl, ...product.additionalImages].filter(img => !imagePaths.includes(img));
+
+            try {
+                await Promise.all(
+                    oldImages.map(imagePath =>
+                        fs.unlink(path.join(uploadDir, path.basename(imagePath)))
+                    )
+                );
+            } catch (cleanupError) {
+                console.error('Error cleaning up old files:', cleanupError);
+            }
+        }
+
+        req.flash('success_msg', 'Product updated successfully.');
         res.redirect('/admin/products');
-    } catch (err) {
-        console.error(err);
-        res.status(500).send("Error updating product");
+
+    } catch (error) {
+        // Clean up uploaded files on error
+        if (req.files && req.files.length > 0) {
+            const fs = require('fs').promises;
+            const uploadDir = path.join(__dirname, '../public/uploads');
+
+            try {
+                await Promise.all(
+                    req.files.map(file =>
+                        fs.unlink(path.join(uploadDir, file.filename))
+                    )
+                );
+            } catch (cleanupError) {
+                console.error('Error cleaning up files:', cleanupError);
+            }
+        }
+
+        console.error('Error updating product:', error);
+        req.flash('error_msg', error.message || 'Failed to update product.');
+        res.redirect('/admin/products');
     }
 });
-
 
 router.delete('/products/delete/:id', isAdmin, async (req, res) => {
     try {
@@ -345,33 +452,6 @@ router.post('/users/delete/:id', isAdmin, async (req, res) => {
     }
 });
 
-
-router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
-    try {
-        const { name, price, description, stockQuantity, category } = req.body;
-        if (!req.files || req.files.length === 0) {
-            req.flash('error_msg', 'Please upload at least one image.');
-            return res.redirect('/admin/products');
-        }
-        const imagePaths = req.files.map(file => `/uploads/${file.filename}`);
-        const product = new Product({
-            name,
-            price: parseFloat(price),
-            description,
-            stockQuantity: parseInt(stockQuantity),
-            category,
-            imageUrl: imagePaths[0],
-            additionalImages: imagePaths.slice(1)
-        });
-        await product.save();
-        req.flash('success_msg', 'Product added successfully.');
-        res.redirect('/admin/products');
-    } catch (error) {
-        console.error('Error adding product:', error.message);
-        req.flash('error_msg', error.message || 'Failed to add product.');
-        res.redirect('/admin/products');
-    }
-});
 
 // Products - Delete (using POST)
 router.post('/products/delete/:id', isAdmin, async (req, res) => {

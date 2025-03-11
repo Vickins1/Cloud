@@ -167,6 +167,7 @@
                                             <th scope="col">Order ID</th>
                                             <th scope="col">Customer</th>
                                             <th scope="col">Phone</th>
+                                            <th scope="col">Customer Location</th>
                                             <th scope="col">Products Ordered</th>
                                             <th scope="col">Total (KES)</th>
                                             <th scope="col">Payment Status</th>
@@ -195,6 +196,7 @@
                                                     N/A
                                                 <% } %>
                                             </td>
+                                            <td class="text-truncate" style="max-width: 120px;"><%= order.customerLocation || 'N/A' %></td>
                                             
                                             <td>
                                                 <% if (order.items && order.items.length > 0) { %>
