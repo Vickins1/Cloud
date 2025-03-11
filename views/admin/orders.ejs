@@ -158,94 +158,122 @@
                                     </button>
                                 </div>
                             <% } %>
-
-                            <div class="table-responsive">
-                                <table class="table table-dark table-hover" aria-label="Orders table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Order ID</th>
-                                            <th scope="col">Customer</th>
-                                            <th scope="col">Phone</th>
-                                            <th scope="col">Customer Location</th>
-                                            <th scope="col">Products Ordered</th>
-                                            <th scope="col">Total (KES)</th>
-                                            <th scope="col">Payment Status</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Shipping Status</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% 
-                                            const sortedOrders = orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                                            sortedOrders.forEach((order, index) => { 
-                                                const count = sortedOrders.length - index;
-                                                if (order && order.total !== undefined) { 
-                                        %>
-                                        <tr>
-                                            <td><%= count %></td>
-                                            <td class="text-truncate" style="max-width: 120px;"><%= order._id %></td>
-                                            <td class="text-truncate" style="max-width: 120px;"><%= order.customerName || 'N/A' %></td>
-                                            <td class="text-truncate" style="max-width: 120px;">
-                                                <% if (order.customerPhone) { %>
-                                                    <a href="tel:<%= order.customerPhone %>" style="color: #00cc00; text-decoration: none;">
-                                                        <%= order.customerPhone %>
-                                                    </a>
-                                                <% } else { %>
-                                                    N/A
-                                                <% } %>
-                                            </td>
-                                            <td class="text-truncate" style="max-width: 120px;"><%= order.customerLocation || 'N/A' %></td>
-                                            
-                                            <td>
-                                                <% if (order.items && order.items.length > 0) { %>
-                                                    <ul class="list-unstyled">
-                                                        <% order.items.forEach(item => { %>
-                                                            <li>
-                                                                <strong><%= item.productId?.name || 'Unknown Product' %></strong> 
-                                                                <span class="text-muted">(Qty: <%= item.quantity %>)</span>
-                                                            </li>
-                                                        <% }); %>
-                                                    </ul>
-                                                <% } else { %>
-                                                    <span class="text-muted">No items</span>
-                                                <% } %>
-                                            </td>
-                                            <td><%= order.total.toFixed(2) %></td>
-                                            <td>
-                                                <span class="badge <%= order.status === 'Completed' ? 'badge-danger' : order.status === 'Pending' ? 'badge-warning' : 'badge-success' %>">
-                                                    <%= order.paymentStatus %>
-                                                </span>
-                                            </td>
-                                            
-                                            <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
-                                            <td>
-                                                <form action="/admin/orders/update-shipping-status" method="POST" style="display:inline;">
-                                                    <input type="hidden" name="orderId" value="<%= order._id %>">
-                                                    <select name="shippingStatus" class="form-control form-control-sm" onchange="this.form.submit()">
-                                                        <option value="Not Shipped" <%= order.shippingStatus === 'Not Shipped' ? 'selected' : '' %>>Not Shipped</option>
-                                                        <option value="Processing" <%= order.shippingStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
-                                                        <option value="Shipped" <%= order.shippingStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                                        <option value="Delivered" <%= order.shippingStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                                        <option value="Cancelled" <%= order.shippingStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                                    </select>
-                                                </form>
-                                            </td>
-                                            <td>
-                                                <form action="/admin/orders/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
-                                                    <input type="hidden" name="orderId" value="<%= order._id %>">
-                                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                        <% 
-                                                }
-                                            }); 
-                                        %>
-                                    </tbody>
-                                </table>
+                            <style>
+                                /* Reduce row height and font size */
+                                .table-sm th, 
+                                .table-sm td {
+                                    padding: 4px 8px !important; /* Decrease padding */
+                                    font-size: 15px; /* Reduce font size */
+                                    white-space: nowrap; /* Prevent line breaks */
+                                }
+                                
+                                /* Adjust badge and button sizes */
+                                .badge {
+                                    font-size: 10px;
+                                    padding: 3px 6px;
+                                }
+                            
+                                .btn-sm {
+                                    padding: 3px 6px;
+                                    font-size: 12px;
+                                }
+                            
+                                /* Ensure table stays scrollable on small screens */
+                                .table-responsive {
+                                    overflow-x: auto;
+                                }
+                            </style>
+                            
+                            <div style="overflow-x: auto; max-width: 100%;">
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover table-sm" aria-label="Orders table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Order ID</th>
+                                                <th scope="col">Customer</th>
+                                                <th scope="col">Phone</th>
+                                                <th scope="col">Customer Location</th>
+                                                <th scope="col">Products Ordered</th>
+                                                <th scope="col">Total (KES)</th>
+                                                <th scope="col">Payment Status</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Shipping Status</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% 
+                                                const sortedOrders = orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                                                sortedOrders.forEach((order, index) => { 
+                                                    const count = sortedOrders.length - index;
+                                                    if (order && order.total !== undefined) { 
+                                            %>
+                                            <tr>
+                                                <td><%= count %></td>
+                                                <td class="text-truncate" style="max-width: 120px;"><%= order._id %></td>
+                                                <td class="text-truncate" style="max-width: 120px;"><%= order.customerName || 'N/A' %></td>
+                                                <td class="text-truncate" style="max-width: 120px;">
+                                                    <% if (order.customerPhone) { %>
+                                                        <a href="tel:<%= order.customerPhone %>" style="color: #00cc00; text-decoration: none;">
+                                                            <%= order.customerPhone %>
+                                                        </a>
+                                                    <% } else { %>
+                                                        N/A
+                                                    <% } %>
+                                                </td>
+                                                <td class="text-truncate" style="max-width: 120px;"><%= order.customerLocation || 'N/A' %></td>
+                            
+                                                <td>
+                                                    <% if (order.items && order.items.length > 0) { %>
+                                                        <ul class="list-unstyled">
+                                                            <% order.items.forEach(item => { %>
+                                                                <li>
+                                                                    <strong><%= item.productId?.name || 'Unknown Product' %></strong> 
+                                                                    <span class="text-muted">(Qty: <%= item.quantity %>)</span>
+                                                                </li>
+                                                            <% }); %>
+                                                        </ul>
+                                                    <% } else { %>
+                                                        <span class="text-muted">No items</span>
+                                                    <% } %>
+                                                </td>
+                                                <td><%= order.total.toFixed(2) %></td>
+                                                <td>
+                                                    <span class="badge <%= order.status === 'Completed' ? 'badge-danger' : order.status === 'Pending' ? 'badge-warning' : 'badge-success' %>">
+                                                        <%= order.paymentStatus %>
+                                                    </span>
+                                                </td>
+                            
+                                                <td><%= order.createdAt ? order.createdAt.toDateString() : 'N/A' %></td>
+                                                <td>
+                                                    <form action="/admin/orders/update-shipping-status" method="POST" style="display:inline;">
+                                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                        <select name="shippingStatus" class="form-control form-control-sm" onchange="this.form.submit()">
+                                                            <option value="Not Shipped" <%= order.shippingStatus === 'Not Shipped' ? 'selected' : '' %>>Not Shipped</option>
+                                                            <option value="Processing" <%= order.shippingStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                                            <option value="Shipped" <%= order.shippingStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                            <option value="Delivered" <%= order.shippingStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                                            <option value="Cancelled" <%= order.shippingStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                                        </select>
+                                                    </form>
+                                                </td>
+                                                <td>
+                                                    <form action="/admin/orders/delete" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
+                                                        <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <% 
+                                                    }
+                                                }); 
+                                            %>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
+                            
                             <ul class="pagination">
                                 <% for (let i = 1; i <= totalPages; i++) { %>
                                     <li class="page-item <%= currentPage === i ? 'active' : '' %>">

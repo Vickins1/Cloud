@@ -22,6 +22,11 @@ const os = require('os');
 const app = express();
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
+const nodemailer = require('nodemailer');
+
+// Validate environment variables
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS;
 
 // MongoDB connection URI
 const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";
@@ -37,6 +42,7 @@ async function connectToDatabase() {
 }
 
 connectToDatabase();
+
 
 // Ensure upload directory exists
 const uploadDir = 'public/uploads/';
@@ -173,54 +179,33 @@ app.get('/home', isLoggedIn, async (req, res) => {
   }
 });
 
-app.post('/track-order', async (req, res) => {
-  const { orderId } = req.body;
 
+
+// Routes
+app.get('/', async (req, res) => {
   try {
-
-      const order = await Order.findOne({ cloudOrderId: orderId });
-      if (!order) {
-          return res.status(404).json({ success: false, message: 'Order not found.' });
+      const userId = req.user ? req.user._id : null;
+      let cartItems = 0;
+      if (userId) {
+          const cart = await Cart.findOne({ userId });
+          cartItems = cart ? cart.products.length : 0;
       }
-
-      res.json({
-          success: true,
-          order: {
-              cloudOrderId: order.cloudOrderId,
-              status: order.status,
-              estimatedDelivery: order.estimatedDelivery || 'N/A',
-          },
+      const products = await Product.find()
+          .sort({ createdAt: -1 })
+          .limit(3);
+      const success = req.flash('success_msg')[0] || null;
+      const error = req.flash('error_msg')[0] || null;
+      res.render('index', { 
+          cartItems, 
+          isAuthenticated: req.isAuthenticated(),
+          success,
+          error,
+          products
       });
   } catch (error) {
-      console.error('Track order error:', error);
-      res.status(500).json({ success: false, message: 'Server error.' });
-  }
-});
-
-app.get("/", async (req, res) => {
-  try {
-    const userId = req.user ? req.user._id : null;
-    let cartItems = 0;
-    if (userId) {
-      const cart = await Cart.findOne({ userId });
-      cartItems = cart ? cart.products.length : 0;
-    }
-    const products = await Product.find()
-      .sort({ createdAt: -1 })
-      .limit(3);
-    const success = req.flash('success_msg')[0] || null;
-    const error = req.flash('error_msg')[0] || null;
-    res.render("index", { 
-      cartItems, 
-      isAuthenticated: req.isAuthenticated(),
-      success,
-      error,
-      products
-    });
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    req.flash('error_msg', 'Server Error');
-    res.status(500).redirect('/');
+      console.error('Error fetching data:', error);
+      req.flash('error_msg', 'Server Error');
+      res.redirect('/'); // Status 500 is implicit in redirect
   }
 });
 
@@ -293,6 +278,50 @@ app.get('/profile', isLoggedIn, async (req, res) => {
     req.flash('error_msg', 'Server error');
     res.redirect('/auth/login');
   }
+});
+
+// Nodemailer transporter with connection pooling
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      user: EMAIL_USER,
+      pass: EMAIL_PASS,
+  },
+  pool: true,
+  maxConnections: 5,
+  maxMessages: 100,
+});
+
+// Contact route
+app.post('/contact', (req, res) => {
+  console.log('Request Body:', req.body);
+
+  const { name, email, message } = req.body;
+
+  if (!name || !email || !message) {
+      return res.redirect('/?success=false&message=All fields are required');
+  }
+
+  const mailOptions = {
+      from:`Cloud 420 Store <${EMAIL_USER}>`,
+      to: 'aj9589362@gmail.com',
+      subject: `New Contact Form Submission from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+          console.error('Error sending email:', error);
+          return res.redirect('/?success=false&message=Failed to send message');
+      }
+      console.log('Email sent:', info.response);
+      res.redirect('/?success=true&message=Message sent successfully!');
+  });
+});
+
+// Serve the HTML 
+app.get('/', (req, res) => {
+  res.send(`<!DOCTYPE html>${document.documentElement.outerHTML}`);
 });
 
 // Change Password Route
