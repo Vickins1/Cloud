@@ -248,7 +248,7 @@ const emailService = {
                     `).join('')}
                 </table>
             ` : '<p>No items to display, but we’ve got your order covered!</p>'}
-            <p><a href="https://${host}/track-order?orderId=${escapeHtml(cloudOrderId)}" class="cta">Track Your Stash</a></p>
+           
         `;
         const mailOptions = {
             from: `Cloud 420 Store <${EMAIL_USER}>`,
