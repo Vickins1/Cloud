@@ -52,50 +52,6 @@
             left: 0;
         }
 
-        .card {
-            background: rgba(28, 28, 28, 0.95);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0, 255, 100, 0.2);
-        }
-
-        .card-img-top {
-            height: 220px;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .card:hover .card-img-top {
-            transform: scale(1.1);
-        }
-
-        .card-body {
-            position: relative;
-            z-index: 1;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(transparent, rgba(0, 255, 100, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .card:hover::before {
-            opacity: 1;
-        }
-
         .btn-primary {
             background: linear-gradient(45deg, #035925, #00ff73);
             border: none;
@@ -221,82 +177,96 @@
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
     filter: invert(1); /* Makes arrows white */
-}
-.notification-container {
+}.notification-container {
     position: fixed;
-    top: 15%; /* Default top position */
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1060;
-    width: 90%; /* Allow flexibility on smaller screens */
-    max-width: 300px; /* Cap width for larger screens */
-    padding: 0 10px; /* Add horizontal padding to prevent edge overlap */
+    top: 20px; /* Fixed distance from top */
+    right: 20px; /* Fixed distance from right */
+    z-index: 1060; /* High z-index to stay above content */
+    width: auto; /* Auto width based on content */
+    max-width: 320px; /* Reasonable max-width for professionalism */
 }
 
 .notification {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    border-radius: 5px;
-    margin-bottom: 8px;
-    width: 100%; /* Full width of container */
-    max-width: 200px; /* Default max-width */
-    height: auto;
-    padding: 10px; /* Default padding */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box; /* Ensure padding doesn’t increase width */
+    background-color: #2a2a2a; /* Dark gray background */
+    border: 1px solid #3a3a3a; /* Subtle dark border */
+    border-radius: 6px; /* Slightly rounded corners */
+    margin-bottom: 10px; /* Consistent spacing */
+    width: 100%;
+    padding: 12px; /* Professional padding */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Deeper, professional shadow */
+    box-sizing: border-box;
+    color: #e0e0e0; /* Light gray text for readability */
+    transition: all 0.3s ease; /* Smooth transitions */
 }
 
 .notification-success {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
+    background-color: #1a3c34; /* Professional dark green */
+    border-color: #2a5c4a;
+    color: #d4edda; /* Light green text */
 }
 
 .notification-danger {
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    color: #721c24;
+    background-color: #3c1a1a; /* Professional dark red */
+    border-color: #5c2a2a;
+    color: #f8d7da; /* Light red text */
 }
 
 .notification-title {
-    font-weight: bold;
-    font-size: 14px; /* Default font size */
+    font-weight: 600; /* Semi-bold for professionalism */
+    font-size: 15px; /* Slightly larger for clarity */
+    margin-bottom: 4px; /* Space below title */
+    color: #ffffff; /* White for emphasis */
 }
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
     .notification-container {
-        top: 10%; 
-        max-width: 250px;
+        top: 15px;
+        right: 15px;
+        max-width: 280px;
     }
 
     .notification {
-        max-width: 100%;
-        padding: 8px;
-        margin-bottom: 6px;
+        padding: 10px;
+        margin-bottom: 8px;
     }
 
     .notification-title {
-        font-size: 13px; 
+        font-size: 14px;
     }
 }
 
 @media screen and (max-width: 576px) {
     .notification-container {
-        top: 5%;
-        width: 85%;
-        max-width: 200px;
-        padding: 0 5px;
+        top: 10px;
+        right: 10px;
+        max-width: 240px;
     }
 
     .notification {
-        padding: 6px; /* Further reduce padding */
-        margin-bottom: 5px; /* Tighter spacing */
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); /* Lighter shadow */
+        padding: 8px;
+        margin-bottom: 6px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25); /* Slightly lighter shadow */
     }
 
     .notification-title {
-        font-size: 12px; /* Smaller font for phones */
+        font-size: 13px;
+    }
+}
+
+/* Animation for entry */
+.notification {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }
     </style>
@@ -307,7 +277,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    <img src="/images/Cloud.png" style="height: 50px; width: 250px;" alt="Cloud 420 Store Logo">
+                    <img src="/images/Cloud.png" style="height: 50px; width: 150px;" alt="Cloud 420 Store Logo">
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -387,294 +357,338 @@
         }
     </style>
 
-    <section class="hero-section">
-        <div class="floating-leaves">
-            <div class="leaf" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
-            <div class="leaf" style="left: 70%; top: 40%; animation-delay: 2s;"></div>
-            <div class="leaf" style="left: 40%; top: 60%; animation-delay: 4s;"></div>
-        </div>
-        
-        <h1 class="hero-title"><strong>Explore Our Cloud Treasures</strong></h1>
-        <div class="filter-container">
-            <input type="text" id="searchInput" class="filter-input" placeholder="Search products...">
-            <select id="categoryFilter" class="filter-select">
-                <option value="">All Categories</option>
-                <option value="Flower">Indica 🌙</option>
-                <option value="Edibles">Sativa ☀️</option>
-                <option value="Hybrid">Hybrid 🔄</option>
-                <option value="CBD">CBD 🌿</option>
-                <option value="THC">High-THC 🔥</option>
-                <option value="Exotic">Exotic Strains 🏝️</option>
-                <option value="Cigarettes">Cigarettes 🚬</option>
-                <option value="Cigars">Cigars 🏆</option>
-                <option value="Rolling-Tobacco">Rolling Tobacco 🌀</option>
-                <option value="Hookah">Hookah/Shisha 💨</option>
-                <option value="Nicotine-Pouches">Nicotine Pouches 🏁</option>
-                <option value="Vapes">Vapes</option>
-                <option value="Accessories">Accessories</option>
-            </select>
-        </div>
-
-        <div id="resultsContainer" class="results-container"></div>
+<section class="hero-section">
+    <div class="floating-leaves">
+        <div class="leaf" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+        <div class="leaf" style="left: 70%; top: 40%; animation-delay: 2s;"></div>
+        <div class="leaf" style="left: 40%; top: 60%; animation-delay: 4s;"></div>
+    </div>
     
-        <style>
-            /* Hero Section Styling */
-            .hero-section {
-                text-align: center;
-                padding: 30px 10px; /* Default padding */
-                position: relative;
-                background: linear-gradient(to right, #000, #035925);
-                color: white;
-                overflow: hidden;
-                margin-top: 20px;
-            }
-            .hero-section h1 {
-                font-size: 2rem; /* Default size */
-                font-weight: bold;
-                margin-top: 50px; /* Default margin */
-            }
-        
-            /* Floating Leaves Animation */
-            .floating-leaves .leaf {
-                position: absolute;
-                width: 30px; /* Default size */
-                height: 30px;
-                background: url('/public/images/leaf-icon.png') no-repeat center;
-                background-size: contain;
-                opacity: 0.7;
-                animation: floatLeaf 6s infinite linear;
-            }
-        
-            @keyframes floatLeaf {
-                0% { transform: translateY(0); }
-                50% { transform: translateY(-20px); }
-                100% { transform: translateY(0); }
-            }
-        
-            /* Hero Title */
-            .hero-title {
-                font-size: 2.5rem; /* Default size */
-                font-weight: bold;
-                margin-top: 20px; /* Default margin */
-            }
-        
-            /* Filter Section */
-            .filter-container {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: center;
-                align-items: center;
-                gap: 15px; /* Default gap */
-                background: rgba(255, 255, 255, 0.1);
-                padding: 15px; /* Default padding */
-                border-radius: 10px;
-                backdrop-filter: blur(5px);
-                margin-top: 20px; /* Default margin */
-                max-width: 490px; /* Default max-width */
-                margin-left: auto;
-                margin-right: auto;
-            }
-        
-            /* Inputs and Select */
-            .filter-input, .filter-select, .filter-button {
-                padding: 12px; /* Default padding */
-                border: none;
-                border-radius: 8px;
-                font-size: 16px; /* Default font size */
-            }
-        
-            .filter-input {
-                width: 100%;
-                max-width: 250px; /* Default max-width */
-                background: rgba(255, 255, 255, 0.8);
-                color: black;
-            }
-        
-            .filter-select {
-                width: 100%;
-                max-width: 180px; /* Default max-width */
-                background: white;
-            }
-        
-            .filter-button {
-                background: #0f5132;
-                color: white;
-                cursor: pointer;
-                transition: 0.3s;
-                font-weight: bold;
-            }
-        
-            .filter-button:hover {
-                background: #198754;
-            }
-        
-            /* Results Container Styling */
-            .results-container {
-                margin-top: 20px; /* Default margin */
-                padding: 15px; /* Default padding */
-                color: white;
-            }
-        
-            .product-item {
-                background: rgba(255, 255, 255, 0.1);
-                padding: 10px; /* Default padding */
-                border-radius: 8px;
-                margin-bottom: 10px;
-                text-align: left;
-            }
-        
-            .product-item h3 {
-                margin: 0 0 5px;
-                font-size: 1.2rem; /* Default size */
-            }
-        
-            .product-item p {
-                margin: 5px 0;
-            }
-        
-            .product-item img {
-                max-width: 100px; /* Default size */
-                border-radius: 5px;
-            }
-        
-            /* Responsive Design */
-            @media screen and (max-width: 768px) {
-                .hero-section {
-                    padding: 20px 5px; /* Reduced padding */
-                    margin-top: 10px; /* Reduced margin */
-                }
-        
-                .hero-section h1 {
-                    font-size: 1.5rem; /* Smaller font size */
-                    margin-top: 20px; /* Reduced margin */
-                }
-        
-                .hero-title {
-                    font-size: 1.8rem; /* Smaller title size */
-                    margin-top: 10px; /* Reduced margin */
-                }
-        
-                .floating-leaves .leaf {
-                    width: 20px; /* Smaller leaves */
-                    height: 20px;
-                }
-        
-                @keyframes floatLeaf {
-                    0% { transform: translateY(0); }
-                    50% { transform: translateY(-10px); } /* Reduced animation range */
-                    100% { transform: translateY(0); }
-                }
-        
-                .filter-container {
-                    flex-direction: column;
-                    gap: 8px; /* Reduced gap */
-                    width: 90%;
-                    padding: 10px; /* Reduced padding */
-                    margin-top: 15px; /* Reduced margin */
-                    max-width: 100%; /* Full width on small screens */
-                }
-        
-                .filter-input, .filter-select, .filter-button {
-                    padding: 8px; /* Reduced padding */
-                    font-size: 14px; /* Smaller font size */
-                    width: 100%;
-                    max-width: none; /* Remove max-width constraints */
-                }
-        
-                .results-container {
-                    margin-top: 10px; /* Reduced margin */
-                    padding: 10px; /* Reduced padding */
-                }
-        
-                .product-item {
-                    padding: 8px; /* Reduced padding */
-                }
-        
-                .product-item h3 {
-                    font-size: 1rem; /* Smaller heading */
-                }
-        
-                .product-item img {
-                    max-width: 80px; /* Smaller image */
-                }
-            }
-        
-            /* Extra small screens (e.g., phones below 576px) */
-            @media screen and (max-width: 576px) {
-                .hero-section {
-                    margin-top: 80px;
-                    padding: 15px 5px; /* Even smaller padding */
-                }
-        
-                .hero-section h1 {
-                    font-size: 1.2rem; /* Even smaller font */
-                    margin-top: 15px;
-                }
-        
-                .hero-title {
-                    font-size: 1.5rem; /* Even smaller title */
-                    margin-top: 8px;
-                }
-        
-                .floating-leaves .leaf {
-                    width: 15px; /* Even smaller leaves */
-                    height: 15px;
-                }
-        
-                .filter-container {
-                    padding: 8px; /* Even smaller padding */
-                    gap: 6px; /* Even smaller gap */
-                }
-        
-                .filter-input, .filter-select, .filter-button {
-                    padding: 6px; /* Even smaller padding */
-                    font-size: 12px; /* Even smaller font */
-                }
-            }
-        </style>
-    </section>
+    <h1 class="hero-title"><strong>Explore Our Cloud Treasures</strong></h1>
+    
+    <div class="filter-container">
+        <input type="text" id="searchInput" class="filter-input" placeholder="Search products...">
+        <select id="categoryFilter" class="filter-select">
+            <option value="">All Categories</option>
+            <option value="Flower">Indica 🌙</option>
+            <option value="Edibles">Sativa ☀️</option>
+            <option value="Hybrid">Hybrid 🔄</option>
+            <option value="CBD">CBD 🌿</option>
+            <option value="THC">High-THC 🔥</option>
+            <option value="Exotic">Exotic Strains 🏝️</option>
+            <option value="Cigarettes">Cigarettes 🚬</option>
+            <option value="Cigars">Cigars 🏆</option>
+            <option value="Rolling-Tobacco">Rolling Tobacco 🌀</option>
+            <option value="Hookah">Hookah/Shisha 💨</option>
+            <option value="Nicotine-Pouches">Nicotine Pouches 🏁</option>
+            <option value="Vapes">Vapes</option>
+            <option value="Accessories">Accessories</option>
+        </select>
+    </div>
 
+    <div id="resultsContainer" class="results-container"></div>
+</section>
+
+<style>
+    /* Hero Section Styling */
+    .hero-section {
+        text-align: center;
+        position: relative;
+        background: linear-gradient(to right, #000, #035925);
+        color: white;
+        overflow: hidden;
+        margin-top: 30px;
+        padding: 20px 0;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 50px;
+    }
+
+    /* Floating Leaves Animation */
+    .floating-leaves {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+
+    .floating-leaves .leaf {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: url('/public/images/leaf-icon.png') no-repeat center;
+        background-size: contain;
+        opacity: 0.7;
+        animation: floatLeaf 6s infinite ease-in-out; /* Changed to ease-in-out for smoother animation */
+    }
+
+    @keyframes floatLeaf {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0); }
+    }
+
+    /* Hero Title */
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        position: relative; /* Added for better layering */
+        z-index: 1; /* Ensures title stays above leaves */
+    }
+
+    /* Filter Container */
+    .filter-container {
+        display: flex; /* Added explicit display */
+        flex-direction: column;
+        gap: 6px;
+        margin: 25px auto 0; /* Centered and fixed margin-top */
+        width: 90%;
+        max-width: 600px; /* Added reasonable max-width */
+    }
+
+    .filter-input,
+    .filter-select {
+        padding: 5px;
+        font-size: 12px;
+        width: 100%;
+        box-sizing: border-box; /* Added for consistent sizing */
+    }
+
+    .results-container {
+        margin-top: 8px;
+        padding: 8px;
+        position: relative; /* Added for better positioning */
+        z-index: 1; /* Ensures results stay above leaves */
+    }
+
+    .product-item img {
+        max-width: 60px;
+    }
+
+    /* Media Query for Extra Small Screens */
+    @media screen and (max-width: 576px) {
+        .hero-section {
+            padding: 10px 0; /* Adjusted padding */
+        }
+
+        .hero-title {
+            font-size: 0.9rem;
+        }
+
+        .floating-leaves .leaf {
+            width: 8px;
+            height: 8px;
+        }
+
+        .filter-container {
+            padding: 5px;
+            gap: 4px;
+            margin-top: 15px; /* Adjusted for smaller screens */
+        }
+
+        .filter-input,
+        .filter-select {
+            padding: 4px;
+            font-size: 11px;
+        }
+
+        .results-container {
+            margin-top: 6px;
+            padding: 6px;
+        }
+    }
+</style>
 
     <div class="container mt-5">
         <div class="container mt-5">
             <div class="row">
                 <% products.forEach(product => { %>
-                    <div class="col-md-3 mb-4"> <!-- Changed from col-md-4 to col-md-3 -->
-                        <div class="card h-100" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
+                    <div class="col-md-3 mb-4"> 
+                        <div class="card h-100 product-card" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
                             <!-- Professional Image Carousel with Click to Open Modal -->
                             <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
                                 <div class="carousel-inner" data-bs-toggle="modal"
                                     data-bs-target="#productModal-<%= product._id %>" style="cursor: pointer;">
                                     <div class="carousel-item active">
-                                        <img src="<%= product.imageUrl %>" class="d-block w-100" alt="Main Product Image">
+                                        <img src="<%= product.imageUrl %>" class="d-block w-100 product-img" alt="Main Product Image">
                                     </div>
                                     <% if (product.additionalImages && product.additionalImages.length > 0) { %>
                                         <% product.additionalImages.forEach((img, index) => { %>
                                             <div class="carousel-item">
-                                                <img src="<%= img %>" class="d-block w-100"
+                                                <img src="<%= img %>" class="d-block w-100 product-img" 
                                                     alt="Product Image <%= index + 1 %>">
                                             </div>
                                         <% }) %>
                                     <% } %>
                                 </div>
                             </div>
-        
+                        
                             <div class="card-body">
-                                <h5 class="card-title">
-                                    <%= product.name %>
-                                </h5>
-                                <p class="card-text">
-                                    <%= product.shortDescription %>
-                                </p>
-                                <p class="card-text text-success">KES <%= product.price.toFixed(2) %>
-                                </p>
+                                <h5 class="card-title"><%= product.name %></h5>
+                                <p class="card-text short-desc"><%= product.shortDescription %></p>
+                                <p class="card-text price text-success">KES <%= product.price.toFixed(2) %></p>
                             </div>
                             <div class="card-footer text-center">
-                                <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy
-                                    Now!</button>
+                                <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy Now!</button>
                                 <button class="btn btn-dark add-to-cart">Add to Cart</button>
                             </div>
                         </div>
+                        
+                        <style>
+                        .product-card {
+                            transition: all 0.3s ease;
+                            max-width: 350px;
+                            margin: 0 auto;
+                            background: #2a2a2a; /* Dark gray background */
+                            color: #ffffff; /* White text */
+                            border: 1px solid #3a3a3a; /* Subtle border */
+                            border-radius: 8px; /* Slightly rounded corners */
+                        }
+                        
+                        /* Carousel Image Styling */
+                        .product-card .carousel-inner {
+                            background: #333333; /* Darker carousel background */
+                            border-top-left-radius: 8px;
+                            border-top-right-radius: 8px;
+                        }
+                        
+                        .product-img {
+                            object-fit: cover;
+                            height: 200px;
+                            width: 100%;
+                            opacity: 0.95; /* Slight transparency for style */
+                            transition: opacity 0.3s ease;
+                        }
+                        
+                        .product-img:hover {
+                            opacity: 1; /* Full opacity on hover */
+                        }
+                        
+                        /* Card Body */
+                        .card-body {
+                            padding: 1rem;
+                            background: #2a2a2a;
+                        }
+                        
+                        .card-title {
+                            font-size: 1.25rem;
+                            margin-bottom: 0.5rem;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                            color: #e0e0e0; /* Light gray for title */
+                        }
+                        
+                        .short-desc {
+                            font-size: 0.9rem;
+                            margin-bottom: 0.5rem;
+                            display: -webkit-box;
+                            -webkit-line-clamp: 2;
+                            -webkit-box-orient: vertical;
+                            overflow: hidden;
+                            color: #b0b0b0; /* Medium gray for description */
+                        }
+                        
+                        .price {
+                            font-size: 1.1rem;
+                            font-weight: bold;
+                        }
+                        
+                        /* Card Footer */
+                        .card-footer {
+                            padding: 0.75rem;
+                            background: #252525; /* Slightly darker footer */
+                            border-top: 1px solid #3a3a3a;
+                            border-bottom-left-radius: 8px;
+                            border-bottom-right-radius: 8px;
+                        }
+                        
+                        .card-footer .btn {
+                            margin: 0.25rem;
+                            padding: 0.5rem 1rem;
+                            width: 45%;
+                            font-size: 0.9rem;
+                            transition: all 0.3s ease;
+                        }
+                        
+                        /* Ensure Bootstrap button styles work with dark theme */
+                        .btn-primary, .btn-dark {
+                            color: #ffffff; /* Ensure text remains white */
+                        }
+                        
+                        /* Hover Effect */
+                        @media (hover: hover) {
+                            .product-card:hover {
+                                transform: translateY(-5px);
+                                box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Darker shadow */
+                            }
+                        }
+                        
+                        /* Responsive Design */
+                        @media screen and (max-width: 1200px) {
+                            .product-card {
+                                max-width: 300px;
+                            }
+                            .product-img {
+                                height: 180px;
+                            }
+                            .card-title {
+                                font-size: 1.1rem;
+                            }
+                        }
+                        
+                        @media screen and (max-width: 992px) {
+                            .product-img {
+                                height: 160px;
+                            }
+                            .card-footer .btn {
+                                width: 48%;
+                                padding: 0.4rem 0.8rem;
+                            }
+                        }
+                        
+                        @media screen and (max-width: 768px) {
+                            .product-card {
+                                max-width: 100%;
+                            }
+                            .product-img {
+                                height: 140px;
+                            }
+                            .card-title {
+                                font-size: 1rem;
+                            }
+                            .short-desc {
+                                font-size: 0.85rem;
+                            }
+                            .price {
+                                font-size: 1rem;
+                            }
+                        }
+                        
+                        @media screen and (max-width: 576px) {
+                            .product-img {
+                                height: 120px;
+                            }
+                            .card-body {
+                                padding: 0.75rem;
+                            }
+                            .card-title {
+                                font-size: 0.95rem;
+                            }
+                            .short-desc {
+                                font-size: 0.8rem;
+                                -webkit-line-clamp: 1;
+                            }
+                            .card-footer .btn {
+                                font-size: 0.8rem;
+                                padding: 0.35rem 0.7rem;
+                            }
+                        }
+                        </style>
 
 <!-- Product Details Modal -->
 <div class="modal fade" id="productModal-<%= product._id %>" tabindex="-1" aria-labelledby="productModalLabel-<%= product._id %>" aria-hidden="true">
@@ -1097,7 +1111,45 @@
             });
         });
     </script>
-
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            © <%= new Date().getFullYear() %> Cloud 420. All Rights Reserved. 
+            <a href="/terms" class="terms-link">Terms of Cosmic Conduct</a> | Crafted for Excellence.
+        </p>
+    </footer>
+    
+    <style>
+        .footer {
+            color: #999999;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+            margin-top: auto;
+            position: relative;
+            z-index: 1;
+        }
+    
+        .terms-link {
+            color: #587a60; /* Muted green to match your theme */
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+    
+        .terms-link:hover {
+            color: #b3ffb3; /* Brighter green on hover */
+            text-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
+        }
+    
+        /* Responsive Adjustments */
+        @media (max-width: 576px) {
+            .footer {
+                font-size: 0.8rem;
+                padding: 15px 0;
+            }
+        }
+    </style>
 
 
 </body>
