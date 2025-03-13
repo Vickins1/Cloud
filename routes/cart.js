@@ -7,7 +7,6 @@ const Order = require('../models/order');
 const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
 const Product = require('../models/product');
-const PDFDocument = require('pdfkit');
 
 
 // Define pendingOrders at module scope
