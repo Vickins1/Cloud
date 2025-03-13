@@ -7,8 +7,7 @@ const Order = require('../models/order');
 const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
 const Product = require('../models/product');
-const { sendEmail, generateEmailTemplate } = require('../services/emailService');
-const escapeHtml = require('escape-html');
+const PDFDocument = require('pdfkit');
 
 
 // Define pendingOrders at module scope
@@ -158,6 +157,33 @@ async function processPaymentVerification(transactionRequestId) {
     }
 }
 
+// Define the PDF generation function
+async function generateReceiptPDF({ transactionRequestId, customerName, amount }) {
+    return new Promise((resolve, reject) => {
+        const doc = new PDFDocument();
+        let buffers = [];
+
+        // Collect buffer chunks
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+            const pdfBuffer = Buffer.concat(buffers);
+            resolve(pdfBuffer);
+        });
+        doc.on('error', reject);
+
+        // PDF content
+        doc.fontSize(16).text('Payment Receipt', { align: 'center' });
+        doc.moveDown();
+        doc.fontSize(12).text(`Transaction ID: ${transactionRequestId}`);
+        doc.text(`Customer: ${customerName || 'N/A'}`);
+        doc.text(`Amount: ${amount ? `KES ${amount}` : 'N/A'}`);
+        doc.text(`Date: ${new Date().toLocaleString()}`);
+        doc.moveDown();
+        doc.text('Thank you for your purchase!', { align: 'center' });
+
+        doc.end();
+    });
+}
 
 // Initiate STK Push
 router.post('/initiate-payment', isLoggedIn, async (req, res) => {
