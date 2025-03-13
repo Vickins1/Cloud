@@ -69,7 +69,7 @@ router.post('/signup', async (req, res) => {
       host: req.headers.host
     });
 
-    req.flash('success_msg', 'Registration successful! Please check your email for your verification code.');
+    req.flash('success_msg', 'Registration successful! Please check your email/spam for your verification code.');
     return res.redirect('/auth/verify');
 
   } catch (error) {
@@ -191,7 +191,7 @@ router.post('/forgot-password', async (req, res) => {
       host: req.headers.host
     });
 
-    req.flash('success_msg', 'A password reset link has been sent to your email.');
+    req.flash('success_msg', 'A password reset link has been sent to your email/spam.');
     res.redirect('/auth/login');
   } catch (err) {
     console.error('Error in forgot-password route:', err);
