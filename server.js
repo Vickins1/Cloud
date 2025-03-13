@@ -16,6 +16,7 @@ const Order = require('./models/order');
 const fs = require('fs').promises;
 const multer = require('multer');
 const adminRouter = require('./routes/admin');
+const supportRoutes = require('./routes/support');
 const Cart = require('./models/cart');
 require('dotenv').config();
 const os = require('os');
@@ -135,6 +136,7 @@ app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/cart', cartRoutes);
 app.use('/admin', adminRouter);
+app.use('/support', supportRoutes);
 
 // Home page route
 app.get('/home', isLoggedIn, async (req, res) => {
@@ -378,6 +380,9 @@ app.use((req, res, next) => {
     error
   });
 });
+
+// Routes
+app.use('/support', supportRoutes);
 
 // 500 Error Handling
 app.use((err, req, res, next) => {

@@ -341,160 +341,7 @@
 
 
 
-        /* WhatsApp-Style Chat Widget */
-#chatWidget {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 350px;
-    height: 650px; /* Increased from 500px to 650px */
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); /* Added subtle gradient */
-    border-radius: 15px; /* Slightly larger radius for a softer look */
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.6); /* Enhanced shadow */
-    display: none;
-    z-index: 1000;
-    overflow: hidden;
-    font-family: 'Poppins', sans-serif;
-    transition: height 0.3s ease; /* Smooth height transition */
-}
-
-.chat-header {
-    background: linear-gradient(to right, #075e54, #0a7a6d); /* Gradient header */
-    color: #fff;
-    padding: 1.2rem; /* Slightly more padding */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
-}
-
-.chat-header h6 { 
-    font-size: 1.1rem; /* Slightly larger text */
-    margin: 0; 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; /* Space between icon and text */
-}
-
-.chat-header i { 
-    cursor: pointer; 
-    transition: color 0.3s ease; 
-}
-
-.chat-header i:hover { 
-    color: #1eff47; /* Creative hover effect */
-}
-
-.chat-body {
-    background: #121212;
-    height: calc(100% - 130px); /* Adjusted for taller widget and larger footer */
-    padding: 1.5rem; /* More padding for breathing room */
-    overflow-y: auto;
-    scrollbar-width: thin; /* Custom scrollbar */
-    scrollbar-color: #1eff47 #252525; /* Creative scrollbar colors */
-}
-
-.chat-message {
-    margin-bottom: 1.2rem; /* Slightly more spacing */
-    display: flex;
-    align-items: flex-end;
-    animation: fadeIn 0.3s ease; /* Subtle message animation */
-}
-
-.chat-message.received { justify-content: flex-start; }
-.chat-message.sent { justify-content: flex-end; }
-
-.chat-message .message-content {
-    max-width: 70%;
-    padding: 0.85rem;
-    border-radius: 10px; 
-    font-size: 0.95rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.chat-message.received .message-content {
-    background: #252525;
-    color: #e0e0e0;
-}
-
-.chat-message.sent .message-content {
-    background: #1eff47;
-    color: #121212;
-}
-
-.chat-footer {
-    background: #1e1e1e;
-    padding: 0.75rem; /* Increased padding */
-    display: flex;
-    align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle divider */
-}
-
-#chatInput {
-    flex-grow: 1;
-    background: #252525;
-    border: none;
-    border-radius: 25px; /* More rounded */
-    padding: 0.9rem; /* More padding */
-    color: #e0e0e0;
-    margin-right: 0.75rem;
-    transition: background 0.3s ease;
-}
-
-#chatInput:focus { 
-    outline: none; 
-    background: #2d2d2d; 
-    box-shadow: inset 0 0 5px rgba(30, 255, 71, 0.3); /* Creative glow */
-}
-
-#sendChat {
-    background: #1eff47;
-    color: #121212;
-    border: none;
-    border-radius: 50%;
-    width: 45px; /* Slightly larger button */
-    height: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-#sendChat:hover { 
-    transform: scale(1.1); 
-    box-shadow: 0 0 10px rgba(30, 255, 71, 0.7); /* Glowing effect */
-}
-
-#chatToggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #075e54;
-    color: #fff;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.8rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease, background 0.3s ease;
-    z-index: 1000;
-}
-
-#chatToggle:hover { 
-    transform: scale(1.1); 
-    background: #135700; 
-}
-
-/* Animation for messages */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-        #chatToggle:hover { transform: scale(1.1); background: #135700; }
+ 
 
         /* Back to Top */
         #backToTop {
@@ -565,7 +412,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-shopping-bag"></i> Store</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-leaf"></i> Dispensary</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
                             <% if (cartItems > 0) { %>
@@ -699,24 +546,92 @@
     <!-- Back to Top Button -->
     <button id="backToTop" title="Back to Top"><i class="fas fa-arrow-up"></i></button>
 
-    <!-- WhatsApp-Style Chat Widget -->
-    <div id="chatWidget">
-        <div class="chat-header">
-            <h6><i class="fas fa-headset"></i> Cloud 420 Support</h6>
-            <i class="fas fa-times" id="closeChat"></i>
-        </div>
-        <div class="chat-body" id="chatBody">
-            <div class="chat-message received">
-                <div class="message-content">Hey there! How can we assist you today?</div>
-            </div>
-        </div>
-        <div class="chat-footer">
-            <input type="text" id="chatInput" placeholder="Type a message...">
-            <button id="sendChat"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-    <div id="chatToggle" title="Chat with Us"><i class="fas fa-headset"></i></div>
 
+    <a href="/support" id="chatToggle" title="Chat with Us"><i class="fas fa-headset"></i></a>
+
+<!-- Notification Container (add this anywhere in body, e.g., before </body>) -->
+<div id="notification" class="notification hidden">
+    <p>Heading to the Support Page in a moment...</p>
+    <button id="cancelRedirect">Cancel</button>
+</div>
+<style>
+    /* Notification Styling */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #252525; /* Matches your dark theme */
+    color: #e0e0e0; /* Light text */
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notification.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.hidden {
+    display: none;
+}
+
+.notification p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.notification button {
+    background: #4CAF50; /* Green accent */
+    color: #fff;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: background 0.3s ease;
+}
+
+.notification button:hover {
+    background: #66BB6A; /* Lighter green on hover */
+}
+
+
+</style>
+
+<script>
+    document.getElementById('chatToggle').addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent default link behavior
+
+    const notification = document.getElementById('notification');
+    const cancelButton = document.getElementById('cancelRedirect');
+    let redirectTimeout;
+
+    // Show notification
+    notification.classList.remove('hidden');
+    setTimeout(() => notification.classList.add('visible'), 10);
+
+    // Set redirect timer (3 seconds)
+    redirectTimeout = setTimeout(() => {
+        window.location.href = '/support';
+    }, 5000);
+
+    // Cancel redirect if button clicked
+    cancelButton.addEventListener('click', () => {
+        clearTimeout(redirectTimeout);
+        notification.classList.remove('visible');
+        setTimeout(() => notification.classList.add('hidden'), 300);
+    }, { once: true }); // Ensure listener only triggers once
+});
+</script>
     <!-- Footer -->
 <footer class="footer">
     <p>
@@ -760,172 +675,6 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Rotating Subtitle
-        const subtitles = [
-            "Your cosmic vibes are ready!",
-            "Fast delivery, premium quality!",
-            "Explore the Cloud 420 galaxy!",
-            "Elevate your day with us!"
-        ];
-        let subtitleIndex = 0;
-        const subtitleElement = document.getElementById('rotating-subtitle');
-        function rotateSubtitle() {
-            subtitleElement.style.opacity = 0;
-            setTimeout(() => {
-                subtitleElement.textContent = subtitles[subtitleIndex];
-                subtitleElement.style.opacity = 1;
-                subtitleIndex = (subtitleIndex + 1) % subtitles.length;
-            }, 500);
-        }
-        setInterval(rotateSubtitle, 3000);
-        rotateSubtitle();
 
-        // Back to Top
-        const backToTop = document.getElementById('backToTop');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) backToTop.classList.add('visible');
-            else backToTop.classList.remove('visible');
-        });
-        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-        // WhatsApp-Style Chat
-        const chatToggle = document.getElementById('chatToggle');
-        const chatWidget = document.getElementById('chatWidget');
-        const closeChat = document.getElementById('closeChat');
-        const sendChat = document.getElementById('sendChat');
-        const chatInput = document.getElementById('chatInput');
-        const chatBody = document.getElementById('chatBody');
-
-        let isFirstMessage = true;
-
-        chatToggle.addEventListener('click', () => {
-            chatWidget.style.display = chatWidget.style.display === 'block' ? 'none' : 'block';
-            if (chatWidget.style.display === 'block') {
-                isFirstMessage = true;
-            }
-        });
-
-        closeChat.addEventListener('click', () => {
-            chatWidget.style.display = 'none';
-        });
-
-        sendChat.addEventListener('click', sendMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
-
-        function sendMessage() {
-            const message = chatInput.value.trim().toLowerCase();
-            if (message) {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = 'chat-message sent';
-                msgDiv.innerHTML = `<div class="message-content">${message}</div>`;
-                chatBody.appendChild(msgDiv);
-                chatInput.value = '';
-                chatBody.scrollTop = chatBody.scrollHeight;
-
-                setTimeout(() => {
-                    const replyDiv = document.createElement('div');
-                    replyDiv.className = 'chat-message received';
-                    const botResponse = getBotResponse(message);
-                    replyDiv.innerHTML = `<div class="message-content">${botResponse}</div>`;
-                    chatBody.appendChild(replyDiv);
-                    chatBody.scrollTop = chatBody.scrollHeight;
-                }, 1000);
-            }
-        }
-
-        function getBotResponse(message) {
-            message = message.toLowerCase();
-
-            if (isFirstMessage && (message.includes('hi') || message.includes('hello') || message.includes('hey') || message.includes('yo'))) {
-                const greetings = [
-                    "Greetings, fellow traveler! Welcome to Cloud 420—how may I elevate your day?",
-                    "Hello, esteemed guest! Step into our green haven—what’s sparking your curiosity?",
-                    "Hey there, kind soul! Cloud 420 is at your service—ready to blaze a trail together?",
-                    "Yo, welcome to the high life! I’m your budtender—how can I make your day even doper?",
-                    "Salutations, my friend! You’ve found Cloud 420—what’s the vibe you’re chasing today?"
-                ];
-                const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
-                isFirstMessage = false;
-                return randomGreeting;
-            }
-
-            if (message.includes('strain') || message.includes('bud') || message.includes('weed')) {
-                return "Greetings, connoisseur! Seeking the perfect strain? Let me know your desired experience—relaxation, inspiration, or a balanced blend—and I’ll curate something exquisite for you.";
-            } else if (message.includes('order') || message.includes('track') || message.includes('delivery')) {
-                return "Let’s track your treasure! Please share your order number, and I’ll ensure you’re updated on its journey to your doorstep—arriving with discretion and delight.";
-            } else if (message.includes('edible') || message.includes('gummies') || message.includes('brownies')) {
-                return "A refined choice! Our edibles range from delicate gummies to decadent brownies. Any flavor or potency preference? I’ll find the perfect treat for your palate.";
-            } else if (message.includes('bong') || message.includes('pipe') || message.includes('vape')) {
-                return "Elevate your experience! We offer premium bongs, sleek pipes, and cutting-edge vapes. Are you after bold clouds or discreet enjoyment? I’ve got the ideal piece for you.";
-            } else if (message.includes('price') || message.includes('cost') || message.includes('how much')) {
-                return "Let’s talk value! Are you interested in our fine flowers, gourmet edibles, or stylish accessories? Share your focus, and I’ll present the perfect price point.";
-            } else if (message.includes('high') || message.includes('stoned') || message.includes('baked')) {
-                return "Riding the wave already? Delightful! Tell me what’s lifting your spirits, and I’ll recommend a companion to prolong the bliss.";
-            } else if (message.includes('help') || message.includes('what') || message.includes('how')) {
-                return "Your personal budtender at your service! Whether it’s strains, orders, or advice, I’m here to assist with elegance and enthusiasm. What’s on your mind?";
-            } else if (message.includes('420') || message.includes('smoke') || message.includes('toke')) {
-                return "A nod to the 420 lifestyle—splendid! Are you here to indulge or restock? Let’s make it a memorable experience.";
-            } else if (message.includes('indica') || message.includes('chill') || message.includes('relax')) {
-                return "Seeking serenity? Indica is your muse—think Purple Kush or Northern Lights for a luxurious unwind. How deep a relaxation are you craving today?";
-            } else if (message.includes('sativa') || message.includes('energy') || message.includes('uplift')) {
-                return "Energize your day! Sativas like Sour Diesel or Durban Poison offer a vibrant lift. What’s inspiring your zest today?";
-            } else if (message.includes('hybrid') || message.includes('balance') || message.includes('both')) {
-                return "A harmonious hybrid, perhaps? Blue Dream or Girl Scout Cookies deliver the best of both worlds. What balance are you seeking?";
-            } else if (message.includes('og kush') || message.includes('kush')) {
-                return "OG Kush—a timeless classic with earthy elegance. Are you a devotee, or shall I introduce you to its kin?";
-            } else if (message.includes('sour diesel') || message.includes('diesel')) {
-                return "Sour Diesel, the spirited sativa! Its bold zest is perfect for daytime pursuits. Is this your go-to, or a new adventure?";
-            } else if (message.includes('grow') || message.includes('plant') || message.includes('cultivate')) {
-                return "A cultivator’s spirit! Are you tending indoors or under the sun? Share your setup, and I’ll offer tailored tips for a bountiful harvest.";
-            } else if (message.includes('thc') || message.includes('cbd') || message.includes('potency')) {
-                return "Potency is the name of the game! THC for euphoria, CBD for calm—what’s your ideal blend? I’ll match you with perfection.";
-            } else if (message.includes('deal') || message.includes('sale') || message.includes('discount')) {
-                return "A savvy seeker! Enjoy our current offer: an eighth with a complimentary pre-roll, or 20% off edibles. Shall I detail more specials for you?";
-            } else if (message.includes('pre-roll') || message.includes('joint') || message.includes('blunt')) {
-                return "Pre-rolls, crafted for convenience! Choose from indica, sativa, or hybrid—ready to spark. How many shall I reserve for you?";
-            } else if (message.includes('legal') || message.includes('law') || message.includes('allowed')) {
-                return "A prudent question! Tell me your location, and I’ll provide the latest on local regulations—ensuring your enjoyment is fully compliant.";
-            } else if (message.includes('munchies') || message.includes('hungry') || message.includes('food')) {
-                return "The munchies call! Pair your high with our sweet edibles, or perhaps a savory snack suggestion? What tempts your taste buds?";
-            } else if (message.includes('dab') || message.includes('wax') || message.includes('shatter')) {
-                return "Dabbing in style! Wax, shatter, or live resin—we’ve got the concentrates for a potent punch. Do you have a rig, or need a recommendation?";
-            } else if (message.includes('first time') || message.includes('newbie') || message.includes('beginner')) {
-                return "Welcome to the fold! For a gentle introduction, try a low-THC strain like Harlequin or 5mg gummies. How can I ease you into this journey?";
-            } else if (message.includes('strongest') || message.includes('potent') || message.includes('fire')) {
-                return "Craving the ultimate? Gorilla Glue #4 or Death Star at 30% THC will ignite your senses. Are you ready for this elevated adventure?";
-            } else if (message.includes('flavor') || message.includes('taste') || message.includes('terpenes')) {
-                return "A flavor aficionado! Fruity, earthy, or spicy—name your preference, and I’ll select a strain bursting with terpene brilliance.";
-            } else if (message.includes('sleep') || message.includes('insomnia') || message.includes('night')) {
-                return "Dreams await! Indicas like Granddaddy Purple or Bubba Kush promise restful slumber. What’s keeping you up, my friend?";
-            } else if (message.includes('party') || message.includes('social') || message.includes('friends')) {
-                return "Let’s spark the festivities! Jack Herer or Pineapple Express will keep the group buzzing. How grand is your gathering?";
-            } else if (message.includes('discreet') || message.includes('stealth') || message.includes('private')) {
-                return "Privacy is paramount! Our packaging is discreet—odor-proof and unassuming. How else can I ensure your comfort?";
-            } else if (message.includes('payment') || message.includes('pay') || message.includes('cash')) {
-                return "Smooth transactions await! We accept cash on delivery, cryptocurrency, or secure card payments online. Your preferred method?";
-            } else if (message.includes('quality') || message.includes('premium') || message.includes('best')) {
-                return "Only the finest for you! Lab-tested, hand-trimmed, and top-tier—our quality is unmatched. What’s your standard of excellence?";
-            } else if (message.includes('organic') || message.includes('natural') || message.includes('clean')) {
-                return "Purely organic options available! Grown with care, free of pesticides—nature’s finest. Interested in our clean green lineup?";
-            } else if (message.includes('gift') || message.includes('present') || message.includes('surprise')) {
-                return "A thoughtful gesture! We offer gift packs—pre-rolls, edibles, or a curated strain sampler. Who’s the lucky recipient?";
-            } else if (message.includes('storage') || message.includes('keep') || message.includes('fresh')) {
-                return "Keep it fresh! Store in a cool, dark place with an airtight jar—humidity packs work wonders. Need a pro storage tip?";
-            } else if (message.includes('travel') || message.includes('trip') || message.includes('vacation')) {
-                return "Toking on the go? Discreet vapes or pre-rolls are travel-friendly—just check local laws. Where’s your next destination?";
-            } else if (message.includes('recipe') || message.includes('cook') || message.includes('infuse')) {
-                return "Culinary cannabis! Infuse butter or oil for delectable dishes—want a simple recipe to whip up something dank?";
-            } else if (message.includes('pain') || message.includes('relief') || message.includes('ache')) {
-                return "Seeking relief? CBD-rich strains or indica-heavy options like Afghan Kush can soothe. What’s ailing you today?";
-            } else if (message.includes('history') || message.includes('origin') || message.includes('story')) {
-                return "A curious mind! Want the tale of a strain’s origins? Name one—like OG Kush—and I’ll weave its legacy for you.";
-            } else {
-                return "I’m delighted to assist, though I may need a nudge! Are we discussing strains, accessories, or something else? Let’s refine the conversation.";
-            }
-        }
-    </script>
 </body>
 </html>

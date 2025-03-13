@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Cloud 420 - Support</title>
+       <!-- Font Awesome -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+       <!-- Bootstrap CSS (for navbar compatibility) -->
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+       
+       <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
+       <style>
+              /* Dark Theme Variables */
+              :root {
+                     --primary-bg: #1a1a1a;
+                     --secondary-bg: #2a2a2a;
+                     --text-color: #e0e0e0;
+                     --accent-color: #00780c;
+                     /* Green accent for cannabis theme */
+                     --hover-color: #66BB6A;
+                     --border-color: #444;
+              }
+
+              /* General Styles */
+              body {
+                     margin: 0;
+                     font-family: 'Arial', sans-serif;
+                     background-color: var(--primary-bg);
+                     color: var(--text-color);
+                     line-height: 1.6;
+              }
+
+              /* Navbar Adjustments */
+              .navbar {
+                     background: rgba(0, 0, 0, 0.9);
+                     backdrop-filter: blur(10px);
+                     box-shadow: 0 2px 15px rgba(0, 255, 100, 0.1);
+                     padding: 10px 0;
+              }
+
+              .navbar-brand img {
+                     height: 50px;
+                     width: 150px;
+                     transition: transform 0.3s ease;
+              }
+
+              .navbar-brand img:hover {
+                     transform: scale(1.1);
+              }
+
+              .nav-link {
+                     position: relative;
+                     overflow: hidden;
+                     color: #fff;
+                     padding: 8px 15px;
+              }
+
+              .nav-link::after {
+                     content: '';
+                     position: absolute;
+                     bottom: 0;
+                     left: -100%;
+                     width: 100%;
+                     height: 2px;
+                     background: #00ff73;
+                     transition: left 0.3s ease;
+              }
+
+              .nav-link:hover::after {
+                     left: 0;
+              }
+
+              .navbar-nav {
+                     align-items: center;
+              }
+
+              .badge {
+                     margin-left: 5px;
+              }
+
+              /* Support Section */
+              .support-section {
+                     margin-top: 50px;
+                     padding: 4rem 0;
+              }
+
+              .container {
+                     margin-top: 50px;
+                     max-width: 1200px;
+                     margin: 0 auto;
+                     padding: 0 2rem;
+              }
+
+              h1 {
+                     font-size: 2.5rem;
+                     color: var(--accent-color);
+                     text-align: center;
+              }
+
+              .subtitle {
+                     text-align: center;
+                     font-size: 1.2rem;
+                     margin-bottom: 3rem;
+                     color: #b0b0b0;
+              }
+
+              /* Contact Form */
+              .contact-form {
+                     background-color: var(--secondary-bg);
+                     padding: 2rem;
+                     border-radius: 8px;
+                     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                     margin-bottom: 3rem;
+              }
+
+              .contact-form h2 {
+                     color: var(--accent-color);
+                     margin-bottom: 1.5rem;
+              }
+
+              .form-group {
+                     margin-bottom: 1.5rem;
+              }
+
+              .form-group label {
+                     display: block;
+                     margin-bottom: 0.5rem;
+                     font-weight: bold;
+              }
+
+              .form-group input,
+              .form-group textarea {
+                     width: 100%;
+                     padding: 0.8rem;
+                     border: 1px solid var(--border-color);
+                     border-radius: 4px;
+                     background-color: #333;
+                     color: var(--text-color);
+                     font-size: 1rem;
+              }
+
+              .form-group textarea {
+                     resize: vertical;
+              }
+
+              .btn {
+                     background-color: var(--accent-color);
+                     color: #fff;
+                     padding: 0.8rem 2rem;
+                     border: none;
+                     border-radius: 4px;
+                     cursor: pointer;
+                     font-size: 1.1rem;
+                     transition: background-color 0.3s;
+              }
+
+              .btn:hover {
+                     background-color: var(--hover-color);
+              }
+
+              /* FAQ Section */
+              .faq-section h2 {
+                     color: var(--accent-color);
+                     margin-bottom: 2rem;
+              }
+
+              .faq-item {
+                     background-color: var(--secondary-bg);
+                     padding: 1.5rem;
+                     margin-bottom: 1rem;
+                     border-radius: 8px;
+                     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+              }
+
+              .faq-item h3 {
+                     color: var(--text-color);
+                     margin-bottom: 0.5rem;
+              }
+
+              .faq-item p {
+                     margin: 0;
+                     color: #b0b0b0;
+              }
+
+              .faq-item a {
+                     color: var(--accent-color);
+                     text-decoration: none;
+              }
+
+              .faq-item a:hover {
+                     color: var(--hover-color);
+              }
+
+              /* Footer */
+              .footer {
+                     background-color: var(--secondary-bg);
+                     text-align: center;
+                     padding: 1rem 0;
+                     font-size: 0.9rem;
+                     border-top: 1px solid var(--border-color);
+                     position: relative;
+                     bottom: 0;
+                     width: 100%;
+              }
+
+              .footer a {
+                     color: var(--accent-color);
+                     text-decoration: none;
+                     margin: 0 0.5rem;
+              }
+
+              .footer a:hover {
+                     color: var(--hover-color);
+              }
+
+              /* Media Queries for Responsiveness */
+              @media (max-width: 768px) {
+                     .navbar-brand img {
+                            height: 30px;
+                            width: 90px;
+                     }
+
+                     .nav-link {
+                            padding: 0.4rem 0.8rem;
+                            font-size: 0.85rem;
+                     }
+
+                     .support-section {
+                            padding: 1.5rem 0;
+                     }
+
+                     .contact-form,
+                     .faq-item {
+                            padding: 1rem;
+                     }
+
+                     .btn {
+                            width: 100%;
+                            padding: 0.6rem;
+                     }
+              }
+
+              @media (max-width: 480px) {
+                     .navbar-brand img {
+                            height: 25px;
+                            width: 75px;
+                     }
+
+                     .nav-link {
+                            font-size: 0.8rem;
+                     }
+
+                     .container {
+                            padding: 0 0.5rem;
+                     }
+
+                     .form-group input,
+                     .form-group textarea {
+                            font-size: 0.85rem;
+                     }
+
+                     .faq-item h3 {
+                            font-size: 0.9rem;
+                     }
+
+                     .faq-item p {
+                            font-size: 0.8rem;
+                     }
+
+                     .footer {
+                            font-size: 0.7rem;
+                     }
+              }
+       </style>
+</head>
+
+<body>
+       <!-- Navbar -->
+       <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+              <div class="container">
+                     <a class="navbar-brand" href="/">
+                            <img src="/images/Cloud.png" alt="Cloud 420 Store Logo">
+                     </a>
+                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                     </button>
+                     <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav ms-auto">
+                                   <li class="nav-item"><a class="nav-link" href="/products"><i class="fas fa-leaf"></i>
+                                                 Dispensary</a></li>
+                                   <li class="nav-item">
+                                          <a class="nav-link" href="/cart"><i class="fas fa-shopping-cart"></i> Cart
+                                                 <% if (typeof cartItems !=='undefined' && cartItems> 0) { %>
+                                                        <span class="badge bg-success" id="cart-count">
+                                                               <%= cartItems %>
+                                                        </span>
+                                                        <% } %>
+                                          </a>
+                                   </li>
+                                   <% if (typeof isAuthenticated !=='undefined' && isAuthenticated) { %>
+                                          <li class="nav-item"><a class="nav-link" href="/home"><i
+                                                               class="fas fa-home"></i> Dashboard</a></li>
+                                          <li class="nav-item">
+                                                 <a class="nav-link orders-link" href="/cart/my-orders">
+                                                        <i class="fas fa-box-open"></i>
+                                                        <span class="orders-text">My Orders</span>
+                                                        <span class="orders-sparkle"><i
+                                                                      class="fas fa-star sparkle-icon"></i></span>
+                                                 </a>
+                                          </li>
+                                          <li class="nav-item"><a class="nav-link" href="/profile"><i
+                                                               class="fas fa-user"></i> Profile</a></li>
+                                          <li class="nav-item"><a class="nav-link" href="/auth/logout"><i
+                                                               class="fas fa-sign-out-alt"></i> Logout</a></li>
+                                          <% } else { %>
+                                                 <li class="nav-item"><a class="nav-link" href="/auth/login"><i
+                                                                      class="fas fa-sign-in-alt"></i> Login</a></li>
+                                                 <li class="nav-item"><a class="nav-link" href="/auth/signup"><i
+                                                                      class="fas fa-user-plus"></i> Sign Up</a></li>
+                                                 <% } %>
+                            </ul>
+                     </div>
+              </div>
+       </nav>
+
+       <!-- Support Section -->
+       <section class="support-section">
+              <div class="container">
+                     <h1><strong>Support Hub</strong></h1>
+
+                     <!-- Flash Messages -->
+                     <div class="flash-messages">
+                            <% if (success_msg && success_msg.length> 0) { %>
+                                   <div class="flash-success">
+                                          <%= success_msg %>
+                                   </div>
+                                   <% } %>
+                                          <% if (error_msg && error_msg.length> 0) { %>
+                                                 <div class="flash-error">
+                                                        <%= error_msg %>
+                                                 </div>
+                                                 <% } %>
+                     </div>
+
+                     <style>
+                            .flash-messages {
+                                   margin-bottom: 1.5rem;
+                                   text-align: center;
+                            }
+
+                            .flash-success {
+                                   background: rgba(76, 175, 80, 0.9);
+                                   color: #fff;
+                                   padding: 0.8rem;
+                                   border-radius: 8px;
+                                   box-shadow: 0 4px 10px rgba(0, 255, 115, 0.2);
+                                   animation: fadeIn 0.5s ease-in-out;
+                            }
+
+                            .flash-error {
+                                   background: rgba(244, 67, 54, 0.9);
+                                   color: #fff;
+                                   padding: 0.8rem;
+                                   border-radius: 8px;
+                                   box-shadow: 0 4px 10px rgba(244, 67, 54, 0.2);
+                                   animation: fadeIn 0.5s ease-in-out;
+                            }
+
+                            @keyframes fadeIn {
+                                   from {
+                                          opacity: 0;
+                                   }
+
+                                   to {
+                                          opacity: 1;
+                                   }
+                            }
+                     </style>
+                     <!-- Contact Form -->
+                     <div class="contact-form">
+                            <h2>Contact Us</h2>
+                            <form id="supportForm" action="/support/submit" method="POST">
+                                   <div class="form-group">
+                                          <label for="name">Name</label>
+                                          <input type="text" id="name" name="name" required>
+                                   </div>
+                                   <div class="form-group">
+                                          <label for="email">Email</label>
+                                          <input type="email" id="email" name="email" required>
+                                   </div>
+                                   <div class="form-group">
+                                          <label for="order">Order Number (if applicable)</label>
+                                          <input type="text" id="order" name="order">
+                                   </div>
+                                   <div class="form-group">
+                                          <label for="message">Your Message</label>
+                                          <textarea id="message" name="message" rows="5" required></textarea>
+                                   </div>
+                                   <button type="submit" class="btn">Submit</button>
+                            </form>
+                     </div>
+              </div>
+       </section>
+
+       <!-- Footer -->
+       <footer class="footer">
+              <p>© 2025 Cloud 420. All rights reserved. | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms
+                            of Service</a></p>
+       </footer>
+
+       <!-- Bootstrap JS and Popper.js -->
+       <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

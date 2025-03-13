@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cloud 420 | Admin Dashboard</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/adminlte.min2167.css?v=3.2.0">
+    <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
+    <style>
+        /* Custom Styles for Communications Panel */
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2a2a2a;
+            --text-color: #e0e0e0;
+            --accent-color: linear-gradient(45deg, #4CAF50, #00ff73);
+            --hover-color: #66BB6A;
+            --shadow: 0 4px 15px rgba(0, 255, 115, 0.2);
+        }
+
+        .content-wrapper {
+            background: var(--primary-bg);
+            padding: 2rem 1rem;
+            min-height: calc(100vh - 70px); /* Adjust for navbar/footer */
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-container h1 {
+            font-size: 2.5rem;
+            color: transparent;
+            background: var(--accent-color);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: slideIn 1s ease-in-out;
+            text-shadow: 0 2px 5px rgba(0, 255, 115, 0.3);
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .flash-success {
+            background: rgba(76, 175, 80, 0.9);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.5s ease-in-out;
+            font-weight: bold;
+        }
+
+        .flash-error {
+            background: rgba(244, 67, 54, 0.9);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+            font-weight: bold;
+        }
+
+        /* Message List */
+        .message-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+
+        .message-card {
+            background: linear-gradient(135deg, #2a2a2a, #333); /* Subtle gradient */
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .message-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 255, 115, 0.4);
+        }
+
+        .message-card::before {
+            content: '\f4d8'; /* Cannabis leaf icon */
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 3rem;
+            color: rgba(76, 175, 80, 0.1);
+            z-index: 0;
+            transform: rotate(15deg);
+        }
+
+        .message-card h3 {
+            color: var(--text-color);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            z-index: 1;
+            position: relative;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .message-card p {
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            margin: 0.6rem 0;
+            z-index: 1;
+            position: relative;
+        }
+
+        .message-card p strong {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        /* Reply Form */
+        .reply-form {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .reply-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #333;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .reply-form textarea:focus {
+            outline: none;
+            border-color: #00ff73;
+            box-shadow: 0 0 10px rgba(0, 255, 115, 0.5);
+        }
+
+        .reply-form .btn {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reply-form .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 255, 115, 0.6);
+        }
+
+        .reply-form .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .reply-form .btn:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-container h1 {
+                font-size: 2rem;
+            }
+            .message-list {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .message-card {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-container h1 {
+                font-size: 1.6rem;
+            }
+            .message-card h3 {
+                font-size: 1.1rem;
+            }
+            .message-card p {
+                font-size: 0.85rem;
+            }
+            .reply-form .btn {
+                width: 100%;
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+    <div class="wrapper">
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__wobble" src="/images/icon.png" alt="AdminLTELogo" height="200" width="200">
+        </div>
+
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-dark">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+                </li>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                        <i class="fas fa-expand-arrows-alt"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+                        <i class="fas fa-th-large"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <a href="/admin/dashboard" class="brand-link">
+                <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light"></span>
+            </a>
+            <div class="sidebar">
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                    </div>
+                    <div class="info">
+                        <a href="#" class="d-block"><strong><%= currentUser.username %></strong></a>
+                    </div>
+                </div>
+                <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <li class="nav-item menu-open">
+                            <a href="/admin/dashboard" class="nav-link active">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Dashboard</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/products" class="nav-link">
+                                <i class="nav-icon fas fa-cube"></i>
+                                <p>Products</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/orders" class="nav-link">
+                                <i class="nav-icon fas fa-shopping-bag"></i>
+                                <p>Orders</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/carts" class="nav-link">
+                                <i class="nav-icon fas fa-shopping-cart"></i>
+                                <p>Carts</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/transactions" class="nav-link">
+                                <i class="nav-icon fas fa-exchange-alt"></i>
+                                <p>Transactions</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/users" class="nav-link">
+                                <i class="nav-icon fas fa-users"></i>
+                                <p>Users</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/support/comms" class="nav-link">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <p>Communications</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/settings" class="nav-link">
+                                <i class="nav-icon fas fa-cogs"></i>
+                                <p>Settings</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/admin/logout" class="nav-link">
+                                <i class="nav-icon fas fa-sign-out-alt"></i>
+                                <p>Logout</p>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <div class="container admin-container">
+                <h1>Communications Panel</h1>
+
+                <!-- Flash Messages -->
+                <div class="flash-messages">
+                    <% if (success_msg && success_msg.length > 0) { %>
+                        <div class="flash-success"><%= success_msg %></div>
+                    <% } %>
+                    <% if (error_msg && error_msg.length > 0) { %>
+                        <div class="flash-error"><%= error_msg %></div>
+                    <% } %>
+                </div>
+
+                <!-- Message List -->
+                <div class="message-list">
+                    <% messages.forEach(msg => { %>
+                        <div class="message-card">
+                            <h3><%= msg.name %> </h3>
+                            <p><strong>Order:</strong> <%= msg.orderNumber || 'N/A' %></p>
+                            <p><strong>Message:</strong> <%= msg.message %></p>
+                            <p><strong>Status:</strong> <%= msg.status %></p>
+                            <% if (msg.reply) { %>
+                                <p><strong>Reply:</strong> <%= msg.reply %></p>
+                            <% } else { %>
+                                <form class="reply-form" action="/support/reply" method="POST">
+                                    <input type="hidden" name="messageId" value="<%= msg._id %>">
+                                    <textarea name="reply" placeholder="Type your reply..." required></textarea>
+                                    <button type="submit" class="btn">Send Reply</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark"></aside>
+
+        <!-- Main Footer -->
+        <footer class="main-footer">
+            <div class="float-right d-none d-sm-block">
+                <b>Version</b> 1.0.1
+            </div>
+            <strong>Copyright © 2025 <a href="/">Cloud 420</a>.</strong> All rights reserved.
+        </footer>
+    </div>
+
+    <!-- REQUIRED SCRIPTS -->
+    <script src="/plugins/jquery/jquery.min.js"></script>
+    <script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+    <script src="/dist/js/adminlte2167.js?v=3.2.0"></script>
+    <script src="/plugins/jquery-mousewheel/jquery.mousewheel.js"></script>
+    <script src="/plugins/raphael/raphael.min.js"></script>
+    <script src="/plugins/jquery-mapael/jquery.mapael.min.js"></script>
+    <script src="/plugins/jquery-mapael/maps/usa_states.min.js"></script>
+    <script src="/plugins/chart.js/Chart.min.js"></script>
+    <script src="/dist/js/demo.js"></script>
+    <script src="/dist/js/pages/dashboard2.js"></script>
+</body>
+</html>

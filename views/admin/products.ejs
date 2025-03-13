@@ -2,243 +2,83 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cloud 420 | Admin Dashboard</title>
+       <meta charset="utf-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1">
+       <title>Cloud 420 | Admin Dashboard</title>
 
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
-    <!-- overlayScrollbars -->
-    <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="/dist/css/adminlte.min2167.css?v=3.2.0">
-    <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
-     <!-- Combined CSS -->
-     <style>
-        .modal-content {
-            transition: all 0.3s ease;
-        }
-
-        .form-control,
-        .form-control-file {
-            background: #2d2d2d;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 8px;
-        }
-
-        .form-control:focus,
-        .form-control-file:focus {
-            box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
-            background: #333;
-        }
-
-        .btn-success {
-            background: #035925;
-            border: none;
-            transition: transform 0.2s, background 0.3s;
-        }
-
-        .btn-success:hover {
-            background: #028a1b;
-            transform: translateY(-2px);
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            border: none;
-            transition: transform 0.2s, background 0.3s;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-            transform: translateY(-2px);
-        }
-
-        .image-preview {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border-radius: 6px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .image-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .image-preview .remove-btn {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            line-height: 20px;
-            cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .image-preview:hover .remove-btn {
-            opacity: 1;
-        }
-
-        @media (max-width: 768px) {
-            .modal-dialog {
-                margin: 8px auto;
-                max-width: 85%;
-            }
-
-            .modal-content {
-                border-radius: 8px;
-            }
-
-            .modal-header {
-                padding: 10px 15px;
-            }
-
-            .modal-title {
-                font-size: 1.1rem;
-            }
-
-            .modal-body {
-                padding: 15px;
-            }
-
-            .form-group {
-                margin-bottom: 12px;
-            }
-
-            .form-control,
-            .form-control-file {
-                padding: 6px;
-                font-size: 0.85rem;
-            }
-
-            .btn-success,
-            .btn-warning {
-                padding: 6px;
-                font-size: 0.85rem;
-            }
-
-            .close span {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .modal-dialog {
-                max-width: 90%;
-            }
-
-            .modal-title {
-                font-size: 1rem;
-            }
-
-            .modal-body {
-                padding: 10px;
-            }
-
-            .form-group {
-                margin-bottom: 10px;
-            }
-
-            .form-control,
-            .form-control-file {
-                padding: 5px;
-                font-size: 0.8rem;
-            }
-
-            .btn-success,
-            .btn-warning {
-                padding: 5px;
-                font-size: 0.8rem;
-            }
-
-            label {
-                font-size: 0.85rem;
-            }
-
-            small {
-                font-size: 0.7rem;
-            }
-        }
-    </style>
+       <!-- Google Font: Source Sans Pro -->
+       <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+       <!-- Font Awesome Icons -->
+       <link rel="stylesheet" href="/plugins/fontawesome-free/css/all.min.css">
+       <!-- overlayScrollbars -->
+       <link rel="stylesheet" href="/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+       <!-- Theme style -->
+       <link rel="stylesheet" href="/dist/css/adminlte.min2167.css?v=3.2.0">
+       <link rel="icon" type="image/png" sizes="64x64" href="/images/Icon.png">
 </head>
 
 <body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
-    <div class="wrapper">
+       <div class="wrapper">
 
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__wobble" src="/images/icon.png" alt="AdminLTELogo" height="200" width="200">
-        </div>
+              <!-- Preloader -->
+              <div class="preloader flex-column justify-content-center align-items-center">
+                     <img class="animation__wobble" src="/images/icon.png" alt="AdminLTELogo" height="200"
+                            width="200">
+              </div>
 
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-dark">
-            <!-- Left navbar links -->
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-none d-sm-inline-block">
-                    <a href="/" class="nav-link">Home</a>
-                </li>
-            </ul>
+              <!-- Navbar -->
+              <nav class="main-header navbar navbar-expand navbar-dark">
+                     <!-- Left navbar links -->
+                     <ul class="navbar-nav">
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i
+                                                 class="fas fa-bars"></i></a>
+                            </li>
+                            <li class="nav-item d-none d-sm-inline-block">
+                                   <a href="/" class="nav-link">Home</a>
+                            </li>
+                     </ul>
 
-            <!-- Right navbar links -->
-            <ul class="navbar-nav ml-auto">
+                     <!-- Right navbar links -->
+                     <ul class="navbar-nav ml-auto">
+                           
 
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+                                          <i class="fas fa-expand-arrows-alt"></i>
+                                   </a>
+                            </li>
+                            <li class="nav-item">
+                                   <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#"
+                                          role="button">
+                                          <i class="fas fa-th-large"></i>
+                                   </a>
+                            </li>
+                     </ul>
+              </nav>
 
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-expand-arrows-alt"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                        <i class="fas fa-th-large"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-
-        <!-- Main Sidebar Container -->
+             <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="/admin/dashboard" class="brand-link">
-                <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="brand-image img-circle elevation-3"
-                    style="opacity: .8">
-                <span class="brand-text font-weight-light"></span>
-            </a>
-
-            <!-- Sidebar --> <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                    <div class="image">
-                        <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                    </div>
-                    <div class="info">
-                        <a href="#" class="d-block"><strong>
-                                <%= currentUser.username %>
-                            </strong></a>
-                    </div>
-                </div>
-
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
-                        data-accordion="false">
+              <!-- Brand Logo -->
+              <a href="/admin/dashboard" class="brand-link">
+                  <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+                  <span class="brand-text font-weight-light"></span>
+              </a>
+  
+              <!-- Sidebar -->
+              <div class="sidebar">
+                  <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                      <div class="image">
+                          <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                      </div>
+                      <div class="info">
+                          <a href="#" class="d-block"><strong><%= currentUser.username %></strong></a>
+                      </div>
+                  </div>
+  
+                  <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Dashboard -->
                         <li class="nav-item menu-open">
                             <a href="/admin/dashboard" class="nav-link active">
@@ -246,9 +86,7 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-
-
-
+                
                         <!-- Products -->
                         <li class="nav-item">
                             <a href="/admin/products" class="nav-link">
@@ -256,7 +94,7 @@
                                 <p>Products</p>
                             </a>
                         </li>
-
+                
                         <!-- Orders -->
                         <li class="nav-item">
                             <a href="/admin/orders" class="nav-link">
@@ -264,7 +102,7 @@
                                 <p>Orders</p>
                             </a>
                         </li>
-
+                
                         <!-- Carts (optional) -->
                         <li class="nav-item">
                             <a href="/admin/carts" class="nav-link">
@@ -272,13 +110,15 @@
                                 <p>Carts</p>
                             </a>
                         </li>
-
+                
+                        <!-- Transactions -->
                         <li class="nav-item">
                             <a href="/admin/transactions" class="nav-link">
                                 <i class="nav-icon fas fa-exchange-alt"></i>
                                 <p>Transactions</p>
                             </a>
                         </li>
+                
                         <!-- Users -->
                         <li class="nav-item">
                             <a href="/admin/users" class="nav-link">
@@ -286,6 +126,15 @@
                                 <p>Users</p>
                             </a>
                         </li>
+                
+                        <!-- Communications (Comms) -->
+                        <li class="nav-item">
+                            <a href="/support/comms" class="nav-link">
+                                <i class="nav-icon fas fa-envelope"></i>
+                                <p>Communications</p>
+                            </a>
+                        </li>
+                
                         <!-- Settings -->
                         <li class="nav-item">
                             <a href="/admin/settings" class="nav-link">
@@ -293,7 +142,7 @@
                                 <p>Settings</p>
                             </a>
                         </li>
-
+                
                         <!-- Logout -->
                         <li class="nav-item">
                             <a href="/admin/logout" class="nav-link">
@@ -301,13 +150,12 @@
                                 <p>Logout</p>
                             </a>
                         </li>
-
                     </ul>
                 </nav>
-            </div>
-        </aside>
+                     </div>
+              </aside>
 
-        <div class="content-wrapper">
+              <div class="content-wrapper">
 
             <section class="content">
                 <div class="container-fluid">

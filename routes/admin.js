@@ -143,7 +143,6 @@ router.get('/dashboard', isAdmin, async (req, res) => {
 });
 
 
-
 router.get('/products', isAdmin, async (req, res) => {
     try {
         let perPage = 10;
@@ -179,7 +178,7 @@ router.get('/products', isAdmin, async (req, res) => {
     } catch (error) {
         console.error('Error fetching products:', error);
         req.flash('error_msg', 'Server error');
-        res.redirect('/admin');
+        res.redirect('/admin/dashboard');
     }
 });
 

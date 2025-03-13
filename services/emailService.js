@@ -37,24 +37,24 @@ const generateEmailTemplate = ({ headerTitle, content, host }) => `
                 box-sizing: border-box;
             }
             body {
-                font-family: 'Helvetica Neue', Arial, sans-serif; /* Modern, clean font */
-                background: #1a1a1a; /* Deep black background */
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+                background: #1a1a1a;
                 margin: 0;
                 padding: 20px;
-                color: #e0e0e0; /* Soft white for readability */
+                color: #e0e0e0;
                 line-height: 1.7;
             }
             .container {
                 max-width: 620px;
                 margin: 0 auto;
-                background: #252525; /* Slightly lighter black for contrast */
+                background: #252525;
                 border-radius: 12px;
-                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); /* Deep, elegant shadow */
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
                 overflow: hidden;
-                border: 1px solid #333333; /* Subtle outline */
+                border: 1px solid #333333;
             }
             .header {
-                background: linear-gradient(135deg, #000000 0%, #1f1f1f 100%); /* Sleek black gradient */
+                background: linear-gradient(135deg, #000000 0%, #1f1f1f 100%);
                 padding: 30px 20px;
                 text-align: center;
                 position: relative;
@@ -73,11 +73,11 @@ const generateEmailTemplate = ({ headerTitle, content, host }) => `
             }
             .header img {
                 max-width: 100px;
-                filter: brightness(1.2); /* Enhances logo on dark bg */
+                filter: brightness(1.2);
                 transition: transform 0.4s ease-in-out;
             }
             .header img:hover {
-                transform: scale(1.1) rotate(5deg); /* Playful yet refined hover */
+                transform: scale(1.1) rotate(5deg);
             }
             .header h1 {
                 margin: 15px 0 0;
@@ -92,6 +92,7 @@ const generateEmailTemplate = ({ headerTitle, content, host }) => `
             .content {
                 padding: 40px;
                 background: #252525;
+                color: #cccccc;
             }
             .greeting {
                 font-size: 22px;
@@ -99,37 +100,19 @@ const generateEmailTemplate = ({ headerTitle, content, host }) => `
                 margin-bottom: 25px;
                 font-weight: 400;
                 letter-spacing: 0.5px;
-                border-bottom: 1px solid #404040; /* Subtle underline */
+                border-bottom: 1px solid #404040;
                 padding-bottom: 10px;
             }
             p {
                 font-size: 16px;
                 line-height: 1.8;
                 margin: 15px 0;
-                color: #cccccc; /* Soft gray-white for body text */
-            }
-            .code-box {
-                font-size: 26px;
-                font-weight: 700;
-                text-align: center;
-                margin: 30px 0;
-                padding: 20px;
-                background: #1f1f1f;
-                border: 1px solid #404040;
-                border-radius: 8px;
-                color: #ffffff;
-                letter-spacing: 5px;
-                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-                transition: all 0.3s ease;
-            }
-            .code-box:hover {
-                background: #2a2a2a;
-                border-color: #606060;
+                color: #cccccc;
             }
             .cta {
                 display: inline-block;
                 padding: 14px 32px;
-                background: #000000; /* Pure black button */
+                background: #000000;
                 color: #ffffff;
                 text-decoration: none;
                 border-radius: 50px;
@@ -186,27 +169,11 @@ const generateEmailTemplate = ({ headerTitle, content, host }) => `
                 color: #ffffff;
             }
             @media (max-width: 480px) {
-                .container { 
-                    margin: 10px; 
-                    border-radius: 10px; 
-                }
-                .header h1 { 
-                    font-size: 24px; 
-                }
-                .content { 
-                    padding: 30px; 
-                }
-                .greeting {
-                    font-size: 20px;
-                }
-                .code-box {
-                    font-size: 22px;
-                    letter-spacing: 3px;
-                }
-                .cta {
-                    padding: 12px 24px;
-                    font-size: 14px;
-                }
+                .container { margin: 10px; border-radius: 10px; }
+                .header h1 { font-size: 24px; }
+                .content { padding: 30px; }
+                .greeting { font-size: 20px; }
+                .cta { padding: 12px 24px; font-size: 14px; }
             }
         </style>
     </head>
@@ -248,7 +215,6 @@ const emailService = {
                     `).join('')}
                 </table>
             ` : '<p>No items to display, but we’ve got your order covered!</p>'}
-           
         `;
         const mailOptions = {
             from: `Cloud 420 Store <${EMAIL_USER}>`,
@@ -359,7 +325,6 @@ const emailService = {
         await sendEmail(mailOptions, 'Payment failure');
     },
 
-    // New Payment Confirmation Email
     async sendPaymentConfirmation({ customerName, customerEmail, transactionRequestId, amount, host }) {
         if (!customerEmail) throw new Error('Customer email is required');
         const content = `
@@ -371,11 +336,7 @@ const emailService = {
                 <tr><td>Status</td><td>Paid in Full</td></tr>
             </table>
             <p>We’re rolling your order now—stay tuned for the next update!</p>
-            <a href="https://${host}/receipt/${escapeHtml(transactionRequestId)}" 
-   class="cta" 
-   style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 0;">
-   Download Your Receipt
-</a>
+            <p><a href="https://${host}/receipt/${escapeHtml(transactionRequestId)}" class="cta">Download Your Receipt</a></p>
             <p><a href="https://${host}/products" class="cta">Keep the Vibes Going</a></p>
         `;
         const mailOptions = {
@@ -387,17 +348,16 @@ const emailService = {
         await sendEmail(mailOptions, 'Payment confirmation');
     },
 
-    // Add this new method inside the emailService object
     async sendPasswordResetEmail({ userName, userEmail, resetToken, host }) {
         if (!userEmail) throw new Error('User email is required');
         const resetUrl = `https://${host}/auth/reset-password/${encodeURIComponent(resetToken)}`;
         const content = `
-        <p class="greeting">Greetings ${escapeHtml(userName)},</p>
-        <p>Forgot your password? No worries, we’ve got you covered! Click below to reset it:</p>
-        <p><a href="${resetUrl}" class="cta">Reset Your Password</a></p>
-        <p>This link expires in 1 hour. If you didn’t request this, just ignore this email—your account’s still safe.</p>
-        <p>Need help? Hit us up!</p>
-    `;
+            <p class="greeting">Greetings ${escapeHtml(userName)},</p>
+            <p>Forgot your password? No worries, we’ve got you covered! Click below to reset it:</p>
+            <p><a href="${resetUrl}" class="cta">Reset Your Password</a></p>
+            <p>This link expires in 1 hour. If you didn’t request this, just ignore this email—your account’s still safe.</p>
+            <p>Need help? Hit us up!</p>
+        `;
         const mailOptions = {
             from: `Cloud 420 Store <${EMAIL_USER}>`,
             to: userEmail,
@@ -407,38 +367,28 @@ const emailService = {
         await sendEmail(mailOptions, 'Password reset');
     },
 
-    async sendShippingUpdate({ customerName, customerEmail, cloudOrderId, total, items = [], shippingStatus, host }) {
+    // New Support Reply Method
+    async sendSupportReply({ customerName, customerEmail, messageId, originalMessage, reply, host }) {
         if (!customerEmail) throw new Error('Customer email is required');
         const content = `
-        <p class="greeting">Hey ${escapeHtml(customerName)},</p>
-        <p>Your Cloud 420 order #${escapeHtml(cloudOrderId)} is on the move! Status: <strong>${escapeHtml(shippingStatus)}</strong>.</p>
-        <table class="details-table">
-            <tr><td>Order ID</td><td>${escapeHtml(cloudOrderId)}</td></tr>
-            <tr><td>Total</td><td>KES ${Number(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td></tr>
-            <tr><td>Shipping Status</td><td>${escapeHtml(shippingStatus)}</td></tr>
-        </table>
-        ${items.length > 0 ? `
-            <table class="items-table">
-                <tr><th>Your Stash</th><th>Qty & Price</th></tr>
-                ${items.map(item => `
-                    <tr>
-                        <td>${escapeHtml(item.productId.name || 'Item')}</td>
-                        <td>x${Number(item.quantity)} - KES ${(Number(item.price || item.productId.price) * Number(item.quantity)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
-                    </tr>
-                `).join('')}
+            <p class="greeting">Greetings ${escapeHtml(customerName)},</p>
+            <p>We’ve got a response to your support request! Here’s the rundown:</p>
+            <table class="details-table">
+                <tr><td>Request ID</td><td>${escapeHtml(messageId)}</td></tr>
+                <tr><td>Your Message</td><td>${escapeHtml(originalMessage)}</td></tr>
+                <tr><td>Our Reply</td><td>${escapeHtml(reply)}</td></tr>
             </table>
-        ` : ''}
-        <p><a href="https://${host}/track-order?orderId=${escapeHtml(cloudOrderId)}" class="cta">Track It Live</a></p>
-    `;
+            <p>Hope this clears the clouds! If you need more help, hit us back anytime.</p>
+            <p><a href="https://${host}/support" class="cta">Contact Us Again</a></p>
+        `;
         const mailOptions = {
-            from: `Cloud 420 Store <${EMAIL_USER}>`,
+            from: `Cloud 420 Support <${EMAIL_USER}>`,
             to: customerEmail,
-            subject: `Cloud 420 Update: ${shippingStatus} 🌿`,
-            html: generateEmailTemplate({ headerTitle: 'Shipping Vibes', content, host }),
+            subject: `Cloud 420 Support - Request #${escapeHtml(messageId)} 🌿`,
+            html: generateEmailTemplate({ headerTitle: 'Support Response', content, host }),
         };
-        await sendEmail(mailOptions, 'Shipping update');
+        await sendEmail(mailOptions, 'Support reply');
     },
-
 };
 
 // Utility function to send emails with retry logic
