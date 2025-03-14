@@ -4,6 +4,7 @@ require('dotenv').config();
 // Validate environment variables
 const EMAIL_USER = process.env.EMAIL_USER;
 const EMAIL_PASS = process.env.EMAIL_PASS;
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 if (!EMAIL_USER || !EMAIL_PASS) {
     console.error('Email configuration missing. Please set EMAIL_USER and EMAIL_PASS in .env');
