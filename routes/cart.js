@@ -106,6 +106,15 @@ async function processPaymentVerification(transactionRequestId) {
                 host: process.env.APP_HOST || 'cloud420.store'
             });
 
+            // Send New Order Notification to admin
+            emailService.sendNewOrderNotificationToAdmin({
+                customerName: orderData.customerName,
+                cloudOrderId: order._id,
+                total: orderData.total,
+                items: enrichedItems,
+                host
+            })
+
             // Generate receipt for successful payment
             const receiptBuffer = await generateReceiptPDF({
                 transactionRequestId,

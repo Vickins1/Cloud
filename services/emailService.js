@@ -225,6 +225,39 @@ const emailService = {
         await sendEmail(mailOptions, 'Order confirmation');
     },
 
+    // Add this new method inside the emailService object
+async sendNewOrderNotificationToAdmin({ customerName, cloudOrderId, total, items = [], host }) {
+    const content = `
+        <p class="greeting">New Order Alert!</p>
+        <p>A new order has been placed by ${escapeHtml(customerName)}. Here are the details:</p>
+        <table class="details-table">
+            <tr><td>Order ID</td><td>${escapeHtml(cloudOrderId)}</td></tr>
+            <tr><td>Customer</td><td>${escapeHtml(customerName)}</td></tr>
+            <tr><td>Total</td><td>KES ${Number(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td></tr>
+            <tr><td>Order Date</td><td>${new Date().toLocaleString()}</td></tr>
+        </table>
+        ${items.length > 0 ? `
+            <table class="items-table">
+                <tr><th>Product</th><th>Qty & Price</th></tr>
+                ${items.map(item => `
+                    <tr>
+                        <td>${escapeHtml(item.productId.name || 'Item')}</td>
+                        <td>x${Number(item.quantity)} - KES ${(Number(item.price || item.productId.price) * Number(item.quantity)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
+                    </tr>
+                `).join('')}
+            </table>
+        ` : '<p>No items to display for this order.</p>'}
+    `;
+    
+    const mailOptions = {
+        from: `Cloud 420 Store <${EMAIL_USER}>`,
+        to: ADMIN_EMAIL,
+        subject: `New Order Alert: #${escapeHtml(cloudOrderId)} 🌿`,
+        html: generateEmailTemplate({ headerTitle: 'New Order Received', content, host }),
+    };
+    await sendEmail(mailOptions, 'New order notification');
+},
+
     async sendDeliveryConfirmation({ customerName, customerEmail, cloudOrderId, total, items = [], deliveredAt, host }) {
         if (!customerEmail) throw new Error('Customer email is required');
         const content = `
@@ -324,6 +357,8 @@ const emailService = {
         };
         await sendEmail(mailOptions, 'Payment failure');
     },
+
+
 
     async sendPaymentConfirmation({ customerName, customerEmail, transactionRequestId, amount, host }) {
         if (!customerEmail) throw new Error('Customer email is required');
