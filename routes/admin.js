@@ -155,12 +155,12 @@ router.get('/products', isAdmin, async (req, res) => {
         const totalProducts = await Product.countDocuments();
         const totalPages = Math.ceil(totalProducts / perPage);
 
-        // Fetch products with pagination and ensure all required fields are included
+        // Fetch products sorted by createdAt (newest first) with pagination
         const products = await Product.find()
+            .sort({ createdAt: -1 }) // Sort by creation date, descending
             .skip((page - 1) * perPage)
             .limit(perPage)
             .lean(); // Use .lean() for plain JS objects
-
 
         if (!products || products.length === 0) {
             console.warn('No products found for page:', page);
