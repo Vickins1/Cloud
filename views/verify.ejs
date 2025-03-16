@@ -14,75 +14,144 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(to bottom, #1a1a1a, #000000); /* Dark gradient */
+            background: linear-gradient(180deg, #0d0d0d, #1c2526); /* Cosmic dark gradient */
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow: hidden; /* Prevent overflow from animations */
+            position: relative;
+        }
+
+        /* Cosmic Background Animation */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.05)"/></svg>') repeat;
+            animation: star-twinkle 10s infinite;
+            z-index: 0;
+        }
+
+        @keyframes star-twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
         }
 
         .container {
-            max-width: 450px;
+            max-width: 480px;
             width: 100%;
-            background: #000000; /* Dark gray background */
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+            background: rgba(20, 20, 20, 0.95); /* Slightly transparent dark */
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 10px rgba(46, 107, 58, 0.2);
             overflow: hidden;
-            border: 1px solid #3a3a3a; /* Subtle border */
+            border: 1px solid #2e2e2e;
+            position: relative;
+            z-index: 1;
+            animation: fade-in 1s ease-out;
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .header {
-            background: linear-gradient(135deg, #1e4d28, #2e6b3a); /* Darker green gradient */
-            padding: 20px;
+            background: linear-gradient(135deg, #1a3c24, #2a9500); /* Cosmic green gradient */
+            padding: 25px;
             text-align: center;
-            color: #e0e0e0; /* Light gray text */
+            color: #e6f0e6;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 70%);
+            animation: glow-pulse 8s infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
         .header img {
-            max-width: 80px;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5)); /* Shadow for logo */
-            transition: transform 0.3s ease;
+            max-width: 90px;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+            transition: transform 0.4s ease;
         }
 
         .header img:hover {
-            transform: scale(1.1); /* Subtle hover effect */
+            transform: rotate(10deg) scale(1.15);
         }
 
         .header h1 {
-            font-size: 26px;
-            font-weight: 600;
-            letter-spacing: 1px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         .content {
-            padding: 30px;
+            padding: 35px;
         }
 
         .message-box {
-            margin-bottom: 20px;
-            padding: 12px;
-            border-radius: 8px;
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 14px;
+            font-size: 15px;
             color: #fff;
+            animation: slide-up 0.5s ease-out;
+        }
+
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .success {
-            background: rgba(30, 77, 40, 0.9); /* Semi-transparent dark green */
+            background: rgba(1, 143, 9, 0.95);
             border: 1px solid #2e6b3a;
         }
 
         .error {
-            background: rgba(139, 0, 0, 0.9); /* Semi-transparent dark red */
+            background: rgba(139, 0, 0, 0.95);
             border: 1px solid #b22222;
+        }
+
+        .spam-notice {
+            font-size: 13px;
+            color: #b3ffb3;
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: rgba(46, 107, 58, 0.2);
+            border-radius: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Increased gap for better spacing */
+            gap: 25px;
         }
 
         .input-group {
@@ -90,83 +159,110 @@
         }
 
         label {
-            font-size: 14px;
-            color: #a0a0a0; /* Light gray for labels */
-            margin-bottom: 8px;
+            font-size: 15px;
+            color: #b3ffb3;
+            margin-bottom: 10px;
             display: block;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        input[type="email"],
         input[type="text"] {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #3a3a3a; /* Darker border */
-            border-radius: 25px;
-            font-size: 14px;
-            background: #1f1f1f; /* Dark input background */
-            color: #e0e0e0; /* Light text */
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            padding: 14px 20px;
+            border: 2px solid #3a3a3a;
+            border-radius: 30px;
+            font-size: 15px;
+            background: #1a1a1a;
+            color: #e6f0e6;
+            transition: all 0.3s ease;
         }
 
         input:focus {
-            outline: none;
-            border-color: #2e6b3a; /* Highlight with dark green */
-            box-shadow: 0 0 8px rgba(46, 107, 58, 0.5); /* Glowing effect */
+            border-color: #008409;
+            box-shadow: 0 0 12px rgba(0, 67, 13, 0.7);
+            background: #222222;
         }
 
         input::placeholder {
-            color: #6a6a6a; /* Muted placeholder */
+            color: #6a6a6a;
+            font-style: italic;
         }
 
         button {
-            padding: 12px 25px;
-            background: linear-gradient(135deg, #1e4d28, #2e6b3a); /* Gradient button */
-            color: #e0e0e0;
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #1a3c24, #097b01);
+            color: #e6f0e6;
             border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            font-size: 14px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 15px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        button:hover::after {
+            width: 300px;
+            height: 300px;
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(46, 107, 58, 0.6); /* Green glow */
-            background: linear-gradient(135deg, #2e6b3a, #3a8a4b); /* Lighter on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 107, 58, 0.8);
+            background: linear-gradient(135deg, #2e6b3a, #007612);
         }
 
         .footer {
             text-align: center;
-            padding: 15px;
-            font-size: 12px;
-            color: #a0a0a0; /* Light gray */
-            background: #2e2e2e; /* Slightly darker footer */
-            border-top: 1px solid #3a3a3a;
+            padding: 20px;
+            font-size: 13px;
+            color: #999999;
+            background: #1a1a1a;
+            border-top: 1px solid #2e2e2e;
         }
 
         .footer a {
-            color: #2e6b3a; /* Dark green link */
+            color: #b3ffb3;
             text-decoration: none;
-            transition: color 0.3s ease;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
         .footer a:hover {
-            color: #3a8a4b; /* Lighter green on hover */
+            color: #e6f0e6;
+            text-shadow: 0 0 8px rgba(179, 255, 179, 0.8);
         }
 
         @media (max-width: 480px) {
             .container { 
-                margin: 10px; 
-                border-radius: 12px; 
+                margin: 7px; 
+                border-radius: 15px; 
             }
             .header h1 { 
-                font-size: 22px; 
+                font-size: 24px; 
             }
             .content { 
-                padding: 20px; 
+                padding: 25px; 
+            }
+            .spam-notice {
+                font-size: 12px;
             }
         }
     </style>
@@ -175,7 +271,7 @@
     <div class="container">
         <div class="header">
             <img src="/images/Cloud.png" alt="Cloud 420 Logo">
-            <h1>Verify Your Email</h1>
+            <h1>Verify Your Cloud Email</h1>
         </div>
         <div class="content">
             <% if (success) { %>
@@ -184,61 +280,29 @@
             <% if (error) { %>
                 <div class="message-box error"><%= error %></div>
             <% } %>
+            <div class="spam-notice">
+                Haven’t received your code? Check your spam or junk folder—it might be hiding among the cosmic debris!
+            </div>
             <form action="/auth/verify" method="POST">
-                
                 <div class="input-group">
                     <label for="code">Verification Code</label>
                     <input 
                         type="text" 
                         id="code" 
                         name="code" 
-                        placeholder="Enter your code" 
+                        placeholder="Enter your stellar code" 
                         required
                     >
                 </div>
-                <button type="submit">Verify Email</button>
+                <button type="submit">Launch Verification</button>
             </form>
         </div>
-       <!-- Footer -->
-<footer class="footer">
-    <p>
-        © <%= new Date().getFullYear() %> Cloud 420. All Rights Reserved. 
-        <a href="/terms" class="terms-link">Terms of Cosmic Conduct</a> | Crafted for Excellence.
-    </p>
-</footer>
-
-<style>
-    .footer {
-        background-color: #000000;
-        color: #999999;
-        text-align: center;
-        padding: 20px 0;
-        font-size: 0.9rem;
-        margin-top: auto;
-        position: relative;
-        z-index: 1;
-    }
-
-    .terms-link {
-        color: #587a60; /* Muted green to match your theme */
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.3s ease, text-shadow 0.3s ease;
-    }
-
-    .terms-link:hover {
-        color: #b3ffb3; /* Brighter green on hover */
-        text-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 576px) {
-        .footer {
-            font-size: 0.8rem;
-            padding: 15px 0;
-        }
-    }
-</style>
+        <footer class="footer">
+            <p>
+                © <%= new Date().getFullYear() %> Cloud 420. All Rights Reserved. 
+                <a href="/terms" class="terms-link">Terms of Cosmic Conduct</a> | Crafted in the Cosmos.
+            </p>
+        </footer>
     </div>
 </body>
 </html>

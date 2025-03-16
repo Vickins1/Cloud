@@ -374,40 +374,29 @@ router.delete('/products/delete/:id', isAdmin, async (req, res) => {
     }
 });
 
-router.get('/users', isAdmin, async (req, res) => {
+router.get('/users', async (req, res) => {
     try {
-        // Pagination parameters
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = 10; // Number of users per page
         const skip = (page - 1) * limit;
 
-        // Fetch current user (if logged in)
-        const currentUser = req.user ? await User.findById(req.user._id).lean() : null;
-
-        // Fetch total users and paginated users
-        const totalUsers = await User.countDocuments();
+        // Fetch users sorted by createdAt descending (newest first)
         const users = await User.find()
+            .sort({ createdAt: -1 }) // -1 for descending
             .skip(skip)
-            .limit(limit)
-            .lean(); // Use .lean() for performance if you don’t need Mongoose documents
+            .limit(limit);
 
-        // Calculate total pages
+        const totalUsers = await User.countDocuments();
         const totalPages = Math.ceil(totalUsers / limit);
 
-        // Render the users page
         res.render('admin/users', {
             users,
             currentPage: page,
-            totalPages,
-            user: currentUser || {}, // Fallback to empty object if null
-            messageCount: currentUser?.messageCount || 0, // Safe default
-            success_msg: req.flash('success_msg'), // Add success flash message
-            error_msg: req.flash('error_msg') // Add error flash message
+            totalPages
         });
     } catch (error) {
         console.error('Error fetching users:', error);
-        req.flash('error_msg', 'Failed to load users. Please try again.');
-        res.redirect('/admin/dashboard');
+        res.status(500).send('Server Error');
     }
 });
 
