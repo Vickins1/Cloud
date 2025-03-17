@@ -18,10 +18,16 @@ const cartSchema = new mongoose.Schema({
             required: true,
             min: [1, 'Quantity must be at least 1'],
             default: 1
+        },
+        quantityType: {
+            type: String,
+            enum: ['piece', 'gram', 'pack'],
+            required: true,
+            default: 'piece'
         }
     }]
 }, {
-    timestamps: true 
+    timestamps: true
 });
 
 // Instance method to populate products

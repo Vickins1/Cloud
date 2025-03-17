@@ -36,9 +36,9 @@ async function countNewUsersThisMonth() {
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999); // Last day, last millisecond of the month
 
         const newUsersThisMonth = await User.countDocuments({
-            createdAt: { 
-                $gte: startOfMonth, 
-                $lte: endOfMonth 
+            createdAt: {
+                $gte: startOfMonth,
+                $lte: endOfMonth
             }
         });
 
@@ -192,10 +192,11 @@ const upload = multer({ storage: storage });
 
 router.post('/products/add', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
-        // Validate required fields
-        const { name, price, description, stockQuantity, category } = req.body;
+        const { name, price, description, stockQuantity, category, quantityType } = req.body;
+        console.log('Received quantityType:', quantityType); // Log the received value
 
-        if (!name || !price || !stockQuantity || !category) {
+        // Validate required fields
+        if (!name || !price || !stockQuantity || !category || !quantityType) {
             throw new Error('Missing required fields');
         }
 
@@ -210,6 +211,24 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         if (parsedPrice < 0 || parsedStock < 0) {
             throw new Error('Price and stock quantity cannot be negative');
         }
+
+        // Validate category
+        const validCategories = [
+            'Indica', 'Sativa', 'Hybrid', 'CBD', 'THC', 'Exotic',
+            'Cigarettes', 'Cigars', 'Rolling-Tobacco', 'Hookah',
+            'Nicotine-Pouches', 'Vapes', 'Accessories', 'Edibles'
+        ];
+
+        if (!validCategories.includes(category)) {
+            throw new Error(`Invalid category selected. Must be one of: ${validCategories.join(', ')}`);
+        }
+
+        // Validate quantityType
+        const validQuantityTypes = ['piece', 'gram', 'pack'];
+        if (!quantityType || !validQuantityTypes.includes(quantityType)) {
+            throw new Error(`Invalid quantity type selected. Must be one of: ${validQuantityTypes.join(', ')}`);
+        }
+
         // Handle image uploads
         let imagePaths = [];
         if (req.files && req.files.length > 0) {
@@ -224,11 +243,10 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
             price: parsedPrice,
             description: description ? description.trim() : '',
             stockQuantity: parsedStock,
-            category: category.trim(),
+            category: category,
+            quantityType: quantityType,
             imageUrl: imagePaths[0],
-            additionalImages: imagePaths.slice(1),
-            createdAt: new Date(),
-            updatedAt: new Date()
+            additionalImages: imagePaths.slice(1)
         });
 
         await product.save();
@@ -237,8 +255,10 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         res.redirect('/admin/products');
 
     } catch (error) {
+        // File cleanup on error
         if (req.files && req.files.length > 0) {
             const fs = require('fs').promises;
+            const path = require('path');
             const uploadDir = path.join(__dirname, '../public/uploads');
 
             try {
@@ -258,13 +278,13 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
     }
 });
 
-// Edit Product Route
 router.post('/products/edit', isAdmin, upload.array('images', 10), async (req, res) => {
     try {
-        // Validate required fields
-        const { id, name, price, description, stockQuantity, category } = req.body;
+        const { id, name, price, description, stockQuantity, category, quantityType } = req.body;
+        console.log('Received quantityType:', quantityType); // Log the received value
 
-        if (!id || !name || !price || !stockQuantity || !category) {
+        // Validate required fields
+        if (!id || !name || !price || !stockQuantity || !category || !quantityType) {
             throw new Error('Missing required fields');
         }
 
@@ -280,20 +300,52 @@ router.post('/products/edit', isAdmin, upload.array('images', 10), async (req, r
             throw new Error('Price and stock quantity cannot be negative');
         }
 
+        // Validate category
+        const validCategories = [
+            'Indica', 'Sativa', 'Hybrid', 'CBD', 'THC', 'Exotic',
+            'Cigarettes', 'Cigars', 'Rolling-Tobacco', 'Hookah',
+            'Nicotine-Pouches', 'Vapes', 'Accessories'
+        ];
+
+        if (!validCategories.includes(category)) {
+            throw new Error(`Invalid category selected. Must be one of: ${validCategories.join(', ')}`);
+        }
+
+        // Validate quantityType
+        const validQuantityTypes = ['piece', 'gram', 'pack'];
+        if (!quantityType || !validQuantityTypes.includes(quantityType)) {
+            throw new Error(`Invalid quantity type selected. Must be one of: ${validQuantityTypes.join(', ')}`);
+        }
+
         // Find the product
         const product = await Product.findById(id);
         if (!product) {
             throw new Error('Product not found');
         }
 
-        // Handle image uploads (optional)
-        let imagePaths = [product.imageUrl, ...product.additionalImages]; // Keep existing images by default
-        if (req.files && req.files.length > 0) {
-            imagePaths = req.files.map(file => `/uploads/${file.filename}`);
-        }
+        // Store old image paths
+        let imagePaths = [product.imageUrl, ...product.additionalImages];
 
-        if (imagePaths.length === 0) {
-            throw new Error('At least one image is required');
+        // Handle image uploads (update only if new images are uploaded)
+        if (req.files && req.files.length > 0) {
+            const newImagePaths = req.files.map(file => `/uploads/${file.filename}`);
+
+            // Clean up old images only if new ones are uploaded
+            const fs = require('fs').promises;
+            const path = require('path');
+            const uploadDir = path.join(__dirname, '../public/uploads');
+
+            try {
+                await Promise.all(
+                    imagePaths.map(imagePath =>
+                        fs.unlink(path.join(uploadDir, path.basename(imagePath)))
+                    )
+                );
+            } catch (cleanupError) {
+                console.error('Error cleaning up old files:', cleanupError);
+            }
+
+            imagePaths = newImagePaths;
         }
 
         // Update product
@@ -301,29 +353,12 @@ router.post('/products/edit', isAdmin, upload.array('images', 10), async (req, r
         product.price = parsedPrice;
         product.description = description ? description.trim() : '';
         product.stockQuantity = parsedStock;
-        product.category = category.trim();
-        product.imageUrl = imagePaths[0];
-        product.additionalImages = imagePaths.slice(1);
-        product.updatedAt = new Date();
+        product.category = category;
+        product.quantityType = quantityType;
+        product.imageUrl = imagePaths[0] !== undefined ? imagePaths[0] : product.imageUrl;
+        product.additionalImages = imagePaths.length > 1 ? imagePaths.slice(1) : product.additionalImages;
 
         await product.save();
-
-        // Clean up old images if new ones were uploaded
-        if (req.files && req.files.length > 0 && (product.imageUrl !== imagePaths[0] || product.additionalImages.length !== imagePaths.slice(1).length)) {
-            const fs = require('fs').promises;
-            const uploadDir = path.join(__dirname, '../public/uploads');
-            const oldImages = [product.imageUrl, ...product.additionalImages].filter(img => !imagePaths.includes(img));
-
-            try {
-                await Promise.all(
-                    oldImages.map(imagePath =>
-                        fs.unlink(path.join(uploadDir, path.basename(imagePath)))
-                    )
-                );
-            } catch (cleanupError) {
-                console.error('Error cleaning up old files:', cleanupError);
-            }
-        }
 
         req.flash('success_msg', 'Product updated successfully.');
         res.redirect('/admin/products');
@@ -332,6 +367,7 @@ router.post('/products/edit', isAdmin, upload.array('images', 10), async (req, r
         // Clean up uploaded files on error
         if (req.files && req.files.length > 0) {
             const fs = require('fs').promises;
+            const path = require('path');
             const uploadDir = path.join(__dirname, '../public/uploads');
 
             try {
@@ -374,29 +410,40 @@ router.delete('/products/delete/:id', isAdmin, async (req, res) => {
     }
 });
 
-router.get('/users', async (req, res) => {
+router.get('/users', isAdmin, async (req, res) => {
     try {
+        // Pagination parameters
         const page = parseInt(req.query.page) || 1;
-        const limit = 10; // Number of users per page
+        const limit = 10;
         const skip = (page - 1) * limit;
 
-        // Fetch users sorted by createdAt descending (newest first)
-        const users = await User.find()
-            .sort({ createdAt: -1 }) // -1 for descending
-            .skip(skip)
-            .limit(limit);
+        // Fetch current user (if logged in)
+        const currentUser = req.user ? await User.findById(req.user._id).lean() : null;
 
+        // Fetch total users and paginated users
         const totalUsers = await User.countDocuments();
+        const users = await User.find()
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        // Calculate total pages
         const totalPages = Math.ceil(totalUsers / limit);
 
+        // Render the users page
         res.render('admin/users', {
             users,
             currentPage: page,
-            totalPages
+            totalPages,
+            user: currentUser || {}, // Fallback to empty object if null
+            messageCount: currentUser?.messageCount || 0, // Safe default
+            success_msg: req.flash('success_msg'), // Add success flash message
+            error_msg: req.flash('error_msg') // Add error flash message
         });
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).send('Server Error');
+        req.flash('error_msg', 'Failed to load users. Please try again.');
+        res.redirect('/admin/dashboard');
     }
 });
 
@@ -468,7 +515,7 @@ router.post('/products/delete/:id', isAdmin, async (req, res) => {
 router.get('/orders', isAdmin, async (req, res) => {
     try {
         const perPage = 10; // Orders per page
-        const page = parseInt(req.query.page) || 1; 
+        const page = parseInt(req.query.page) || 1;
 
         const totalOrders = await Order.countDocuments(); // Total order count
         const totalPages = Math.ceil(totalOrders / perPage); // Calculate total pages
@@ -508,7 +555,7 @@ router.get('/orders', isAdmin, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        req.flash('error_msg', 'Failed to load orders'); 
+        req.flash('error_msg', 'Failed to load orders');
 
         // Render with fallback data in case of error
         res.render('admin/orders', {
@@ -547,7 +594,7 @@ router.post('/orders/update-shipping-status', isAdmin, async (req, res) => {
             total: order.total,
             items: order.items || [],
             deliveredAt: shippingStatus === 'Delivered' ? new Date() : null,
-            host: req.get('host') || 'cloud420.store', 
+            host: req.get('host') || 'cloud420.store',
         };
 
         // Send email based on shipping status
@@ -649,7 +696,7 @@ router.post('/orders/update-shipping-status', isAdmin, async (req, res) => {
                 cloudOrderId: order._id.toString(),
                 total: order.total,
                 items: order.items,
-                deliveredAt: new Date() 
+                deliveredAt: new Date()
             });
             console.log(`Delivery confirmation email sent for order ${order._id}`);
         }
@@ -681,13 +728,13 @@ router.get('/carts', isAdmin, async (req, res) => {
         const carts = await Cart.find()
             .populate({
                 path: 'userId',
-                select: 'username email', 
+                select: 'username email',
                 model: 'User'
             })
             .populate({
                 path: 'products.productId',
                 select: 'name price imageUrl',
-                model: 'Product' 
+                model: 'Product'
             })
             .lean();
 
@@ -705,18 +752,18 @@ router.get('/carts', isAdmin, async (req, res) => {
             }
         }));
 
-        res.render('admin/carts', { 
-            carts: formattedCarts, 
-            currentUser: req.user, 
-            activePage: 'carts' 
+        res.render('admin/carts', {
+            carts: formattedCarts,
+            currentUser: req.user,
+            activePage: 'carts'
         });
-        
+
     } catch (error) {
         console.error('Error fetching carts:', error);
         req.flash('error_msg', 'Failed to load carts');
-        res.status(500).render('error', { 
+        res.status(500).render('error', {
             error: 'Server error',
-            currentUser: req.user 
+            currentUser: req.user
         });
     }
 });
@@ -767,16 +814,16 @@ router.get('/transactions', isAdmin, async (req, res) => {
 
         const enrichedTransactions = transactions.map(transaction => ({
             ...transaction,
-            transactionId: transaction._id, 
+            transactionId: transaction._id,
             orderId: transaction.orderId?._id || transaction._id,
             customerName: transaction.orderId?.customerName || transaction.customerPhone || 'Cloud Wanderer',
             total: transaction.orderId?.total || transaction.amount || 0,
-            paymentDate: (transaction.status === 'completed' && transaction.updatedAt) 
-                ? transaction.updatedAt 
+            paymentDate: (transaction.status === 'completed' && transaction.updatedAt)
+                ? transaction.updatedAt
                 : transaction.createdAt,
             status: transaction.status || 'Unknown'
         }));
-        
+
 
         res.render('admin/transactions', {
             transactions: enrichedTransactions,

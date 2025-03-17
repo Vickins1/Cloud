@@ -136,6 +136,20 @@
         .order-items-table td {
             padding: 15px;
             font-size: 0.95rem;
+            vertical-align: middle; /* Center align content */
+        }
+
+        .order-items-table .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .order-items-table .product-cell {
+            display: flex;
+            align-items: center;
         }
 
         .order-items-table tfoot td {
@@ -304,6 +318,10 @@
                 padding: 12px;
                 font-size: 0.9rem;
             }
+            .order-items-table .product-image {
+                width: 50px;
+                height: 50px;
+            }
             .order-actions {
                 flex-direction: column;
                 gap: 10px;
@@ -363,6 +381,10 @@
             }
             .order-items-table th, .order-items-table td {
                 padding: 10px;
+            }
+            .order-items-table .product-image {
+                width: 40px;
+                height: 40px;
             }
             .order-actions {
                 margin-top: 30px;
@@ -450,6 +472,14 @@
                 display: inline-block;
                 width: 40%;
             }
+            .order-items-table .product-cell {
+                display: block;
+            }
+            .order-items-table .product-image {
+                width: 50px;
+                height: 50px;
+                margin-bottom: 5px;
+            }
             .order-items-table tfoot td {
                 text-align: right;
             }
@@ -494,7 +524,7 @@
                         <% } else if (status === 'error') { %>
                         <div class="order-header error-header">
                             <h2><i class="fas fa-exclamation-triangle"></i> Payment Failed</h2>
-                            <p class="lead text-light mt-2">Something went wrong, but we’re here to help.</p>
+                            <p class="lead text-light mt-2">Something went wrong, but we’re here to help Feel free to Contact Support.</p>
                         </div>
                         <% } else { %>
                         <div class="order-header warning-header">
@@ -557,8 +587,14 @@
                                     <tbody>
                                         <% order.items.forEach(item => { %>
                                         <tr>
-                                            <td data-label="Product"><%= item.productName %></td>
-                                            <td data-label="Qty"><%= item.quantity %></td>
+                                            <td data-label="Product" class="product-cell">
+                                                <img src="<%= item.imageUrl %>" alt="<%= item.productName %>" class="product-image">
+                                                <span><%= item.productName %></span>
+                                            </td>
+                                            <td data-label="Qty">
+                                                <%= item.quantity %> 
+                                                <%= item.quantityType === 'perItem' ? 'item' : 'gram' %>
+                                            </td>
                                             <td data-label="Price">KES <%= Number(item.price).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
                                             <td data-label="Subtotal">KES <%= Number(item.subtotal).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') %></td>
                                         </tr>

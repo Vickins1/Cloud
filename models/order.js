@@ -10,8 +10,14 @@ const orderSchema = new mongoose.Schema({
     items: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
         quantity: { type: Number, required: true },
-        price: { type: Number }
+        price: { type: Number },
+        quantityType: {
+            type: String,
+            enum: ['perItem', 'perGram'],
+            required: true
+        }
     }],
+    
     paymentStatus: { 
         type: String, 
         enum: ['pending', 'completed', 'failed', 'refunded'],

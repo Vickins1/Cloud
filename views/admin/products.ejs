@@ -193,141 +193,149 @@
                                         <div class="table-responsive">
                                             <table class="table table-dark table-hover table-sm m-0">
                                                 <thead>
-                                                    <tr>
-                                                        <th class="py-2 pl-2">Name</th>
-                                                        <th class="py-2">Price</th>
-                                                        <th class="py-2">Stock</th>
-                                                        <th class="py-2">Category</th>
-                                                        <th class="py-2 pr-2">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <% products.forEach(product => { %>
+                                                    <thead>
                                                         <tr>
-                                                            <td class="py-2 pl-2"><%= product.name %></td>
-                                                            <td class="py-2">KES <%= product.price.toFixed(2) %></td>
-                                                            <td class="py-2"><%= product.stockQuantity %></td>
-                                                            <td class="py-2"><%= product.category || 'N/A' %></td>
-                                                            <td class="py-2 pr-2">
-                                                                <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editProductModal-<%= product._id %>">
-                                                                    Edit
-                                                                </button>
-                                                                <form action="/admin/products/delete/<%= product._id %>" method="POST" class="d-inline" onsubmit="return confirmDelete()">
-                                                                    <button type="submit" class="btn btn-xs btn-danger">
-                                                                        <i class="fas fa-trash-alt"></i>
-                                                                    </button>
-                                                                </form>
-                                                            </td>
+                                                            <th class="py-2 pl-2">Name</th>
+                                                            <th class="py-2">Price</th>
+                                                            <th class="py-2">Stock</th>
+                                                            <th class="py-2">Quantity Type</th>
+                                                            <th class="py-2">Category</th>
+                                                            <th class="py-2 pr-2">Actions</th>
                                                         </tr>
-                                        
-                                                        <!-- Edit Product Modal -->
-                                                        <div class="modal fade" id="editProductModal-<%= product._id %>" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-md" role="document">
-                                                                <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 12px; border: 1px solid #ffc107;">
-                                                                    <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #856404);">
-                                                                        <h5 class="modal-title font-weight-bold" id="editProductModalLabel-<%= product._id %>" style="font-size: 1.25rem; color: #fff3cd;">Edit Product</h5>
-                                                                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                                                                            <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% products.forEach(product => { %>
+                                                            <tr>
+                                                                <td class="py-2 pl-2"><%= product.name %></td>
+                                                                <td class="py-2">KES <%= product.price.toFixed(2) %></td>
+                                                                <td class="py-2"><%= product.stockQuantity %></td>
+                                                                <td class="py-2"><%= product.quantityType || 'N/A' %></td> <!-- Quantity type (grams, pieces, packs) -->
+                                                                <td class="py-2"><%= product.category || 'N/A' %></td>
+                                                                <td class="py-2 pr-2">
+                                                                    <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#editProductModal-<%= product._id %>">
+                                                                        Edit
+                                                                    </button>
+                                                                    <form action="/admin/products/delete/<%= product._id %>" method="POST" class="d-inline" onsubmit="return confirmDelete()">
+                                                                        <button type="submit" class="btn btn-xs btn-danger">
+                                                                            <i class="fas fa-trash-alt"></i>
                                                                         </button>
-                                                                    </div>
-                                                                    <div class="modal-body p-3">
-                                                                        <form action="/admin/products/edit" method="POST" enctype="multipart/form-data">
-                                                                            <input type="hidden" name="id" value="<%= product._id %>">
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Product Name</label>
-                                                                                <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" name="name" value="<%= product.name %>" required>
-                                                                            </div>
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Price (KES)</label>
-                                                                                <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" name="price" step="0.01" value="<%= product.price %>" required>
-                                                                            </div>
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Description</label>
-                                                                                <textarea class="form-control bg-secondary text-white border-0 shadow-sm" name="description" rows="2"><%= product.description %></textarea>
-                                                                            </div>
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Stock Quantity</label>
-                                                                                <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" name="stockQuantity" value="<%= product.stockQuantity %>" required>
-                                                                            </div>
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Category</label>
-                                                                                <select class="form-control bg-secondary text-white border-0 shadow-sm" name="category" required>
-                                                                                    <option value="" disabled>Select a category</option>
-                                                                                    <option value="Flower" <%= product.category === 'Flower' ? 'selected' : '' %>>Indica 🌙</option>
-                                                                                    <option value="Edibles" <%= product.category === 'Edibles' ? 'selected' : '' %>>Sativa ☀️</option>
-                                                                                    <option value="Hybrid" <%= product.category === 'Hybrid' ? 'selected' : '' %>>Hybrid 🔄</option>
-                                                                                    <option value="CBD" <%= product.category === 'CBD' ? 'selected' : '' %>>CBD 🌿</option>
-                                                                                    <option value="THC" <%= product.category === 'THC' ? 'selected' : '' %>>High-THC 🔥</option>
-                                                                                    <option value="Exotic" <%= product.category === 'Exotic' ? 'selected' : '' %>>Exotic Strains 🏝️</option>
-                                                                                    <option value="Cigarettes" <%= product.category === 'Cigarettes' ? 'selected' : '' %>>Cigarettes 🚬</option>
-                                                                                    <option value="Cigars" <%= product.category === 'Cigars' ? 'selected' : '' %>>Cigars 🏆</option>
-                                                                                    <option value="Rolling-Tobacco" <%= product.category === 'Rolling-Tobacco' ? 'selected' : '' %>>Rolling Tobacco 🌀</option>
-                                                                                    <option value="Hookah" <%= product.category === 'Hookah' ? 'selected' : '' %>>Hookah/Shisha 💨</option>
-                                                                                    <option value="Nicotine-Pouches" <%= product.category === 'Nicotine-Pouches' ? 'selected' : '' %>>Nicotine Pouches 🏁</option>
-                                                                                    <option value="Vapes" <%= product.category === 'Vapes' ? 'selected' : '' %>>Vapes</option>
-                                                                                    <option value="Accessories" <%= product.category === 'Accessories' ? 'selected' : '' %>>Accessories</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Current Images</label>
-                                                                                <div class="d-flex flex-wrap gap-2 mb-2" id="currentImagesContainer">
-                                                                                    <% if (product.imageUrl) { %>
-                                                                                        <div class="image-wrapper position-relative">
-                                                                                            <img src="<%= product.imageUrl %>" class="current-image" style="max-width: 80px; max-height: 80px; border-radius: 6px; object-fit: cover; margin: 5px;">
-                                                                                            <button type="button" class="btn btn-sm btn-danger remove-image" data-url="<%= product.imageUrl %>">×</button>
-                                                                                        </div>
-                                                                                    <% } %>
-                                                                                    <% if (product.additionalImages) { %>
-                                                                                        <% product.additionalImages.forEach(img => { %>
-                                                                                            <div class="image-wrapper position-relative">
-                                                                                                <img src="<%= img %>" class="current-image" style="max-width: 80px; max-height: 80px; border-radius: 6px; object-fit: cover; margin: 5px;">
-                                                                                                <button type="button" class="btn btn-sm remove-image" data-url="<%= img %>">×</button>
-                                                                                            </div>
-                                                                                        <% }); %>
-                                                                                    <% } %>
-                                                                                </div>
-                                                                                <!-- Hidden input to track removed images -->
-                                                                                <input type="hidden" id="removedImages" name="removedImages">
-                                                                            </div>
-                                                                            <script>
-                                                                                document.addEventListener("DOMContentLoaded", function () {
-                                                                                    const removedImagesInput = document.getElementById("removedImages");
-                                                                                    const removedImages = [];
-                                                                            
-                                                                                    document.querySelectorAll(".remove-image").forEach(button => {
-                                                                                        button.addEventListener("click", function () {
-                                                                                            const imageWrapper = this.parentElement;
-                                                                                            const imageUrl = this.getAttribute("data-url");
-                                                                            
-                                                                                            // Add image URL to removed images list
-                                                                                            removedImages.push(imageUrl);
-                                                                                            removedImagesInput.value = JSON.stringify(removedImages);
-                                                                            
-                                                                                            // Remove the image preview
-                                                                                            imageWrapper.remove();
-                                                                                        });
-                                                                                    });
-                                                                                });
-                                                                            </script>
-                                                                            
-                                                                            
-                                                                            <div class="form-group mb-3">
-                                                                                <label class="text-muted font-weight-bold small">Upload New Images (Optional)</label>
-                                                                                <input type="file" class="form-control-file" name="images" accept="image/*" multiple>
-                                                                            </div>
+                                                                    </form>
+                                                                </td>
+                                                            </tr>
                                         
-                                                                            <button type="submit" class="btn btn-warning btn-block shadow-sm">Update Product</button>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal-<%= product._id %>" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel-<%= product._id %>" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 12px; border: 1px solid #ffc107;">
+            <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #856404);">
+                <h5 class="modal-title font-weight-bold" id="editProductModalLabel-<%= product._id %>" style="font-size: 1.25rem; color: #fff3cd;">Edit Product</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <form action="/admin/products/edit" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="id" value="<%= product._id %>">
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Product Name</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" name="name" value="<%= product.name %>" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Price (KES)</label>
+                        <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" name="price" step="0.01" value="<%= product.price %>" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Description</label>
+                        <textarea class="form-control bg-secondary text-white border-0 shadow-sm" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"><%= product.description %></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Stock Quantity</label>
+                        <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" name="stockQuantity" value="<%= product.stockQuantity %>" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Quantity Type</label>
+                        <select class="form-control bg-secondary text-white border-0 shadow-sm" name="quantityType" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                            <option value="gram" <%= product.quantityType === 'gram' ? 'selected' : '' %>>Grams</option>
+                            <option value="piece" <%= product.quantityType === 'piece' ? 'selected' : '' %>>Pieces</option>
+                            <option value="pack" <%= product.quantityType === 'pack' ? 'selected' : '' %>>Packs</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Category</label>
+                        <select class="form-control bg-secondary text-white border-0 shadow-sm" name="category" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                            <option value="" disabled>Select a category</option>
+                            <% const categories = [
+                                { value: "Indica", label: "Indica 🌙" },
+                                { value: "Sativa", label: "Sativa ☀️" },
+                                { value: "Hybrid", label: "Hybrid 🔄" },
+                                { value: "CBD", label: "CBD 🌿" },
+                                { value: "THC", label: "High-THC 🔥" },
+                                { value: "Exotic", label: "Exotic Strains 🏝️" },
+                                { value: "Cigarettes", label: "Cigarettes 🚬" },
+                                { value: "Cigars", label: "Cigars 🏆" },
+                                { value: "Rolling-Tobacco", label: "Rolling Tobacco 🌀" },
+                                { value: "Hookah", label: "Hookah/Shisha 💨" },
+                                { value: "Nicotine-Pouches", label: "Nicotine Pouches 🏁" },
+                                { value: "Vapes", label: "Vapes" },
+                                { value: "Accessories", label: "Accessories" },
+                                { value: "Edibles", label: "Edibles" }
+                            ]; %>
+                            <% categories.forEach(cat => { %>
+                                <option value="<%= cat.value %>" <%= product.category === cat.value ? 'selected' : '' %>><%= cat.label %></option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Current Images</label>
+                        <div class="d-flex flex-wrap gap-2 mb-2" id="currentImagesContainer-<%= product._id %>">
+                            <% if (product.imageUrl) { %>
+                                <div class="image-wrapper position-relative">
+                                    <img src="<%= product.imageUrl %>" class="current-image" style="max-width: 80px; max-height: 80px; border-radius: 6px; object-fit: cover; margin: 5px;">
+                                    <button type="button" class="btn btn-sm btn-danger remove-image" data-url="<%= product.imageUrl %>" data-product-id="<%= product._id %>">×</button>
+                                </div>
+                            <% } %>
+                            <% if (product.additionalImages) { %>
+                                <% product.additionalImages.forEach(img => { %>
+                                    <div class="image-wrapper position-relative">
+                                        <img src="<%= img %>" class="current-image" style="max-width: 80px; max-height: 80px; border-radius: 6px; object-fit: cover; margin: 5px;">
+                                        <button type="button" class="btn btn-sm btn-danger remove-image" data-url="<%= img %>" data-product-id="<%= product._id %>">×</button>
+                                    </div>
+                                <% }); %>
+                            <% } %>
+                        </div>
+                        <input type="hidden" id="removedImages-<%= product._id %>" name="removedImages">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Upload New Images (Optional)</label>
+                        <input type="file" class="form-control-file" name="images" accept="image/*" multiple style="padding: 6px; border: 1px dashed #ffc107; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;">
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Update Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".remove-image").forEach(button => {
+        button.addEventListener("click", function () {
+            const productId = this.getAttribute("data-product-id");
+            const removedImagesInput = document.getElementById("removedImages-" + productId);
+            let removedImages = JSON.parse(removedImagesInput.value || "[]");
+
+            const imageWrapper = this.parentElement;
+            const imageUrl = this.getAttribute("data-url");
+
+            removedImages.push(imageUrl);
+            removedImagesInput.value = JSON.stringify(removedImages);
+
+            imageWrapper.remove();
+        });
+    });
+});
+</script>
+
                                                     <% }); %>
                                                 </tbody>
                                             </table>
@@ -351,94 +359,73 @@
 
 
 <!-- Add Product Modal -->
-<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog"
-aria-labelledby="addProductModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-md" role="document">
-    <div class="modal-content bg-dark text-white shadow-sm"
-        style="border-radius: 10px; border: 1px solid #035925;">
-        <div class="modal-header border-0 py-2"
-            style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
-            <h5 class="modal-title font-weight-bold" id="addProductModalLabel"
-                style="font-size: 1.25rem; color: #d4edda;">Add New Product</h5>
-            <button type="button" class="close text-white" data-dismiss="modal"
-                aria-label="Close">
-                <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
-            </button>
-        </div>
-        <div class="modal-body p-3">
-            <form id="addProductForm" action="/admin/products/add" method="POST"
-                enctype="multipart/form-data">
-                <div class="form-group mb-3">
-                    <label for="name" class="text-muted font-weight-bold small">Product
-                        Name</label>
-                    <input type="text"
-                        class="form-control bg-secondary text-white border-0 shadow-sm"
-                        id="name" name="name" required
-                        style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="price" class="text-muted font-weight-bold small">Price
-                        (KES)</label>
-                    <input type="number"
-                        class="form-control bg-secondary text-white border-0 shadow-sm"
-                        id="price" name="price" step="0.01" required
-                        style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="description"
-                        class="text-muted font-weight-bold small">Description</label>
-                    <textarea class="form-control bg-secondary text-white border-0 shadow-sm"
-                        id="description" name="description" rows="2"
-                        style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="stockQuantity" class="text-muted font-weight-bold small">Stock
-                        Quantity</label>
-                    <input type="number"
-                        class="form-control bg-secondary text-white border-0 shadow-sm"
-                        id="stockQuantity" name="stockQuantity" required
-                        style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                </div>
-                <div class="form-group mb-3">
-                    <label for="category"
-                        class="text-muted font-weight-bold small">Category</label>
-                    <select class="form-control bg-secondary text-white border-0 shadow-sm"
-                        id="category" name="category"
-                        style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
-                        <option value="Flower">Indica 🌙</option>
-                        <option value="Edibles">Sativa ☀️</option>
-                        <option value="Hybrid">Hybrid 🔄</option>
-                        <option value="CBD">CBD 🌿</option>
-                        <option value="THC">High-THC 🔥</option>
-                        <option value="Exotic">Exotic Strains 🏝️</option>
-                        <option value="Cigarettes">Cigarettes 🚬</option>
-                        <option value="Cigars">Cigars 🏆</option>
-                        <option value="Rolling-Tobacco">Rolling Tobacco 🌀</option>
-                        <option value="Hookah">Hookah/Shisha 💨</option>
-                        <option value="Nicotine-Pouches">Nicotine Pouches 🏁</option>
-                        <option value="Vapes">Vapes</option>
-                        <option value="Accessories">Accessories</option>
-                    </select>
-                </div>
-                <div class="form-group mb-3">
-                    <label class="text-muted font-weight-bold small">Product Images (First image
-                        will be main)</label>
-                    <input type="file" class="form-control-file" id="images" name="images"
-                        accept="image/*" multiple required
-                        style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;"
-                        onchange="previewImages(event, 'addImagePreview')">
-                    <div id="addImagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
-                    <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
-                        Max 10 images, 5MB each. First image is used as the main image.
-                    </small>
-                </div>
-                <button type="submit" class="btn btn-success btn-block shadow-sm"
-                    style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add
-                    Product</button>
-            </form>
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content bg-dark text-white shadow-sm" style="border-radius: 10px; border: 1px solid #035925;">
+            <div class="modal-header border-0 py-2" style="background: linear-gradient(135deg, #1a1a1a, #2d2d2d);">
+                <h5 class="modal-title font-weight-bold" id="addProductModalLabel" style="font-size: 1.25rem; color: #d4edda;">Add New Product</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="font-size: 1.25rem;">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-3">
+                <form id="addProductForm" action="/admin/products/add" method="POST" enctype="multipart/form-data">
+                    <div class="form-group mb-3">
+                        <label for="name" class="text-muted font-weight-bold small">Product Name</label>
+                        <input type="text" class="form-control bg-secondary text-white border-0 shadow-sm" id="name" name="name" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="price" class="text-muted font-weight-bold small">Price (KES)</label>
+                        <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="price" name="price" step="0.01" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="description" class="text-muted font-weight-bold small">Description</label>
+                        <textarea class="form-control bg-secondary text-white border-0 shadow-sm" id="description" name="description" rows="2" style="border-radius: 8px; padding: 8px; font-size: 0.9rem;"></textarea>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="stockQuantity" class="text-muted font-weight-bold small">Stock Quantity</label>
+                        <input type="number" class="form-control bg-secondary text-white border-0 shadow-sm" id="stockQuantity" name="stockQuantity" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="quantityType" class="text-muted font-weight-bold small">Quantity Type</label>
+                        <select class="form-control bg-secondary text-white border-0 shadow-sm" id="quantityType" name="quantityType" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                            <option value="gram">Grams</option>
+                            <option value="piece">Pieces</option>
+                            <option value="pack">Packs</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="category" class="text-muted font-weight-bold small">Category</label>
+                        <select class="form-control bg-secondary text-white border-0 shadow-sm" id="category" name="category" required style="border-radius: 8px; padding: 8px; font-size: 0.9rem;">
+                            <option value="Indica">Indica 🌙</option>
+                            <option value="Sativa">Sativa ☀️</option>
+                            <option value="Hybrid">Hybrid 🔄</option>
+                            <option value="CBD">CBD 🌿</option>
+                            <option value="THC">High-THC 🔥</option>
+                            <option value="Exotic">Exotic Strains 🏝️</option>
+                            <option value="Cigarettes">Cigarettes 🚬</option>
+                            <option value="Cigars">Cigars 🏆</option>
+                            <option value="Rolling-Tobacco">Rolling Tobacco 🌀</option>
+                            <option value="Hookah">Hookah/Shisha 💨</option>
+                            <option value="Nicotine-Pouches">Nicotine Pouches 🏁</option>
+                            <option value="Vapes">Vapes</option>
+                            <option value="Accessories">Accessories</option>
+                            <option value="Edibles">Edibles</option>
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="text-muted font-weight-bold small">Product Images (First image will be main)</label>
+                        <input type="file" class="form-control-file" id="images" name="images" accept="image/*" multiple required style="padding: 6px; border: 1px dashed #035925; border-radius: 8px; background: #1a1a1a; font-size: 0.85rem;" onchange="previewImages(event, 'addImagePreview')">
+                        <div id="addImagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+                        <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                            Max 10 images, 5MB each. First image is used as the main image.
+                        </small>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block shadow-sm" style="border-radius: 20px; padding: 8px; font-size: 0.9rem; font-weight: bold;">Add Product</button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 </div>
 
 <!-- Updated JavaScript -->

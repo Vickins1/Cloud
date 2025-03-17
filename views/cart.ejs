@@ -291,125 +291,145 @@
     <div class="content container mt-5">
         <h2 class="mb-4" style="margin-left: 40px;"><strong>Shopping Cart</strong></h2>
 
-        <!-- Cart Items -->
-        <div class="cart-items" aria-live="polite">
-            <% if (cart.length> 0) { %>
-                <% cart.forEach(function(item) { %>
-                    <div class="cart-item d-flex justify-content-between align-items-center"
-                        data-item-id="<%= item._id %>">
-                        <div class="cart-item-details">
-                            <h5 class="item-name">
-                                <%= item.productId?.name || 'Unknown Product' %>
-                            </h5>
-                            <p class="item-price">
-                                Price: KES <%= item.productId?.price ? item.productId.price.toFixed(2) : '0.00' %>
-                            </p>
+<!-- Cart Items -->
+<div class="cart-items" aria-live="polite">
+    <% if (cart.length > 0) { %>
+        <% cart.forEach(function(item) { %>
+            <div class="cart-item d-flex justify-content-between align-items-center" data-item-id="<%= item._id %>">
+                <div class="cart-item-details">
+                    <h5 class="item-name">
+                        <%= item.productId?.name || 'Unknown Product' %>
+                    </h5>
+                    <p class="item-price">
+                        Price: KES <%= item.productId?.price ? item.productId.price.toFixed(2) : '0.00' %>
+                    </p>
 
-                            <% if (item.productId) { %>
-                                <form action="/cart/update/<%= item.productId._id %>" method="POST"
-                                    class="d-flex align-items-center">
-                                    <input type="hidden" name="itemId" value="<%= item.productId._id %>">
-                                    <input type="hidden" name="quantity" id="quantity-<%= item._id %>"
-                                        value="<%= item.quantity %>">
-
-                                    <button type="submit" class="btn btn-custom quantity-decrease mx-1"
-                                        onclick="updateQuantity('<%= item._id %>', -1)" <%=item.quantity <=1
-                                        ? 'disabled' : '' %>
-                                        aria-label="Decrease quantity">
-                                        ➖
-                                    </button>
-
-                                    <span class="mx-2 font-weight-bold" id="quantity-display-<%= item._id %>">
-                                        <%= item.quantity %>
-                                    </span>
-
-                                    <button type="submit" class="btn btn-custom quantity-increase mx-1"
-                                        onclick="updateQuantity('<%= item._id %>', 1)" <%=item.productId.stockQuantity
-                                        && item.quantity>= item.productId.stockQuantity ? 'disabled' : '' %>
-                                        aria-label="Increase quantity">
-                                        ➕
-                                    </button>
-                                </form>
-                                <% } else { %>
-                                    <p class="text-danger">This product is no longer available.</p>
-                                    <% } %>
-                        </div>
-
-                        <div class="cart-item-actions">
-                            <form action="/cart/remove/<%= item._id %>" method="POST" style="display: inline;">
-                                <button type="submit" class="btn btn-danger remove-item"
-                                    aria-label="Remove item from cart">
-                                    <i class="fas fa-trash-alt"></i> Remove
-                                </button>
-                            </form>
-
-                        </div>
-                    </div>
-                    <% }) %>
-
-                        <p class="total text-right font-weight-bold" id="cart-total">
-                            Total: KES <%= total.toFixed(2) %>
-                        </p>
-
-                        <div class="text-right mt-3">
-                            <button class="btn btn-checkout" data-toggle="modal" data-target="#checkoutModal"
-                                <%=cart.length===0 ? 'disabled' : '' %>
-                                aria-label="Proceed to checkout">
-                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                    <% if (item.productId) { %>
+                        <form action="/cart/update/<%= item.productId._id %>" method="POST" class="d-flex align-items-center">
+                            <input type="hidden" name="itemId" value="<%= item.productId._id %>">
+                            <input type="hidden" name="quantity" id="quantity-<%= item._id %>"
+                                value="<%= item.quantity %>" data-unit="<%= item.productId.quantityType %>">
+                            
+                            <button type="submit" class="btn btn-custom quantity-decrease mx-1"
+                                onclick="updateQuantity('<%= item._id %>', -1)" <%= item.quantity <= 1 ? 'disabled' : '' %>
+                                aria-label="Decrease quantity">
+                                ➖
                             </button>
-                        </div>
-                        <% } else { %>
-                            <p class="empty-cart-message text-center">Your cart is empty.</p>
-                            <div class="text-center mt-4">
-                                <a href="/products" class="btn btn-explore" aria-label="Explore products">
-                                    <i class="fas fa-search"></i> Explore Products
-                                </a>
-                            </div>
-                            <style>
-                                .empty-cart-message {
-                                    font-size: 1.5rem;
-                                    font-weight: bold;
-                                    color: #ababab;
-                                    margin-top: 20px;
-                                }
+                            
+                            <span class="mx-2 font-weight-bold" id="quantity-display-<%= item._id %>">
+                                <%= item.quantity %>
+                            </span>
+                            
+                            <span id="quantity-label-<%= item._id %>">
+                                <% if (item.productId.quantityType === 'gram') { %>
+                                    <%= item.quantity === 1 ? 'gram' : 'grams' %>
+                                <% } else if (item.productId.quantityType === 'piece') { %>
+                                    <%= item.quantity === 1 ? 'piece' : 'pieces' %>
+                                <% } else if (item.productId.quantityType === 'pack') { %>
+                                    <%= item.quantity === 1 ? 'pack' : 'packs' %>
+                                <% } %>
+                            </span>
+                            
+                            <button type="submit" class="btn btn-custom quantity-increase mx-1"
+                                onclick="updateQuantity('<%= item._id %>', 1)" <%= item.productId.stockQuantity && item.quantity >= item.productId.stockQuantity ? 'disabled' : '' %>
+                                aria-label="Increase quantity">
+                                ➕
+                            </button>
+                        </form>
+                        <script>
+                            function updateQuantity(itemId, change) {
+                                event.preventDefault();
 
-                                .btn-explore {
-                                    background-color: black;
-                                    color: white;
-                                    padding: 10px 20px;
-                                    font-size: 1.2rem;
-                                    border-radius: 8px;
-                                    text-decoration: none;
-                                    transition: background 0.3s ease, transform 0.2s;
-                                    display: inline-block;
-                                }
+                                let quantityInput = document.getElementById(`quantity-${itemId}`);
+                                let quantityDisplay = document.getElementById(`quantity-display-${itemId}`);
+                                let quantityLabel = document.getElementById(`quantity-label-${itemId}`);
 
-                                .btn-explore:hover {
-                                    background-color: #035925;
-                                    transform: scale(1.05);
-                                    color: white;
+                                let currentQuantity = parseInt(quantityInput.value, 10);
+                                let newQuantity = currentQuantity + change;
+
+                                if (newQuantity >= 1) {
+                                    quantityInput.value = newQuantity;
+                                    quantityDisplay.textContent = newQuantity;
+
+                                    // Get the unit from the data-unit attribute
+                                    let unit = quantityInput.getAttribute("data-unit");
+
+                                    // Update label based on unit and quantity
+                                    let label = "items"; // Fallback
+                                    if (unit === "gram") {
+                                        label = newQuantity === 1 ? "gram" : "grams";
+                                    } else if (unit === "piece") {
+                                        label = newQuantity === 1 ? "piece" : "pieces";
+                                    } else if (unit === "pack") {
+                                        label = newQuantity === 1 ? "pack" : "packs";
+                                    }
+
+                                    quantityLabel.textContent = label;
+
+                                    // Submit the form
+                                    quantityInput.form.submit();
                                 }
-                            </style>
-                            <% } %>
+                            }
+                        </script>
+                    <% } else { %>
+                        <p class="text-danger">This product is no longer available.</p>
+                    <% } %>
+                </div>
+
+                <div class="cart-item-actions">
+                    <form action="/cart/remove/<%= item._id %>" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger remove-item" aria-label="Remove item from cart">
+                            <i class="fas fa-trash-alt"></i> Remove
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <% }); %>
+
+        <p class="total text-right font-weight-bold" id="cart-total">
+            Total: KES <%= total.toFixed(2) %>
+        </p>
+
+        <div class="text-right mt-3">
+            <button class="btn btn-checkout" data-toggle="modal" data-target="#checkoutModal"
+                <%= cart.length === 0 ? 'disabled' : '' %>
+                aria-label="Proceed to checkout">
+                <i class="fas fa-credit-card"></i> Proceed to Checkout
+            </button>
         </div>
-
-        <script>
-            function updateQuantity(itemId, change) {
-                event.preventDefault();
-
-                let quantityInput = document.getElementById(`quantity-${itemId}`);
-                let quantityDisplay = document.getElementById(`quantity-display-${itemId}`);
-
-                let currentQuantity = parseInt(quantityInput.value, 10);
-                let newQuantity = currentQuantity + change;
-
-                if (newQuantity >= 1) {
-                    quantityInput.value = newQuantity;
-                    quantityDisplay.textContent = newQuantity;
-                    quantityInput.form.submit(); // Auto-submit form
-                }
+    <% } else { %>
+        <p class="empty-cart-message text-center">Your cart is empty.</p>
+        <div class="text-center mt-4">
+            <a href="/products" class="btn btn-explore" aria-label="Explore products">
+                <i class="fas fa-search"></i> Explore Products
+            </a>
+        </div>
+        <style>
+            .empty-cart-message {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #ababab;
+                margin-top: 20px;
             }
-        </script>
+            .btn-explore {
+                background-color: black;
+                color: white;
+                padding: 10px 20px;
+                font-size: 1.2rem;
+                border-radius: 8px;
+                text-decoration: none;
+                transition: background 0.3s ease, transform 0.2s;
+                display: inline-block;
+            }
+            .btn-explore:hover {
+                background-color: #035925;
+                transform: scale(1.05);
+                color: white;
+            }
+        </style>
+    <% } %>
+</div>
+
 
 <!-- In your cart.ejs or equivalent template -->
 <% if (typeof showModal !== 'undefined' && showModal) { %>

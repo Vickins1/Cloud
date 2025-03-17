@@ -12,11 +12,13 @@ const transactionSchema = new mongoose.Schema({
         default: 'pending',
         required: true 
     },
+    
     transactionRequestId: { 
         type: String, 
         required: true, 
         unique: true 
     },
+
     amount: { type: Number },
     paymentMethod: { type: String },
     customerPhone: { type: String },

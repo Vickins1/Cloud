@@ -8,7 +8,6 @@ const Transaction = require('../models/transaction');
 const emailService = require('../services/emailService');
 const Product = require('../models/product');
 
-
 // Define pendingOrders at module scope
 const pendingOrders = new Map();
 
@@ -83,7 +82,7 @@ async function processPaymentVerification(transactionRequestId) {
                         _id: item.productId
                     },
                     quantity: item.quantity,
-                    price: item.price || product?.price || 0 // Fallback to 0 if no price
+                    price: item.price || product?.price || 0 
                 };
             }));
 
@@ -92,7 +91,7 @@ async function processPaymentVerification(transactionRequestId) {
                 customerName: orderData.customerName,
                 customerEmail: orderData.customerEmail,
                 transactionRequestId,
-                amount: orderData.total, // Assuming total is the payment amount
+                amount: orderData.total,
                 host: process.env.APP_HOST || 'cloud420.store'
             });
 
@@ -107,36 +106,34 @@ async function processPaymentVerification(transactionRequestId) {
             });
 
             // Send New Order Notification to admin
-            emailService.sendNewOrderNotificationToAdmin({
+            await emailService.sendNewOrderNotificationToAdmin({
                 customerName: orderData.customerName,
                 cloudOrderId: order._id,
                 total: orderData.total,
                 items: enrichedItems,
-                host
-            })
+                host: process.env.APP_HOST || 'cloud420.store' 
+            });
 
             // Generate receipt for successful payment
             const receiptBuffer = await generateReceiptPDF({
                 transactionRequestId,
-                customerName: pendingOrder?.orderData?.customerName,
-                amount: pendingOrder?.orderData?.amount || verification.amount
+                customerName: orderData.customerName,
+                amount: orderData.total || verification.amount
             });
 
-            // Send JSON response with receipt info
-            res.json({
+            // Note: 'res' is undefined here; assuming this is meant to be returned
+            pendingOrders.delete(transactionRequestId);
+            console.log(`Payment completed for order: ${order._id}`);
+            return {
                 status: 'completed',
-                orderId,
+                orderId: order._id,
                 message: 'Payment successful!',
                 receipt: {
                     filename: `receipt-${transactionRequestId}.pdf`,
                     data: receiptBuffer.toString('base64'),
                     contentType: 'application/pdf'
                 }
-            });
-
-            pendingOrders.delete(transactionRequestId);
-            console.log(`Payment completed for order: ${order._id}`);
-            return { status: 'completed', orderId: order._id, message: 'Payment successful' };
+            };
         } else if (
             verification.ResultCode === '503' ||
             verification.TransactionStatus === 'Failed' ||
@@ -149,7 +146,6 @@ async function processPaymentVerification(transactionRequestId) {
             const transaction = new Transaction(transactionData);
             await transaction.save();
 
-            // No change here since you didn't ask for failure email adjustment
             pendingOrders.delete(transactionRequestId);
             console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
             return { status: 'failed', orderId: null, message: 'Payment declined' };
@@ -417,7 +413,8 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             items: cart.map(item => ({
                 productId: item.productId._id || item.productId,
                 quantity: item.quantity,
-                price: item.productId.price
+                price: item.productId.price,
+                quantityType: item.quantityType
             })),
             paymentStatus: 'Pending',
             shippingStatus: 'Processing',
@@ -534,9 +531,9 @@ router.get('/verify-payment/:transactionRequestId', async (req, res) => {
 setInterval(async () => {
     const now = Date.now();
     for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders.entries()) {
-        if ((now - orderData.createdAt.getTime()) > 1000 * 60 * 30) { // 30 minutes
+        if ((now - orderData.createdAt.getTime()) > 1000 * 60 * 30) { 
             try {
-                transactionData.status = 'Failed';
+                transactionData.status = 'failed';
                 transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
                 const transaction = new Transaction(transactionData);
                 await transaction.save();
@@ -554,7 +551,6 @@ setInterval(async () => {
         }
     }
 }, 1000 * 60 * 5);
-
 
 // GET cart page
 router.get('/', isLoggedIn, async (req, res) => {
@@ -767,8 +763,12 @@ router.get('/order-confirmation/:orderId', async (req, res) => {
         let order = null;
         if (orderId !== 'null') {
             order = await Order.findById(orderId)
-                .populate('items.productId')
+                .populate({
+                    path: 'items.productId',
+                    select: 'name price quantityType imageUrl' // Include fields we might need
+                })
                 .lean();
+            
             if (!order) {
                 return res.status(404).render('order-confirmation', {
                     order: null,
@@ -776,14 +776,17 @@ router.get('/order-confirmation/:orderId', async (req, res) => {
                     message: 'Order not found'
                 });
             }
-            // Add calculated fields
+
+            // Add calculated fields and include quantityType
             order.subtotal = order.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
             order.deliveryFee = order.total - order.subtotal;
             order.items = order.items.map(item => ({
                 productName: item.productId.name,
                 quantity: item.quantity,
+                quantityType: item.quantityType || item.productId.quantityType, // Use stored value or fall back to product
                 price: item.price,
-                subtotal: item.quantity * item.price
+                subtotal: item.quantity * item.price,
+                imageUrl: item.productId.imageUrl // Optional: for display
             }));
         }
 
