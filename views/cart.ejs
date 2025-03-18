@@ -183,23 +183,10 @@
 
         .btn-checkout:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 204, 31, 0.873);
+            box-shadow: 0 4px 12px rgba(0, 76, 11, 0.873);
             color: #fff;
         }
-
-        .footer {
-            background: linear-gradient(135deg, #000000 0%, #1a1f2a 100%);
-            color: #fff;
-            text-align: center;
-            width: 100%;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            padding: 10px 0;
-            box-sizing: border-box;
-            z-index: 1000;
-        }
-
+        
         @media (max-width: 768px) {
             .footer {
                 padding: 15px 0;
@@ -289,7 +276,7 @@
 
 
     <div class="content container mt-5">
-        <h2 class="mb-4" style="margin-left: 40px;"><strong>Shopping Cart</strong></h2>
+        <h4 class="mb-4" style="margin-left: 38px;"><strong>Shopping Cart</strong></h4>
 
 <!-- Cart Items -->
 <div class="cart-items" aria-live="polite">
@@ -305,7 +292,7 @@
                     </p>
 
                     <% if (item.productId) { %>
-                        <form action="/cart/update/<%= item.productId._id %>" method="POST" class="d-flex align-items-center">
+                        <form action="/cart/update/<%= item.productId._id %>" method="POST" class="d-flex align-items-center quantity-form">
                             <input type="hidden" name="itemId" value="<%= item.productId._id %>">
                             <input type="hidden" name="quantity" id="quantity-<%= item._id %>"
                                 value="<%= item.quantity %>" data-unit="<%= item.productId.quantityType %>">
@@ -316,11 +303,11 @@
                                 ➖
                             </button>
                             
-                            <span class="mx-2 font-weight-bold" id="quantity-display-<%= item._id %>">
+                            <span class="mx-2 font-weight-bold quantity-display" id="quantity-display-<%= item._id %>">
                                 <%= item.quantity %>
                             </span>
                             
-                            <span id="quantity-label-<%= item._id %>">
+                            <span class="quantity-label" id="quantity-label-<%= item._id %>">
                                 <% if (item.productId.quantityType === 'gram') { %>
                                     <%= item.quantity === 1 ? 'gram' : 'grams' %>
                                 <% } else if (item.productId.quantityType === 'piece') { %>
@@ -336,50 +323,15 @@
                                 ➕
                             </button>
                         </form>
-                        <script>
-                            function updateQuantity(itemId, change) {
-                                event.preventDefault();
-
-                                let quantityInput = document.getElementById(`quantity-${itemId}`);
-                                let quantityDisplay = document.getElementById(`quantity-display-${itemId}`);
-                                let quantityLabel = document.getElementById(`quantity-label-${itemId}`);
-
-                                let currentQuantity = parseInt(quantityInput.value, 10);
-                                let newQuantity = currentQuantity + change;
-
-                                if (newQuantity >= 1) {
-                                    quantityInput.value = newQuantity;
-                                    quantityDisplay.textContent = newQuantity;
-
-                                    // Get the unit from the data-unit attribute
-                                    let unit = quantityInput.getAttribute("data-unit");
-
-                                    // Update label based on unit and quantity
-                                    let label = "items"; // Fallback
-                                    if (unit === "gram") {
-                                        label = newQuantity === 1 ? "gram" : "grams";
-                                    } else if (unit === "piece") {
-                                        label = newQuantity === 1 ? "piece" : "pieces";
-                                    } else if (unit === "pack") {
-                                        label = newQuantity === 1 ? "pack" : "packs";
-                                    }
-
-                                    quantityLabel.textContent = label;
-
-                                    // Submit the form
-                                    quantityInput.form.submit();
-                                }
-                            }
-                        </script>
                     <% } else { %>
-                        <p class="text-danger">This product is no longer available.</p>
+                        <p class="text-danger unavailable-text">This product is no longer available.</p>
                     <% } %>
                 </div>
 
                 <div class="cart-item-actions">
                     <form action="/cart/remove/<%= item._id %>" method="POST" style="display: inline;">
                         <button type="submit" class="btn btn-danger remove-item" aria-label="Remove item from cart">
-                            <i class="fas fa-trash-alt"></i> Remove
+                            <i class="fas fa-trash-alt"></i> <span class="remove-text">Remove</span>
                         </button>
                     </form>
                 </div>
@@ -390,11 +342,11 @@
             Total: KES <%= total.toFixed(2) %>
         </p>
 
-        <div class="text-right mt-3">
+        <div class="text-right mt-3 checkout-wrapper">
             <button class="btn btn-checkout" data-toggle="modal" data-target="#checkoutModal"
                 <%= cart.length === 0 ? 'disabled' : '' %>
                 aria-label="Proceed to checkout">
-                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                <i class="fas fa-credit-card"></i> Checkout
             </button>
         </div>
     <% } else { %>
@@ -404,32 +356,303 @@
                 <i class="fas fa-search"></i> Explore Products
             </a>
         </div>
-        <style>
-            .empty-cart-message {
-                font-size: 1.5rem;
-                font-weight: bold;
-                color: #ababab;
-                margin-top: 20px;
-            }
-            .btn-explore {
-                background-color: black;
-                color: white;
-                padding: 10px 20px;
-                font-size: 1.2rem;
-                border-radius: 8px;
-                text-decoration: none;
-                transition: background 0.3s ease, transform 0.2s;
-                display: inline-block;
-            }
-            .btn-explore:hover {
-                background-color: #035925;
-                transform: scale(1.05);
-                color: white;
-            }
-        </style>
     <% } %>
 </div>
 
+<style>
+    .cart-items {
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .cart-item {
+        background: #2a2a2a;
+        padding: 5px;
+        border-radius: 4px;
+        margin-bottom: 7px;
+        flex-wrap: wrap; /* Allow wrapping on small screens */
+    }
+
+    .cart-item-details {
+        flex: 1;
+        min-width: 0; /* Prevent overflow */
+    }
+
+    .item-name {
+        font-size: 1.2rem;
+        color: #e0e0e0;
+        margin-bottom: 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .item-price {
+        font-size: 1rem;
+        color: #b0b0b0;
+        margin-bottom: 10px;
+    }
+
+    .quantity-form {
+        gap: 5px;
+    }
+
+    .btn-custom {
+        background: #4CAF50;
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+    }
+
+    .btn-custom:hover {
+        background: #66BB6A;
+    }
+
+    .btn-custom:disabled {
+        background: #666;
+        cursor: not-allowed;
+    }
+
+    .quantity-display {
+        font-size: 1rem;
+        color: #e0e0e0;
+    }
+
+    .quantity-label {
+        font-size: 0.9rem;
+        color: #b0b0b0;
+    }
+
+    .unavailable-text {
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    .cart-item-actions {
+        margin-left: 10px;
+    }
+
+    .btn-danger {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+
+    .remove-text {
+        margin-left: 5px;
+    }
+
+    .total {
+        font-size: 1.2rem;
+        color: #e0e0e0;
+        margin-top: 15px;
+    }
+
+    .btn-checkout {
+        background: #035925;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 1.1rem;
+        border-radius: 8px;
+        transition: background 0.3s ease, transform 0.2s;
+    }
+
+    .btn-checkout:hover {
+        background: #046d2f;
+        transform: scale(1.05);
+    }
+
+    .empty-cart-message {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ababab;
+        margin-top: 20px;
+    }
+
+    .btn-explore {
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: background 0.3s ease, transform 0.2s;
+    }
+
+    .btn-explore:hover {
+        background-color: #035925;
+        transform: scale(1.05);
+        color: #fff;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .cart-items {
+            padding: 10px; /* Reduced padding to decrease height */
+        }
+
+        .cart-item {
+            padding: 8px; /* Reduced padding */
+            margin-bottom: 8px; /* Reduced margin */
+            flex-direction: column; /* Stack vertically */
+            align-items: flex-start;
+        }
+
+        .cart-item-details {
+            width: 100%;
+            margin-bottom: 5px; /* Reduced spacing */
+        }
+
+        .item-name {
+            font-size: 1rem;
+        }
+
+        .item-price {
+            font-size: 0.9rem;
+            margin-bottom: 5px; /* Reduced spacing */
+        }
+
+        .quantity-form {
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .btn-custom {
+            padding: 4px 8px;
+            font-size: 0.9rem;
+        }
+
+        .quantity-display {
+            font-size: 0.9rem;
+        }
+
+        .quantity-label {
+            font-size: 0.8rem;
+        }
+
+        .cart-item-actions {
+            margin-left: 0;
+            width: 100%;
+            text-align: right;
+            margin-top: 5px; /* Reduced spacing */
+        }
+
+        .btn-danger {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+
+        .remove-text {
+            display: none; /* Hide "Remove" text, keep icon */
+        }
+
+        .total {
+            font-size: 1.1rem;
+            text-align: center;
+            margin-top: 10px; /* Reduced spacing */
+        }
+
+        .checkout-wrapper {
+            text-align: center;
+            margin-top: 10px; /* Reduced spacing */
+        }
+
+        .btn-checkout {
+            padding: 8px 15px;
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cart-items {
+            padding: 8px; /* Further reduced padding */
+        }
+
+        .cart-item {
+            padding: 6px; /* Further reduced padding */
+            margin-bottom: 6px; /* Further reduced margin */
+        }
+
+        .item-name {
+            font-size: 0.9rem;
+        }
+
+        .item-price {
+            font-size: 0.8rem;
+            margin-bottom: 3px; /* Further reduced spacing */
+        }
+
+        .btn-custom {
+            padding: 3px 6px;
+            font-size: 0.8rem;
+        }
+
+        .quantity-display {
+            font-size: 0.8rem;
+        }
+
+        .quantity-label {
+            font-size: 0.7rem;
+        }
+
+        .btn-danger {
+            padding: 5px 10px;
+        }
+
+        .total {
+            font-size: 1rem;
+            margin-top: 8px; /* Further reduced spacing */
+        }
+
+        .btn-checkout {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+
+        .empty-cart-message {
+            font-size: 1.2rem;
+            margin-top: 15px; /* Reduced spacing */
+        }
+
+        .btn-explore {
+            padding: 8px 15px;
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<script>
+    function updateQuantity(itemId, change) {
+        event.preventDefault();
+
+        let quantityInput = document.getElementById(`quantity-${itemId}`);
+        let quantityDisplay = document.getElementById(`quantity-display-${itemId}`);
+        let quantityLabel = document.getElementById(`quantity-label-${itemId}`);
+
+        let currentQuantity = parseInt(quantityInput.value, 10);
+        let newQuantity = currentQuantity + change;
+
+        if (newQuantity >= 1) {
+            quantityInput.value = newQuantity;
+            quantityDisplay.textContent = newQuantity;
+
+            let unit = quantityInput.getAttribute("data-unit");
+            let label = "items";
+            if (unit === "gram") {
+                label = newQuantity === 1 ? "gram" : "grams";
+            } else if (unit === "piece") {
+                label = newQuantity === 1 ? "piece" : "pieces";
+            } else if (unit === "pack") {
+                label = newQuantity === 1 ? "pack" : "packs";
+            }
+
+            quantityLabel.textContent = label;
+            quantityInput.form.submit();
+        }
+    }
+</script>
 
 <!-- In your cart.ejs or equivalent template -->
 <% if (typeof showModal !== 'undefined' && showModal) { %>
@@ -944,10 +1167,45 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 </style>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <p>© 2025 Cloud 420 Store. All rights reserved.</p>
-        </footer>
+          <!-- Footer -->
+<footer class="footer">
+    <p>
+        © <%= new Date().getFullYear() %> Cloud 420. All Rights Reserved. 
+        <a href="/terms" class="terms-link">Terms of Cosmic Conduct</a> | Crafted for Excellence.
+    </p>
+</footer>
+
+<style>
+    .footer {
+        color: #ffffff;
+        text-align: center;
+        padding: 20px 0;
+        font-size: 0.9rem;
+        margin-top: auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .terms-link {
+        color: #587a60; /* Muted green to match your theme */
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+    .terms-link:hover {
+        color: #b3ffb3; /* Brighter green on hover */
+        text-shadow: 0 0 5px rgba(0, 204, 0, 0.5);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 576px) {
+        .footer {
+            font-size: 0.8rem;
+            padding: 15px 0;
+        }
+    }
+</style>
 
                <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
