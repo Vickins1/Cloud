@@ -194,7 +194,7 @@ app.get('/', async (req, res) => {
       }
       const products = await Product.find()
           .sort({ createdAt: -1 })
-          .limit(3);
+          .limit(4);
       const success = req.flash('success_msg')[0] || null;
       const error = req.flash('error_msg')[0] || null;
       res.render('index', { 
