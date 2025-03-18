@@ -87,37 +87,6 @@
             border: none;
             color: #fff;
         }
-
-        /* Cart item and other styles remain unchanged */
-        .cart-item {
-            background: rgba(28, 28, 28, 0.95);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .cart-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .cart-item h5 {
-            font-size: 1.2rem;
-            margin: 0;
-            color: #fff;
-            font-weight: 600;
-        }
-
-        .cart-item p {
-            margin: 5px 0;
-            color: #a0a0a0;
-        }
-
         .quantity-controls {
             display: flex;
             align-items: center;
@@ -147,75 +116,12 @@
             color: #fff;
         }
 
-        .btn-danger {
-            background: linear-gradient(45deg, #005000, #ff0b0b);
-            border: none;
-            border-radius: 25px;
-            padding: 8px 20px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(104, 0, 26, 0.3);
-            color: #fff;
-        }
-
-        .total {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #00cc66;
-            background: rgba(0, 204, 102, 0.1);
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .btn-checkout {
-            background: linear-gradient(45deg, #00340e, #009619);
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            margin-bottom: 50px;
-        }
-
-        .btn-checkout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 76, 11, 0.873);
-            color: #fff;
-        }
         
         @media (max-width: 768px) {
             .footer {
                 padding: 15px 0;
             }
 
-            .cart-item {
-                flex-direction: column;
-                text-align: center;
-                width: 80%;
-                margin: 0 auto;
-                gap: 10px;
-                margin-top: 10px;
-            }
-
-            .cart-item div {
-                margin-bottom: 15px;
-            }
-
-            .btn-checkout {
-                margin-right: 80px;
-                margin-left: 50px;
-                font-size: 0.8rem;
-            }
-
-            .total {
-                margin-right: 50px;
-                margin-left: 50px;
-                font-size: 1.4rem;
-            }
         }
 
         @media (max-width: 480px) {
@@ -293,36 +199,36 @@
 
                     <% if (item.productId) { %>
                         <form action="/cart/update/<%= item.productId._id %>" method="POST" class="d-flex align-items-center quantity-form">
-                            <input type="hidden" name="itemId" value="<%= item.productId._id %>">
-                            <input type="hidden" name="quantity" id="quantity-<%= item._id %>"
-                                value="<%= item.quantity %>" data-unit="<%= item.productId.quantityType %>">
-                            
-                            <button type="submit" class="btn btn-custom quantity-decrease mx-1"
-                                onclick="updateQuantity('<%= item._id %>', -1)" <%= item.quantity <= 1 ? 'disabled' : '' %>
-                                aria-label="Decrease quantity">
-                                ➖
-                            </button>
-                            
-                            <span class="mx-2 font-weight-bold quantity-display" id="quantity-display-<%= item._id %>">
-                                <%= item.quantity %>
-                            </span>
-                            
-                            <span class="quantity-label" id="quantity-label-<%= item._id %>">
-                                <% if (item.productId.quantityType === 'gram') { %>
-                                    <%= item.quantity === 1 ? 'gram' : 'grams' %>
-                                <% } else if (item.productId.quantityType === 'piece') { %>
-                                    <%= item.quantity === 1 ? 'piece' : 'pieces' %>
-                                <% } else if (item.productId.quantityType === 'pack') { %>
-                                    <%= item.quantity === 1 ? 'pack' : 'packs' %>
-                                <% } %>
-                            </span>
-                            
-                            <button type="submit" class="btn btn-custom quantity-increase mx-1"
-                                onclick="updateQuantity('<%= item._id %>', 1)" <%= item.productId.stockQuantity && item.quantity >= item.productId.stockQuantity ? 'disabled' : '' %>
-                                aria-label="Increase quantity">
-                                ➕
-                            </button>
-                        </form>
+    <input type="hidden" name="itemId" value="<%= item.productId._id %>">
+    <input type="hidden" name="quantity" id="quantity-<%= item._id %>"
+        value="<%= item.quantity %>" data-unit="<%= item.productId.quantityType %>">
+    
+    <button type="submit" class="btn btn-custom quantity-decrease mx-1"
+        onclick="updateQuantity('<%= item._id %>', -1)" <%= item.quantity <= 1 ? 'disabled' : '' %>
+        aria-label="Decrease quantity">
+        <i class="fas fa-minus" style="color: #fff;"></i>
+    </button>
+    
+    <span class="mx-2 font-weight-bold quantity-display" id="quantity-display-<%= item._id %>">
+        <%= item.quantity %>
+    </span>
+    
+    <span class="quantity-label" id="quantity-label-<%= item._id %>">
+        <% if (item.productId.quantityType === 'gram') { %>
+            <%= item.quantity === 1 ? 'gram' : 'grams' %>
+        <% } else if (item.productId.quantityType === 'piece') { %>
+            <%= item.quantity === 1 ? 'piece' : 'pieces' %>
+        <% } else if (item.productId.quantityType === 'pack') { %>
+            <%= item.quantity === 1 ? 'pack' : 'packs' %>
+        <% } %>
+    </span>
+    
+    <button type="submit" class="btn btn-custom quantity-increase mx-1"
+        onclick="updateQuantity('<%= item._id %>', 1)" <%= item.productId.stockQuantity && item.quantity >= item.productId.stockQuantity ? 'disabled' : '' %>
+        aria-label="Increase quantity">
+        <i class="fas fa-plus" style="color: #fff;"></i>
+    </button>
+</form>
                     <% } else { %>
                         <p class="text-danger unavailable-text">This product is no longer available.</p>
                     <% } %>
@@ -361,54 +267,54 @@
 
 <style>
     .cart-items {
-        padding: 20px;
+        padding: 15px;
         max-width: 800px;
         margin: 0 auto;
     }
 
     .cart-item {
-        background: #2a2a2a;
-        padding: 5px;
+        background: #000000;
+        padding: 8px; /* Reduced from 15px */
         border-radius: 4px;
-        margin-bottom: 7px;
-        flex-wrap: wrap; /* Allow wrapping on small screens */
+        margin-bottom: 5px; /* Reduced from 7px */
+        flex-wrap: wrap;
     }
 
     .cart-item-details {
         flex: 1;
-        min-width: 0; /* Prevent overflow */
+        min-width: 0;
     }
 
     .item-name {
-        font-size: 1.2rem;
-        color: #e0e0e0;
-        margin-bottom: 5px;
+        font-size: 1rem; /* Reduced from 1.2rem */
+        color: #ffffff;
+        margin-bottom: 3px; /* Reduced from 5px */
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .item-price {
-        font-size: 1rem;
-        color: #b0b0b0;
-        margin-bottom: 10px;
+        font-size: 0.9rem; /* Reduced from 1rem */
+        color: #ffffff;
+        margin-bottom: 5px; /* Reduced from 10px */
     }
 
     .quantity-form {
-        gap: 5px;
+        gap: 3px; /* Reduced from 5px */
     }
 
     .btn-custom {
-        background: #4CAF50;
+        background: #2e6b3a; /* Darker green to match theme */
         color: #fff;
-        padding: 5px 10px;
-        font-size: 1rem;
-        border-radius: 5px;
+        padding: 3px 6px; /* Reduced from 5px 10px */
+        font-size: 0.8rem; /* Reduced from 1rem */
+        border-radius: 4px;
         transition: background 0.3s ease;
     }
 
     .btn-custom:hover {
-        background: #66BB6A;
+        background: #3a8a4b;
     }
 
     .btn-custom:disabled {
@@ -417,72 +323,72 @@
     }
 
     .quantity-display {
-        font-size: 1rem;
-        color: #e0e0e0;
+        font-size: 0.9rem; /* Reduced from 1rem */
+        color: #ffffff;
     }
 
     .quantity-label {
-        font-size: 0.9rem;
-        color: #b0b0b0;
+        font-size: 0.8rem; /* Reduced from 0.9rem */
+        color: #d5d5d5;
     }
 
     .unavailable-text {
-        font-size: 0.9rem;
+        font-size: 0.8rem; /* Reduced from 0.9rem */
         margin: 0;
     }
 
     .cart-item-actions {
-        margin-left: 10px;
+        margin-left: 5px; /* Reduced from 10px */
     }
 
     .btn-danger {
-        padding: 8px 15px;
-        font-size: 0.9rem;
+        padding: 4px 8px; /* Reduced from 8px 15px */
+        font-size: 0.7rem; /* Reduced from 0.9rem */
     }
 
     .remove-text {
-        margin-left: 5px;
+        margin-left: 3px; /* Reduced from 5px */
     }
 
     .total {
-        font-size: 1.2rem;
-        color: #e0e0e0;
-        margin-top: 15px;
+        font-size: 1.1rem; /* Reduced from 1.2rem */
+        color: #ffffff;
+        margin-top: 10px; /* Reduced from 15px */
     }
 
     .btn-checkout {
-        background: #035925;
+        background: #2e6b3a; /* Darker green */
         color: #fff;
-        padding: 10px 20px;
-        font-size: 1.1rem;
-        border-radius: 8px;
+        padding: 6px 12px; /* Reduced from 10px 20px */
+        font-size: 1rem; /* Reduced from 1.1rem */
+        border-radius: 6px;
         transition: background 0.3s ease, transform 0.2s;
     }
 
     .btn-checkout:hover {
-        background: #046d2f;
+        background: #3a8a4b;
         transform: scale(1.05);
     }
 
     .empty-cart-message {
-        font-size: 1.5rem;
+        font-size: 1.3rem; /* Reduced from 1.5rem */
         font-weight: bold;
         color: #ababab;
-        margin-top: 20px;
+        margin-top: 15px; /* Reduced from 20px */
     }
 
     .btn-explore {
-        background-color: #000;
+        background-color: #1a1a1a; /* Darker to match theme */
         color: #fff;
-        padding: 10px 20px;
-        font-size: 1.2rem;
-        border-radius: 8px;
+        padding: 6px 12px; /* Reduced from 10px 20px */
+        font-size: 1rem; /* Reduced from 1.2rem */
+        border-radius: 6px;
         text-decoration: none;
         transition: background 0.3s ease, transform 0.2s;
     }
 
     .btn-explore:hover {
-        background-color: #035925;
+        background-color: #2e6b3a;
         transform: scale(1.05);
         color: #fff;
     }
@@ -490,103 +396,38 @@
     /* Responsive Adjustments */
     @media (max-width: 768px) {
         .cart-items {
-            padding: 10px; /* Reduced padding to decrease height */
+            padding: 10px;
         }
 
         .cart-item {
-            padding: 8px; /* Reduced padding */
-            margin-bottom: 8px; /* Reduced margin */
-            flex-direction: column; /* Stack vertically */
+            padding: 6px; /* Further reduced */
+            margin-bottom: 4px; /* Further reduced */
+            flex-direction: column;
             align-items: flex-start;
         }
 
         .cart-item-details {
             width: 100%;
-            margin-bottom: 5px; /* Reduced spacing */
+            margin-bottom: 3px; /* Further reduced */
         }
 
         .item-name {
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .item-price {
-            font-size: 0.9rem;
-            margin-bottom: 5px; /* Reduced spacing */
+            font-size: 0.8rem;
+            margin-bottom: 3px; /* Further reduced */
         }
 
         .quantity-form {
             flex-wrap: wrap;
-            gap: 3px;
+            gap: 2px; /* Further reduced */
         }
 
         .btn-custom {
-            padding: 4px 8px;
-            font-size: 0.9rem;
-        }
-
-        .quantity-display {
-            font-size: 0.9rem;
-        }
-
-        .quantity-label {
-            font-size: 0.8rem;
-        }
-
-        .cart-item-actions {
-            margin-left: 0;
-            width: 100%;
-            text-align: right;
-            margin-top: 5px; /* Reduced spacing */
-        }
-
-        .btn-danger {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
-
-        .remove-text {
-            display: none; /* Hide "Remove" text, keep icon */
-        }
-
-        .total {
-            font-size: 1.1rem;
-            text-align: center;
-            margin-top: 10px; /* Reduced spacing */
-        }
-
-        .checkout-wrapper {
-            text-align: center;
-            margin-top: 10px; /* Reduced spacing */
-        }
-
-        .btn-checkout {
-            padding: 8px 15px;
-            font-size: 1rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .cart-items {
-            padding: 8px; /* Further reduced padding */
-        }
-
-        .cart-item {
-            padding: 6px; /* Further reduced padding */
-            margin-bottom: 6px; /* Further reduced margin */
-        }
-
-        .item-name {
-            font-size: 0.9rem;
-        }
-
-        .item-price {
-            font-size: 0.8rem;
-            margin-bottom: 3px; /* Further reduced spacing */
-        }
-
-        .btn-custom {
-            padding: 3px 6px;
-            font-size: 0.8rem;
+            padding: 2px 5px; /* Further reduced */
+            font-size: 0.7rem;
         }
 
         .quantity-display {
@@ -597,28 +438,94 @@
             font-size: 0.7rem;
         }
 
+        .cart-item-actions {
+            margin-left: 0;
+            width: 100%;
+            text-align: right;
+            margin-top: 3px; /* Further reduced */
+        }
+
         .btn-danger {
-            padding: 5px 10px;
+            padding: 3px 6px; /* Further reduced */
+            font-size: 0.6rem;
+        }
+
+        .remove-text {
+            display: none; /* Hide text */
         }
 
         .total {
             font-size: 1rem;
-            margin-top: 8px; /* Further reduced spacing */
+            text-align: center;
+            margin-top: 8px; /* Further reduced */
+        }
+
+        .checkout-wrapper {
+            text-align: center;
+            margin-top: 8px; /* Further reduced */
         }
 
         .btn-checkout {
-            padding: 6px 12px;
+            padding: 5px 10px; /* Further reduced */
             font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cart-items {
+            padding: 8px;
+        }
+
+        .cart-item {
+            padding: 5px; /* Further reduced */
+            margin-bottom: 3px; /* Further reduced */
+        }
+
+        .item-name {
+            font-size: 0.8rem;
+        }
+
+        .item-price {
+            font-size: 0.7rem;
+            margin-bottom: 2px; /* Further reduced */
+        }
+
+        .btn-custom {
+            padding: 2px 4px; /* Further reduced */
+            font-size: 0.6rem;
+        }
+
+        .quantity-display {
+            font-size: 0.7rem;
+        }
+
+        .quantity-label {
+            font-size: 0.6rem;
+        }
+
+        .btn-danger {
+            padding: 3px 5px; /* Further reduced */
+            font-size: 0.6rem;
+        }
+
+        .total {
+            font-size: 0.9rem;
+            margin-top: 6px; /* Further reduced */
+        }
+
+        .btn-checkout {
+            padding: 4px 8px; /* Further reduced */
+            font-size: 0.8rem;
         }
 
         .empty-cart-message {
-            font-size: 1.2rem;
-            margin-top: 15px; /* Reduced spacing */
+            font-size: 1.1rem;
+            margin-top: 10px; /* Further reduced */
         }
 
         .btn-explore {
-            padding: 8px 15px;
-            font-size: 1rem;
+            padding: 5px 10px; /* Further reduced */
+            font-size: 0.9rem;
         }
     }
 </style>
@@ -666,7 +573,7 @@
 <!-- Checkout Modal -->
 <div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #1c1c1c 0%, #2d2d2d 100%);">
+        <div class="modal-content shadow-lg" style="border: none; background: linear-gradient(135deg, #000000 0%, #150000 100%);">
             <div class="modal-header border-0" style="background: #035925; color: white;">
                 <h5 class="modal-title" id="checkoutModalLabel">
                     <i class="fas fa-check-circle mr-2"></i> Checkout
