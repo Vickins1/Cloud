@@ -420,9 +420,10 @@ router.get('/users', isAdmin, async (req, res) => {
         // Fetch current user (if logged in)
         const currentUser = req.user ? await User.findById(req.user._id).lean() : null;
 
-        // Fetch total users and paginated users
+        // Fetch total users and paginated users, sorted by creation date (newest first)
         const totalUsers = await User.countDocuments();
         const users = await User.find()
+            .sort({ createdAt: -1 }) // Sort by creation date, descending (newest first)
             .skip(skip)
             .limit(limit)
             .lean();
@@ -446,7 +447,6 @@ router.get('/users', isAdmin, async (req, res) => {
         res.redirect('/admin/dashboard');
     }
 });
-
 // Toggle Admin Status
 router.post('/users/toggle-admin/:id', async (req, res) => {
     try {

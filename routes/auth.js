@@ -92,28 +92,31 @@ router.post('/signup', async (req, res) => {
 // Handle user login
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      console.error('Login error:', err);
+      req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
+      return res.redirect('/auth/login');
+    }
+    if (!user) {
+      req.flash('error_msg', 'Invalid username or password.');
+      return res.redirect('/auth/login');
+    }
+    if (!user.isVerified) {
+      req.flash('error_msg', 'Please verify your account before logging in.');
+      return res.redirect('/auth/verify');
+    }
+    req.logIn(user, (err) => {
       if (err) {
-          console.error('Login error:', err);
-          req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
-          return res.redirect('/auth/login');
-      }
-      if (!user) {
-          req.flash('error_msg', 'Invalid username or password.');
-          return res.redirect('/auth/login');
+        console.error('Login error:', err);
+        req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
+        return res.redirect('/auth/login');
       }
 
-      req.logIn(user, (err) => {
-          if (err) {
-              console.error('Login error:', err);
-              req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
-              return res.redirect('/auth/login');
-          }
-
-          // Success login
-          req.flash('success_msg', `Welcome back, ${user.username}! You’re now logged in.`);
-          const redirectTo = user.isAdmin ? '/admin/dashboard' : '/home';
-          res.redirect(redirectTo);
-      });
+      // Success login
+      req.flash('success_msg', `Welcome back, ${user.username}! You’re now logged in.`);
+      const redirectTo = user.isAdmin ? '/admin/dashboard' : '/home';
+      res.redirect(redirectTo);
+    });
   })(req, res, next);
 });
 
@@ -132,10 +135,10 @@ router.get('/logout', (req, res, next) => {
 router.get('/verify', (req, res) => {
   const success = req.flash('success_msg')[0] || null;
   const error = req.flash('error_msg')[0] || null;
-  res.render('verify', { 
-      title: 'Verify Email | Cloud 420',
-      success,
-      error
+  res.render('verify', {
+    title: 'Verify Email | Cloud 420',
+    success,
+    error
   });
 });
 
@@ -144,27 +147,27 @@ router.post('/verify', async (req, res) => {
   const { code } = req.body;
 
   try {
-      const user = await User.findOne({
-          verificationCode: code,
-          verificationCodeExpires: { $gt: Date.now() }
-      });
+    const user = await User.findOne({
+      verificationCode: code,
+      verificationCodeExpires: { $gt: Date.now() }
+    });
 
-      if (!user) {
-          req.flash('error_msg', 'Invalid or expired verification code.');
-          return res.redirect('/auth/verify');
-      }
+    if (!user) {
+      req.flash('error_msg', 'Invalid or expired verification code.');
+      return res.redirect('/auth/verify');
+    }
 
-      user.isVerified = true;
-      user.verificationCode = undefined;
-      user.verificationCodeExpires = undefined;
-      await user.save();
+    user.isVerified = true;
+    user.verificationCode = undefined;
+    user.verificationCodeExpires = undefined;
+    await user.save();
 
-      req.flash('success_msg', 'Email verified successfully! Please log in.');
-      res.redirect('/auth/login');
+    req.flash('success_msg', 'Email verified successfully! Please log in.');
+    res.redirect('/auth/login');
   } catch (err) {
-      console.error('Error in verification:', err);
-      req.flash('error_msg', 'Verification failed. Please try again.');
-      res.redirect('/auth/verify');
+    console.error('Error in verification:', err);
+    req.flash('error_msg', 'Verification failed. Please try again.');
+    res.redirect('/auth/verify');
   }
 });
 
@@ -214,8 +217,8 @@ router.get('/reset-password/:token', async (req, res) => {
 
     const success = req.flash('success_msg')[0] || null;
     const error = req.flash('error_msg')[0] || null;
-    
-    res.render('reset-password', { 
+
+    res.render('reset-password', {
       title: 'Reset Password | Cloud 420',
       token: req.params.token,
       success,
