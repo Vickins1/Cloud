@@ -151,28 +151,27 @@ router.get('/products', isAdmin, async (req, res) => {
         // Fetch user data if logged in
         const user = req.user ? await User.findById(req.user._id).lean() : null;
 
-        // Get total product count and calculate pages
+        // Get total product count
         const totalProducts = await Product.countDocuments();
-        const totalPages = Math.ceil(totalProducts / perPage);
+        const totalPages = Math.max(1, Math.ceil(totalProducts / perPage));
 
-        // Fetch products sorted by createdAt (newest first) with pagination
+        // Ensure page number is within valid range
+        page = Math.max(1, Math.min(page, totalPages));
+
+        // Fetch paginated products
         const products = await Product.find()
-            .sort({ createdAt: -1 }) // Sort by creation date, descending
+            .sort({ createdAt: -1 }) // Sort by newest first
             .skip((page - 1) * perPage)
             .limit(perPage)
-            .lean(); // Use .lean() for plain JS objects
-
-        if (!products || products.length === 0) {
-            console.warn('No products found for page:', page);
-        }
+            .lean(); 
 
         res.render('admin/products', {
-            products: products || [], // Fallback to empty array if no products
+            products: products || [],
             totalPages,
             currentPage: page,
-            user: user || {}, // Pass user with fallback
+            user: user || {},
             messageCount: user?.messageCount || 0,
-            success_msg: req.flash('success_msg'), // Include flash messages
+            success_msg: req.flash('success_msg'),
             error_msg: req.flash('error_msg')
         });
     } catch (error) {

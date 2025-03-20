@@ -194,13 +194,6 @@
                                                                     </span>
                                                                 </td>
                                                                 <td>
-                                                                    <!-- Toggle Admin Form -->
-                                                                    <form action="/admin/users/toggle-admin/<%= user._id %>" method="POST" style="display:inline;">
-                                                                        <button type="submit" class="btn btn-sm <%= user.isAdmin ? 'btn-warning' : 'btn-success' %> mr-2" title="<%= user.isAdmin ? 'Remove Admin' : 'Make Admin' %>">
-                                                                            <i class="fas <%= user.isAdmin ? 'fa-user-minus' : 'fa-user-plus' %>"></i>
-                                                                            <%= user.isAdmin ? 'Remove' : 'Make' %> Admin
-                                                                        </button>
-                                                                    </form>
                                                                     <!-- Delete Form -->
                                                                     <form action="/admin/users/delete/<%= user._id %>" method="POST" onsubmit="return confirmDelete()" style="display:inline;">
                                                                         <button type="submit" class="btn btn-sm btn-danger">
@@ -215,25 +208,28 @@
                                             </div>
                                         
                                             <!-- Pagination Controls -->
-                                            <nav>
-                                                <ul class="pagination justify-content-center">
-                                                    <% if (currentPage > 1) { %>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
-                                                        </li>
-                                                    <% } %>
-                                                    <% for (let i = 1; i <= totalPages; i++) { %>
-                                                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                                                        </li>
-                                                    <% } %>
-                                                    <% if (currentPage < totalPages) { %>
-                                                        <li class="page-item">
-                                                            <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-                                                        </li>
-                                                    <% } %>
-                                                </ul>
-                                            </nav>
+<nav>
+    <ul class="pagination justify-content-center">
+        <% if (currentPage > 1) { %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+            </li>
+        <% } %>
+
+        <% for (let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= (currentPage === i) ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+            </li>
+        <% } %>
+
+        <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+            </li>
+        <% } %>
+    </ul>
+</nav>
+
                                         </div>
                                         
                                     </div>
