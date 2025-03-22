@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const User = require('../models/user');
 require('dotenv').config();
 
 // Validate environment variables
@@ -22,6 +23,17 @@ const transporter = nodemailer.createTransport({
     maxConnections: 5,
     maxMessages: 100,
 });
+
+// Fixed HTML escape function (corrected entity replacements)
+function escapeHtml(str) {
+    if (typeof str !== 'string') return str;
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
 
 const generateEmailTemplate = ({ headerTitle, content, host }) => `
     <!DOCTYPE html>
@@ -195,6 +207,26 @@ const generateEmailTemplate = ({ headerTitle, content, host }) => `
     </html>
 `;
 
+// Utility function to send emails with retry logic
+async function sendEmail(mailOptions, type) {
+    const maxRetries = 3;
+    let attempt = 0;
+    while (attempt < maxRetries) {
+        try {
+            await transporter.sendMail(mailOptions);
+            console.log(`${type} email sent to ${mailOptions.to}`);
+            return;
+        } catch (error) {
+            attempt++;
+            console.error(`Attempt ${attempt} failed to send ${type} email:`, error);
+            if (attempt === maxRetries) {
+                throw new Error(`Failed to send ${type} email after ${maxRetries} attempts: ${error.message}`);
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+    }
+}
+
 const emailService = {
     async sendOrderConfirmation({ customerName, customerEmail, cloudOrderId, total, items = [], host }) {
         if (!customerEmail) throw new Error('Customer email is required');
@@ -226,38 +258,36 @@ const emailService = {
         await sendEmail(mailOptions, 'Order confirmation');
     },
 
-    // Add this new method inside the emailService object
-async sendNewOrderNotificationToAdmin({ customerName, cloudOrderId, total, items = [], host }) {
-    const content = `
-        <p class="greeting">New Order Alert!</p>
-        <p>A new order has been placed by ${escapeHtml(customerName)}. Here are the details:</p>
-        <table class="details-table">
-            <tr><td>Order ID</td><td>${escapeHtml(cloudOrderId)}</td></tr>
-            <tr><td>Customer</td><td>${escapeHtml(customerName)}</td></tr>
-            <tr><td>Total</td><td>KES ${Number(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td></tr>
-            <tr><td>Order Date</td><td>${new Date().toLocaleString()}</td></tr>
-        </table>
-        ${items.length > 0 ? `
-            <table class="items-table">
-                <tr><th>Product</th><th>Qty & Price</th></tr>
-                ${items.map(item => `
-                    <tr>
-                        <td>${escapeHtml(item.productId.name || 'Item')}</td>
-                        <td>x${Number(item.quantity)} - KES ${(Number(item.price || item.productId.price) * Number(item.quantity)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
-                    </tr>
-                `).join('')}
+    async sendNewOrderNotificationToAdmin({ customerName, cloudOrderId, total, items = [], host }) {
+        const content = `
+            <p class="greeting">New Order Alert!</p>
+            <p>A new order has been placed by ${escapeHtml(customerName)}. Here are the details:</p>
+            <table class="details-table">
+                <tr><td>Order ID</td><td>${escapeHtml(cloudOrderId)}</td></tr>
+                <tr><td>Customer</td><td>${escapeHtml(customerName)}</td></tr>
+                <tr><td>Total</td><td>KES ${Number(total).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td></tr>
+                <tr><td>Order Date</td><td>${new Date().toLocaleString()}</td></tr>
             </table>
-        ` : '<p>No items to display for this order.</p>'}
-    `;
-    
-    const mailOptions = {
-        from: `Cloud 420 Store <${EMAIL_USER}>`,
-        to: ADMIN_EMAIL,
-        subject: `New Order Alert: #${escapeHtml(cloudOrderId)} 🌿`,
-        html: generateEmailTemplate({ headerTitle: 'New Order Received', content, host }),
-    };
-    await sendEmail(mailOptions, 'New order notification');
-},
+            ${items.length > 0 ? `
+                <table class="items-table">
+                    <tr><th>Product</th><th>Qty & Price</th></tr>
+                    ${items.map(item => `
+                        <tr>
+                            <td>${escapeHtml(item.productId.name || 'Item')}</td>
+                            <td>x${Number(item.quantity)} - KES ${(Number(item.price || item.productId.price) * Number(item.quantity)).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td>
+                        </tr>
+                    `).join('')}
+                </table>
+            ` : '<p>No items to display for this order.</p>'}
+        `;
+        const mailOptions = {
+            from: `Cloud 420 Store <${EMAIL_USER}>`,
+            to: ADMIN_EMAIL,
+            subject: `New Order Alert: #${escapeHtml(cloudOrderId)} 🌿`,
+            html: generateEmailTemplate({ headerTitle: 'New Order Received', content, host }),
+        };
+        await sendEmail(mailOptions, 'New order notification');
+    },
 
     async sendDeliveryConfirmation({ customerName, customerEmail, cloudOrderId, total, items = [], deliveredAt, host }) {
         if (!customerEmail) throw new Error('Customer email is required');
@@ -359,8 +389,6 @@ async sendNewOrderNotificationToAdmin({ customerName, cloudOrderId, total, items
         await sendEmail(mailOptions, 'Payment failure');
     },
 
-
-
     async sendPaymentConfirmation({ customerName, customerEmail, transactionRequestId, amount, host }) {
         if (!customerEmail) throw new Error('Customer email is required');
         const content = `
@@ -403,59 +431,109 @@ async sendNewOrderNotificationToAdmin({ customerName, cloudOrderId, total, items
         await sendEmail(mailOptions, 'Password reset');
     },
 
-    // New Support Reply Method
     async sendSupportReply({ customerName, customerEmail, messageId, originalMessage, reply, host }) {
-        if (!customerEmail) throw new Error('Customer email is required');
+        if (!customerEmail) throw new Error('Customer email is required for support reply');
+        if (!messageId || !originalMessage || !reply) throw new Error('Support reply requires message ID, original message, and reply content');
         const content = `
-            <p class="greeting">Greetings ${escapeHtml(customerName)},</p>
-            <p>We’ve got a response to your support request! Here’s the rundown:</p>
+            <p class="greeting">Dear ${escapeHtml(customerName || 'Valued Customer')},</p>
+            <p>Thank you for reaching out to Cloud 420 Support. We’ve reviewed your request and are pleased to provide the following response:</p>
             <table class="details-table">
-                <tr><td>Request ID</td><td>${escapeHtml(messageId)}</td></tr>
-                <tr><td>Your Message</td><td>${escapeHtml(originalMessage)}</td></tr>
-                <tr><td>Our Reply</td><td>${escapeHtml(reply)}</td></tr>
+                <tr><td><strong>Reference ID</strong></td><td>${escapeHtml(messageId)}</td></tr>
+                <tr><td><strong>Your Inquiry</strong></td><td>${escapeHtml(originalMessage)}</td></tr>
+                <tr><td><strong>Our Response</strong></td><td>${escapeHtml(reply)}</td></tr>
             </table>
-            <p>Hope this clears the clouds! If you need more help, hit us back anytime.</p>
-            <p><a href="https://${host}/support" class="cta">Contact Us Again</a></p>
+            <p>We hope this resolves your inquiry. Should you have additional questions or require further assistance, please don’t hesitate to contact us.</p>
+            <p><a href="https://${host}/support" class="cta">Submit Another Request</a></p>
+            <p>Best regards,<br>The Cloud 420 Support Team</p>
         `;
         const mailOptions = {
             from: `Cloud 420 Support <${EMAIL_USER}>`,
             to: customerEmail,
-            subject: `Cloud 420 Support - Request #${escapeHtml(messageId)} 🌿`,
-            html: generateEmailTemplate({ headerTitle: 'Support Response', content, host }),
+            subject: `Cloud 420 Support - Resolution for Request #${escapeHtml(messageId)}`,
+            html: generateEmailTemplate({ headerTitle: 'Support Resolution', content, host }),
         };
-        await sendEmail(mailOptions, 'Support reply');
+        try {
+            await sendEmail(mailOptions, 'Support reply');
+            console.log(`Support reply sent successfully to ${customerEmail} for message ID ${messageId}`);
+        } catch (error) {
+            console.error(`Failed to send support reply for message ID ${messageId}:`, error);
+            throw new Error(`Unable to send support reply: ${error.message}`);
+        }
+    },
+
+    async sendNewProductNotification({ productName, productPrice, productDescription, productCategory, productImage, host }) {
+        try {
+            const users = await User.find({}).select('email username');
+            if (!users || users.length === 0) {
+                console.log('No registered users found to notify');
+                return;
+            }
+            
+            const sendPromises = users.map(user => {
+                const content = `
+                    <p class="greeting">Hey ${escapeHtml(user.username || 'Valued Customer')}</p>
+                    <p>We’ve just dropped a fresh new product in the stash! Check out the details:</p>
+                    <table class="details-table">
+                        <tr><td>Product</td><td>${escapeHtml(productName)}</td></tr>
+                        <tr><td>Price</td><td>KES ${Number(productPrice).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</td></tr>
+                        <tr><td>Category</td><td>${escapeHtml(productCategory)}</td></tr>
+                        <tr><td>Description</td><td>${escapeHtml(productDescription || 'No description available')}</td></tr>
+                    </table>
+                    ${productImage ? `
+                        <p><img src="https://${host}${productImage}" alt="${escapeHtml(productName)}" style="max-width: 300px; border-radius: 8px; margin: 20px 0;" /></p>
+                    ` : ''}
+                    <p><a href="https://${host}/products" class="cta">Check It Out Now</a></p>
+                    <p>Grab it before it’s gone—stock’s limited!</p>
+                `;
+                const mailOptions = {
+                    from: `Cloud 420 Store <${EMAIL_USER}>`,
+                    to: user.email,
+                    subject: `New Product Alert: ${escapeHtml(productName)} 🌿`,
+                    html: generateEmailTemplate({ headerTitle: 'Fresh Drop Alert', content, host }),
+                };
+                return sendEmail(mailOptions, 'New product notification');
+            });
+            
+            await Promise.all(sendPromises);
+            console.log(`New product notification sent to ${users.length} users`);
+        } catch (error) {
+            console.error('Error sending new product notifications:', error);
+            throw new Error('Failed to send new product notifications');
+        }
+    },
+    
+    async sendUpdateNotification({ subject, message, host }) {
+        try {
+            const users = await User.find({}).select('email username');
+            if (!users || users.length === 0) {
+                console.log('No registered users found to notify');
+                return;
+            }
+            
+            const sendPromises = users.map(user => {
+                const content = `
+                    <p class="greeting">Greetings ${escapeHtml(user.username || 'Valued Customer')}</p>
+                    <p>We’ve got some important vibes to share with you:</p>
+                    <p>${escapeHtml(message)}</p>
+                    <p><a href="https://${host}" class="cta">Visit Cloud 420</a></p>
+                    <p>Stay lit and keep vibing with us!</p>
+                `;
+                const mailOptions = {
+                    from: `Cloud 420 Store <${EMAIL_USER}>`,
+                    to: user.email,
+                    subject: `Cloud 420 Update: ${escapeHtml(subject)} 🌿`,
+                    html: generateEmailTemplate({ headerTitle: 'Important Update', content, host }),
+                };
+                return sendEmail(mailOptions, 'Update notification');
+            });
+            
+            await Promise.all(sendPromises);
+            console.log(`Update notification sent to ${users.length} users`);
+        } catch (error) {
+            console.error('Error sending update notifications:', error);
+            throw new Error('Failed to send update notifications');
+        }
     },
 };
-
-// Utility function to send emails with retry logic
-async function sendEmail(mailOptions, type) {
-    const maxRetries = 3;
-    let attempt = 0;
-    while (attempt < maxRetries) {
-        try {
-            await transporter.sendMail(mailOptions);
-            console.log(`${type} email sent to ${mailOptions.to}`);
-            return;
-        } catch (error) {
-            attempt++;
-            console.error(`Attempt ${attempt} failed to send ${type} email:`, error);
-            if (attempt === maxRetries) {
-                throw new Error(`Failed to send ${type} email after ${maxRetries} attempts: ${error.message}`);
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-        }
-    }
-}
-
-// Fixed HTML escape function
-function escapeHtml(str) {
-    if (typeof str !== 'string') return str;
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
 
 module.exports = emailService;

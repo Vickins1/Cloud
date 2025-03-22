@@ -249,7 +249,15 @@ router.post('/products/add', isAdmin, upload.array('images', 10), async (req, re
         });
 
         await product.save();
-
+        const host = req.get('host'); // Get the host from the request
+        await emailService.sendNewProductNotification({
+            productName: name,
+            productPrice: parsedPrice,
+            productDescription: description,
+            productCategory: category,
+            productImage: imagePaths[0], 
+            host
+        });
         req.flash('success_msg', 'Product added successfully.');
         res.redirect('/admin/products');
 
@@ -406,6 +414,30 @@ router.delete('/products/delete/:id', isAdmin, async (req, res) => {
     } catch (error) {
         console.error('Error deleting product:', error);
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+});
+
+router.post('/comms/send-update', isAdmin, async (req, res) => {
+    try {
+        const { subject, message } = req.body;
+
+        if (!subject || !message) {
+            throw new Error('Subject and message are required');
+        }
+
+        const host = req.get('host');
+        await emailService.sendUpdateNotification({
+            subject,
+            message,
+            host
+        });
+
+        req.flash('success_msg', 'Update notification sent to all users successfully.');
+        res.redirect('/support/comms');
+    } catch (error) {
+        console.error('Error sending update:', error);
+        req.flash('error_msg', error.message || 'Failed to send update notification.');
+        res.redirect('/support/comms');
     }
 });
 
