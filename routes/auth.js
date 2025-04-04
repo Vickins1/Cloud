@@ -5,18 +5,38 @@ const router = express.Router();
 const crypto = require('crypto');
 const emailService = require('../services/emailService');
 
-// Render login page
-router.get('/login', (req, res) => {
-  const error = req.query.error || (req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null);
-  const success = req.flash('success_msg').length > 0 ? req.flash('success_msg')[0] : null;
-  res.render('login', { error, success });
+router.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/profile");
+  }
+);
+
+// Single route for auth page
+router.get('/', (req, res) => {
+  const errorFlash = req.flash('error_msg') || [];
+  const successFlash = req.flash('success_msg') || [];
+  
+  const error = req.query.error || (errorFlash.length > 0 ? errorFlash[0] : null);
+  const success = successFlash.length > 0 ? successFlash[0] : null;
+  
+  const form = req.query.form === 'login' ? 'login' : 'signup';
+
+  res.render('auth', { 
+    error_msg: error, 
+    success_msg: success, 
+    initialForm: form,
+    isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+    cartItems: req.session ? req.session.cartItems || 0 : 0
+  });
 });
 
-// Render signup page
-router.get('/signup', (req, res) => {
-  const error = req.query.error || (req.flash('error_msg').length > 0 ? req.flash('error_msg')[0] : null);
-  res.render('signup', { error });
-});
 
 // Handle user sign-up
 router.post('/signup', async (req, res) => {
@@ -26,24 +46,24 @@ router.post('/signup', async (req, res) => {
     // Validate input
     if (!username || !email || !password) {
       req.flash('error_msg', 'All fields (username, email, password) are required.');
-      return res.redirect('/auth/signup');
+      return res.redirect('/auth');
     }
 
     // Additional validation
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
       req.flash('error_msg', 'Please provide a valid email address.');
-      return res.redirect('/auth/signup');
+      return res.redirect('/auth');
     }
     if (password.length < 8) {
       req.flash('error_msg', 'Password must be at least 8 characters long.');
-      return res.redirect('/auth/signup');
+      return res.redirect('/auth');
     }
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
       req.flash('error_msg', 'Username or email already in use.');
-      return res.redirect('/auth/signup');
+      return res.redirect('/auth');
     }
 
     // Generate verification code (6-character code instead of token)
@@ -85,7 +105,7 @@ router.post('/signup', async (req, res) => {
     }
 
     req.flash('error_msg', errorMessage);
-    return res.redirect('/auth/signup');
+    return res.redirect('/auth');
   }
 });
 
@@ -95,11 +115,11 @@ router.post('/login', (req, res, next) => {
     if (err) {
       console.error('Login error:', err);
       req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
-      return res.redirect('/auth/login');
+      return res.redirect('/auth');
     }
     if (!user) {
       req.flash('error_msg', 'Invalid username or password.');
-      return res.redirect('/auth/login');
+      return res.redirect('/auth');
     }
     if (!user.isVerified) {
       req.flash('error_msg', 'Please verify your account before logging in.');
@@ -109,7 +129,7 @@ router.post('/login', (req, res, next) => {
       if (err) {
         console.error('Login error:', err);
         req.flash('error_msg', 'An unexpected error occurred during login. Please try again.');
-        return res.redirect('/auth/login');
+        return res.redirect('/auth');
       }
 
       // Success login
@@ -179,7 +199,7 @@ router.post('/forgot-password', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       req.flash('error_msg', 'No account with that email exists.');
-      return res.redirect('/auth/login');
+      return res.redirect('/auth');
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -195,11 +215,11 @@ router.post('/forgot-password', async (req, res) => {
     });
 
     req.flash('success_msg', 'A password reset link has been sent to your email/spam.');
-    res.redirect('/auth/login');
+    res.redirect('/auth');
   } catch (err) {
     console.error('Error in forgot-password route:', err);
     req.flash('error_msg', 'Failed to send reset email. Please try again.');
-    res.redirect('/auth/login');
+    res.redirect('/auth');
   }
 });
 
@@ -212,7 +232,7 @@ router.get('/reset-password/:token', async (req, res) => {
 
     if (!user) {
       req.flash('error_msg', 'Password reset link is invalid or has expired.');
-      return res.redirect('/auth/login');
+      return res.redirect('/auth');
     }
 
     const success = req.flash('success_msg')[0] || null;
@@ -227,7 +247,7 @@ router.get('/reset-password/:token', async (req, res) => {
   } catch (err) {
     console.error('Error in reset-password GET route:', err);
     req.flash('error_msg', 'Something went wrong. Please try again.');
-    res.redirect('/auth/login');
+    res.redirect('/auth');
   }
 });
 
@@ -243,7 +263,7 @@ router.post('/reset-password/:token', async (req, res) => {
 
     if (!user) {
       req.flash('error_msg', 'Password reset link is invalid or has expired.');
-      return res.redirect('/auth/login');
+      return res.redirect('/auth');
     }
 
     // Password validation
@@ -276,7 +296,7 @@ router.post('/reset-password/:token', async (req, res) => {
     await user.save();
 
     req.flash('success_msg', 'Password reset successful! Please log in with your new password.');
-    res.redirect('/auth/login');
+    res.redirect('/auth');
   } catch (err) {
     console.error('Error in reset-password POST route:', err);
     req.flash('error_msg', 'Failed to reset password. Please try again.');

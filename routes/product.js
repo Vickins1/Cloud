@@ -22,7 +22,7 @@ function ensureAuthenticated(req, res, next) {
     return next();
   }
   req.flash('error_msg', 'Please log in to view that resource');
-  res.redirect('/auth/login');
+  res.redirect('/auth');
 }
 
 // Get all products (existing route)

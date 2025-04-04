@@ -14,7 +14,7 @@ const fs = require('fs');
 function isAdmin(req, res, next) {
     if (req.isAuthenticated() && req.user.isAdmin) return next();
     req.flash('error_msg', 'Unauthorized access. Admins only.');
-    res.redirect('/auth/login');
+    res.redirect('/auth');
 }
 
 

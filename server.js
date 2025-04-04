@@ -10,7 +10,6 @@ const productRoutes = require('./routes/product');
 const LocalStrategy = require('passport-local').Strategy;
 const MongoStore = require('connect-mongo');
 const User = require('./models/user');
-const { isLoggedIn } = require('./middleware/auth');
 const cartRoutes = require('./routes/cart');
 const Order = require('./models/order');
 const fs = require('fs').promises;
@@ -19,6 +18,7 @@ const adminRouter = require('./routes/admin');
 const supportRoutes = require('./routes/support');
 const Cart = require('./models/cart');
 require('dotenv').config();
+require("./config/passport");
 const os = require('os');
 const app = express();
 app.set('view engine', 'ejs');
@@ -138,19 +138,27 @@ app.use('/cart', cartRoutes);
 app.use('/admin', adminRouter);
 app.use('/support', supportRoutes);
 
+//isLoggedIn middleware
+const isLoggedIn = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next(); 
+  }
+  res.redirect("/auth");
+};
+
+
 // Home page route
 app.get('/home', isLoggedIn, async (req, res) => {
   try {
-    // Fetch all required data in parallel for better performance
     const [products, cart, user, recentOrders] = await Promise.all([
-      Product.find().lean(), // Fetch all products
-      Cart.findOne({ userId: req.user._id }).lean(), // Fetch user's cart
-      User.findById(req.user._id).lean(), // Fetch user details
+      Product.find().lean(), 
+      Cart.findOne({ userId: req.user._id }).lean(),
+      User.findById(req.user._id).lean(),
       Order.find({ userId: req.user._id })
-        .sort({ createdAt: -1 }) // Most recent first
-        .limit(5) // Fetch top 5 recent orders
+        .sort({ createdAt: -1 })
+        .limit(5) 
         .lean()
-        .select('orderId createdAt status') // Only fetch necessary fields
+        .select('orderId createdAt status')
     ]);
 
     // Process fetched data
@@ -169,10 +177,10 @@ app.get('/home', isLoggedIn, async (req, res) => {
       userName,
       recentOrders,
       userPoints,
-      isAuthenticated: true, // Ensured by isLoggedIn middleware
+      isAuthenticated: true,
       success,
       error,
-      user: req.user // Pass full user object if needed in template
+      user: req.user 
     });
   } catch (err) {
     console.error('Error in /home route:', err);
@@ -180,7 +188,6 @@ app.get('/home', isLoggedIn, async (req, res) => {
     res.status(500).redirect('/home');
   }
 });
-
 
 
 // Routes
@@ -415,5 +422,6 @@ app.listen(4200, '0.0.0.0', () => {
   const localIP = getLocalIP();
   console.log(`Cloud 420 is running at:
     - Local: http://localhost:4200
-    - Network: http://${localIP}:4200`);
+    - Network: http://${localIP}:4200
+    - Network (via Nginx): https://cloud420.store`);
 });
