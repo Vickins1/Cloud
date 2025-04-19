@@ -369,22 +369,22 @@
     
     <div class="filter-container">
         <input type="text" id="searchInput" class="filter-input" placeholder="Search products...">
-        <select id="categoryFilter" class="filter-select">
-            <option value="">All Categories</option>
-            <option value="Flower">Indica 🌙</option>
-            <option value="Edibles">Sativa ☀️</option>
-            <option value="Hybrid">Hybrid 🔄</option>
-            <option value="CBD">CBD 🌿</option>
-            <option value="THC">High-THC 🔥</option>
-            <option value="Exotic">Exotic Strains 🏝️</option>
-            <option value="Cigarettes">Cigarettes 🚬</option>
-            <option value="Cigars">Cigars 🏆</option>
-            <option value="Rolling-Tobacco">Rolling Tobacco 🌀</option>
-            <option value="Hookah">Hookah/Shisha 💨</option>
-            <option value="Nicotine-Pouches">Nicotine Pouches 🏁</option>
-            <option value="Vapes">Vapes</option>
-            <option value="Accessories">Accessories</option>
-        </select>
+        <div class="category-buttons">
+            <button class="category-btn active" data-category="">All Categories</button>
+            <button class="category-btn" data-category="Flower">Indica 🌙</button>
+            <button class="category-btn" data-category="Edibles">Sativa ☀️</button>
+            <button class="category-btn" data-category="Hybrid">Hybrid 🔄</button>
+            <button class="category-btn" data-category="CBD">CBD 🌿</button>
+            <button class="category-btn" data-category="THC">High-THC 🔥</button>
+            <button class="category-btn" data-category="Exotic">Exotic Strains 🏝️</button>
+            <button class="category-btn" data-category="Cigarettes">Cigarettes 🚬</button>
+            <button class="category-btn" data-category="Cigars">Cigars 🏆</button>
+            <button class="category-btn" data-category="Rolling-Tobacco">Rolling Tobacco 🌀</button>
+            <button class="category-btn" data-category="Hookah">Hookah/Shisha 💨</button>
+            <button class="category-btn" data-category="Nicotine-Pouches">Nicotine Pouches 🏁</button>
+            <button class="category-btn" data-category="Vapes">Vapes</button>
+            <button class="category-btn" data-category="Accessories">Accessories</button>
+        </div>
     </div>
 
     <div id="resultsContainer" class="results-container"></div>
@@ -424,7 +424,7 @@
         background: url('/public/images/leaf-icon.png') no-repeat center;
         background-size: contain;
         opacity: 0.7;
-        animation: floatLeaf 6s infinite ease-in-out; /* Changed to ease-in-out for smoother animation */
+        animation: floatLeaf 6s infinite ease-in-out;
     }
 
     @keyframes floatLeaf {
@@ -437,33 +437,63 @@
     .hero-title {
         font-size: 2.5rem;
         font-weight: bold;
-        position: relative; /* Added for better layering */
-        z-index: 1; /* Ensures title stays above leaves */
+        position: relative;
+        z-index: 1;
     }
 
     /* Filter Container */
     .filter-container {
-        display: flex; /* Added explicit display */
+        display: flex;
         flex-direction: column;
         gap: 6px;
-        margin: 25px auto 0; /* Centered and fixed margin-top */
+        margin: 25px auto 0;
         width: 90%;
-        max-width: 600px; /* Added reasonable max-width */
+        max-width: 600px;
     }
 
-    .filter-input,
-    .filter-select {
+    .filter-input {
         padding: 5px;
         font-size: 12px;
         width: 100%;
-        box-sizing: border-box; /* Added for consistent sizing */
+        box-sizing: border-box;
+    }
+
+    /* Category Buttons */
+    .category-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .category-btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        background-color: #ffffff;
+        color: #035925;
+        border: 1px solid #035925;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .category-btn:hover {
+        background-color: #035925;
+        color: #ffffff;
+    }
+
+    .category-btn.active {
+        background-color: #035925;
+        color: #ffffff;
+        font-weight: bold;
     }
 
     .results-container {
         margin-top: 8px;
         padding: 8px;
-        position: relative; /* Added for better positioning */
-        z-index: 1; /* Ensures results stay above leaves */
+        position: relative;
+        z-index: 1;
     }
 
     .product-item img {
@@ -473,7 +503,7 @@
     /* Media Query for Extra Small Screens */
     @media screen and (max-width: 576px) {
         .hero-section {
-            padding: 10px 0; /* Adjusted padding */
+            padding: 10px 0;
         }
 
         .hero-title {
@@ -488,12 +518,20 @@
         .filter-container {
             padding: 5px;
             gap: 4px;
-            margin-top: 15px; /* Adjusted for smaller screens */
+            margin-top: 15px;
         }
 
-        .filter-input,
-        .filter-select {
+        .filter-input {
             padding: 4px;
+            font-size: 11px;
+        }
+
+        .category-buttons {
+            gap: 4px;
+        }
+
+        .category-btn {
+            padding: 4px 8px;
             font-size: 11px;
         }
 
@@ -503,6 +541,33 @@
         }
     }
 </style>
+
+<script>
+    // JavaScript to handle category button functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.category-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                buttons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+                // Get the category value
+                const category = button.getAttribute('data-category');
+                // Trigger filtering logic (assuming a filter function exists)
+                filterProducts(category);
+            });
+        });
+    });
+
+    // Placeholder filter function (to be implemented based on your backend or data)
+    function filterProducts(category) {
+        console.log(`Filtering by category: ${category}`);
+        // Add your filtering logic here, e.g., fetch products from an API
+        const resultsContainer = document.getElementById('resultsContainer');
+        resultsContainer.innerHTML = `<p>Filtering products for: ${category || 'All Categories'}</p>`;
+    }
+</script>
 
 <div class="container mt-5">
     <div class="row">

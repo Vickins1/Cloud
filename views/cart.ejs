@@ -162,274 +162,486 @@
         </div>
     </div>
 
-    <!-- Checkout Modal -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content shadow-lg">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title" id="checkoutModalLabel">
-                        <i class="fas fa-check-circle mr-2"></i>Checkout
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="checkoutForm" method="POST" action="/cart/checkout">
-                        <div class="form-group mb-4">
-                            <label for="customerName" class="mb-2">Full Name</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+<!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="checkoutModalLabel">
+                    <i class="fas fa-check-circle mr-2"></i>Checkout
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="checkoutForm" method="POST" action="/cart/checkout">
+                    <div class="sections-wrapper">
+                        <!-- Section 1: Customer Information -->
+                        <div class="section-container">
+                            <h6 class="section-title">Customer Information</h6>
+                            <div class="form-group mb-4">
+                                <label for="customerName" class="mb-2">Full Name</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Enter your name" required>
                                 </div>
-                                <input type="text" class="form-control" id="customerName" name="customerName" placeholder="Enter your name" required>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label for="customerEmail" class="mb-2">Email Address</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    </div>
+                                    <input type="email" class="form-control" id="customerEmail" name="customerEmail" placeholder="your@email.com" required>
+                                </div>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label for="customerPhone" class="mb-2">Phone Number</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    </div>
+                                    <input type="tel" class="form-control" id="customerPhone" name="customerPhone" placeholder="e.g., 0712345678" pattern="^(?:254|\+254|0)?[7][0-9]{8}$" required>
+                                </div>
+                                <small class="form-text text-muted">Format: 0712345678 or +254712345678</small>
                             </div>
                         </div>
-                        <div class="form-group mb-4">
-                            <label for="customerEmail" class="mb-2">Email Address</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+
+                        <!-- Section 2: Delivery & Payment Details -->
+                        <div class="section-container">
+                            <h6 class="section-title">Delivery & Payment Details</h6>
+                            <div class="form-group mb-4">
+                                <label for="customerLocation" class="mb-2">Delivery Location</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                                    </div>
+                                    <select class="custom-dropdown form-control" id="customerLocation" name="customerLocation" required>
+                                        <option value="" disabled selected>Select your delivery location</option>
+                                        <option value="Pick-Up" data-delivery="0">Pick-Up</option>
+                                        <option value="Kianyaga" data-delivery="100">Kianyaga</option>
+                                        <option value="Nandi Hills" data-delivery="1000">Nandi Hills</option>
+                                        <option value="Chogoria" data-delivery="300">Chogoria</option>
+                                        <option value="Kisumu" data-delivery="1000">Kisumu</option>
+                                        <option value="Naromoru" data-delivery="350">Naromoru</option>
+                                        <option value="Moi University" data-delivery="1200">Moi University</option>
+                                        <option value="Kikuyu" data-delivery="300">Kikuyu</option>
+                                        <option value="Karatina" data-delivery="150">Karatina</option>
+                                        <option value="Mombasa" data-delivery="1000">Mombasa</option>
+                                        <option value="Kericho" data-delivery="1000">Kericho</option>
+                                        <option value="Maseno University" data-delivery="1200">Maseno University</option>
+                                        <option value="Ngong" data-delivery="350">Ngong</option>
+                                        <option value="Kapsabet" data-delivery="1000">Kapsabet</option>
+                                        <option value="Nyeri" data-delivery="250">Nyeri</option>
+                                        <option value="Kitengela" data-delivery="350">Kitengela</option>
+                                        <option value="Kutus" data-delivery="50">Kutus</option>
+                                        <option value="Sagana" data-delivery="100">Sagana</option>
+                                        <option value="Wajir" data-delivery="1500">Wajir</option>
+                                        <option value="Meru" data-delivery="350">Meru</option>
+                                        <option value="Kabarnet" data-delivery="1000">Kabarnet</option>
+                                        <option value="Kisii University" data-delivery="1200">Kisii University</option>
+                                        <option value="Kangai" data-delivery="50">Kangai</option>
+                                        <option value="Juja" data-delivery="200">Juja</option>
+                                        <option value="Kagio" data-delivery="100">Kagio</option>
+                                        <option value="Ruiru" data-delivery="200">Ruiru</option>
+                                        <option value="Thika" data-delivery="200">Thika</option>
+                                        <option value="Mwea" data-delivery="100">Mwea</option>
+                                        <option value="Karatina University" data-delivery="150">Karatina University</option>
+                                        <option value="Embu University" data-delivery="150">Embu University</option>
+                                        <option value="Murang'a University" data-delivery="200">Murang'a University</option>
+                                        <option value="Nairobi" data-delivery="200">Nairobi</option>
+                                        <option value="Machakos" data-delivery="350">Machakos</option>
+                                        <option value="Nanyuki" data-delivery="400">Nanyuki</option>
+                                        <option value="Kiambu" data-delivery="250">Kiambu</option>
+                                        <option value="Eldoret" data-delivery="1000">Eldoret</option>
+                                        <option value="Nakuru" data-delivery="500">Nakuru</option>
+                                        <option value="Kisii" data-delivery="1200">Kisii</option>
+                                        <option value="Kakamega" data-delivery="1000">Kakamega</option>
+                                        <option value="Kitale" data-delivery="1200">Kitale</option>
+                                        <option value="Bungoma" data-delivery="1200">Bungoma</option>
+                                        <option value="Busia" data-delivery="1200">Busia</option>
+                                        <option value="Kisumu University" data-delivery="1200">Kisumu University</option>
+                                        <option value="Egerton University" data-delivery="600">Egerton University</option>
+                                        <option value="Masinde Muliro University" data-delivery="1200">Masinde Muliro University</option>
+                                        <option value="Kirinyaga University" data-delivery="50">Kirinyaga University</option>
+                                        <option value="Kiamutugu" data-delivery="50">Kiamutugu</option>
+                                        <option value="Baricho" data-delivery="100">Baricho</option>
+                                        <option value="Wang'uru" data-delivery="100">Wang'uru</option>
+                                        <option value="Makutano" data-delivery="150">Makutano</option>
+                                        <option value="Embu" data-delivery="200">Embu</option>
+                                        <option value="Murang'a" data-delivery="200">Murang'a</option>
+                                        <option value="Kangema" data-delivery="200">Kangema</option>
+                                        <option value="Othaya" data-delivery="200">Othaya</option>
+                                        <option value="Mukurweini" data-delivery="200">Mukurweini</option>
+                                        <option value="Isiolo" data-delivery="500">Isiolo</option>
+                                        <option value="Kitui" data-delivery="500">Kitui</option>
+                                        <option value="Wote" data-delivery="500">Wote</option>
+                                        <option value="Gilgil" data-delivery="400">Gilgil</option>
+                                        <option value="Naivasha" data-delivery="400">Naivasha</option>
+                                        <option value="Limuru" data-delivery="300">Limuru</option>
+                                        <option value="Ongata Rongai" data-delivery="350">Ongata Rongai</option>
+                                        <option value="Athi River" data-delivery="350">Athi River</option>
+                                        <option value="Malindi" data-delivery="1200">Malindi</option>
+                                        <option value="Lamu" data-delivery="1500">Lamu</option>
+                                        <option value="Voi" data-delivery="1000">Voi</option>
+                                        <option value="Taveta" data-delivery="1200">Taveta</option>
+                                        <option value="Iten" data-delivery="1000">Iten</option>
+                                        <option value="Kapenguria" data-delivery="1200">Kapenguria</option>
+                                        <option value="Lodwar" data-delivery="1500">Lodwar</option>
+                                        <option value="Maralal" data-delivery="600">Maralal</option>
+                                        <option value="Rumuruti" data-delivery="500">Rumuruti</option>
+                                        <option value="Siaya" data-delivery="1200">Siaya</option>
+                                        <option value="Homa Bay" data-delivery="1200">Homa Bay</option>
+                                        <option value="Migori" data-delivery="1200">Migori</option>
+                                        <option value="Keroka" data-delivery="1000">Keroka</option>
+                                        <option value="Nyamira" data-delivery="1000">Nyamira</option>
+                                        <option value="Kilifi" data-delivery="1200">Kilifi</option>
+                                        <option value="University of Nairobi" data-delivery="200">University of Nairobi</option>
+                                        <option value="KCA University" data-delivery="200">KCA University</option>
+                                        <option value="Mount Kenya University" data-delivery="200">Mount Kenya University</option>
+                                        <option value="Kabarak University" data-delivery="600">Kabarak University</option>
+                                        <option value="Kaimosi Friends University" data-delivery="1200">Kaimosi Friends University</option>
+                                        <option value="Tom Mboya University" data-delivery="1200">Tom Mboya University</option>
+                                        <option value="Kenyatta University" data-delivery="200">Kenyatta University</option>
+                                        <option value="Jomo Kenyatta University (JKUAT)" data-delivery="200">Jomo Kenyatta University (JKUAT)</option>
+                                        <option value="Technical University of Kenya" data-delivery="200">Technical University of Kenya</option>
+                                        <option value="Technical University of Mombasa" data-delivery="1200">Technical University of Mombasa</option>
+                                        <option value="Dedan Kimathi University" data-delivery="200">Dedan Kimathi University</option>
+                                        <option value="Chuka University" data-delivery="300">Chuka University</option>
+                                        <option value="Meru University" data-delivery="350">Meru University</option>
+                                        <option value="Multimedia University" data-delivery="250">Multimedia University</option>
+                                        <option value="South Eastern Kenya University" data-delivery="500">South Eastern Kenya University</option>
+                                        <option value="Pwani University" data-delivery="1200">Pwani University</option>
+                                        <option value="Maasai Mara University" data-delivery="1000">Maasai Mara University</option>
+                                        <option value="University of Eldoret" data-delivery="1200">University of Eldoret</option>
+                                        <option value="Kibabii University" data-delivery="1200">Kibabii University</option>
+                                        <option value="Rongo University" data-delivery="1200">Rongo University</option>
+                                        <option value="Jaramogi Oginga Odinga University" data-delivery="1200">Jaramogi Oginga Odinga University</option>
+                                        <option value="Laikipia University" data-delivery="400">Laikipia University</option>
+                                        <option value="Garissa University" data-delivery="1200">Garissa University</option>
+                                        <option value="Taita Taveta University" data-delivery="1200">Taita Taveta University</option>
+                                        <option value="Bomet University College" data-delivery="1000">Bomet University College</option>
+                                        <option value="Strathmore University" data-delivery="200">Strathmore University</option>
+                                        <option value="USIU Africa" data-delivery="250">USIU Africa</option>
+                                        <option value="Gatundu" data-delivery="250">Gatundu</option>
+                                        <option value="Kajiado" data-delivery="400">Kajiado</option>
+                                        <option value="Namanga" data-delivery="600">Namanga</option>
+                                        <option value="Molo" data-delivery="600">Molo</option>
+                                        <option value="Njoro" data-delivery="600">Njoro</option>
+                                        <option value="Ol Kalou" data-delivery="400">Ol Kalou</option>
+                                        <option value="Nyandarua" data-delivery="400">Nyandarua</option>
+                                        <option value="Kinangop" data-delivery="400">Kinangop</option>
+                                        <option value="Matuu" data-delivery="350">Matuu</option>
+                                        <option value="Mwingi" data-delivery="500">Mwingi</option>
+                                        <option value="Nkubu" data-delivery="350">Nkubu</option>
+                                        <option value="Timau" data-delivery="400">Timau</option>
+                                        <option value="Marsabit" data-delivery="1200">Marsabit</option>
+                                        <option value="Moyale" data-delivery="1500">Moyale</option>
+                                        <option value="Mandera" data-delivery="1500">Mandera</option>
+                                        <option value="Hola" data-delivery="1200">Hola</option>
+                                        <option value="Mtwapa" data-delivery="1200">Mtwapa</option>
+                                        <option value="Ukunda" data-delivery="1200">Ukunda</option>
+                                        <option value="Diani" data-delivery="1200">Diani</option>
+                                        <option value="Msambweni" data-delivery="1200">Msambweni</option>
+                                        <option value="Lunga Lunga" data-delivery="1200">Lunga Lunga</option>
+                                        <option value="Bondo" data-delivery="1200">Bondo</option>
+                                        <option value="Ugunja" data-delivery="1200">Ugunja</option>
+                                        <option value="Mbale" data-delivery="1200">Mbale</option>
+                                        <option value="Webuye" data-delivery="1200">Webuye</option>
+                                        <option value="Kimilili" data-delivery="1200">Kimilili</option>
+                                        <option value="Malaba" data-delivery="1200">Malaba</option>
+                                        <option value="Luanda" data-delivery="1200">Luanda</option>
+                                        <option value="Sotik" data-delivery="1000">Sotik</option>
+                                        <option value="Bomet" data-delivery="1000">Bomet</option>
+                                        <option value="Litein" data-delivery="1000">Litein</option>
+                                        <option value="Londiani" data-delivery="600">Londiani</option>
+                                        <option value="Muhoroni" data-delivery="1000">Muhoroni</option>
+                                        <option value="Ahero" data-delivery="1000">Ahero</option>
+                                        <option value="Nyansiongo" data-delivery="1000">Nyansiongo</option>
+                                        <option value="Oyugis" data-delivery="1200">Oyugis</option>
+                                        <option value="Rachuonyo" data-delivery="1200">Rachuonyo</option>
+                                        <option value="Kendubay" data-delivery="1200">Kendubay</option>
+                                        <option value="Kehancha" data-delivery="1200">Kehancha</option>
+                                        <option value="Isebania" data-delivery="1200">Isebania</option>
+                                        <option value="Suna" data-delivery="1200">Suna</option>
+                                        <option value="Kapchorua" data-delivery="1000">Kapchorua</option>
+                                        <option value="Kapsowar" data-delivery="1000">Kapsowar</option>
+                                        <option value="Chepkorio" data-delivery="1000">Chepkorio</option>
+                                        <option value="Cheptais" data-delivery="1200">Cheptais</option>
+                                        <option value="Kiminini" data-delivery="1200">Kiminini</option>
+                                        <option value="Kaptumo" data-delivery="1000">Kaptumo</option>
+                                        <option value="Kakuma" data-delivery="1500">Kakuma</option>
+                                        <option value="Lokichoggio" data-delivery="1500">Lokichoggio</option>
+                                        <option value="Archers Post" data-delivery="600">Archers Post</option>
+                                        <option value="Laisamis" data-delivery="1000">Laisamis</option>
+                                        <option value="Loiyangalani" data-delivery="1500">Loiyangalani</option>
+                                        <option value="North Horr" data-delivery="1500">North Horr</option>
+                                        <option value="Sololo" data-delivery="1500">Sololo</option>
+                                        <option value="Kenya Methodist University" data-delivery="350">Kenya Methodist University</option>
+                                        <option value="Pan Africa Christian University" data-delivery="300">Pan Africa Christian University</option>
+                                        <option value="Daystar University" data-delivery="350">Daystar University</option>
+                                        <option value="Africa Nazarene University" data-delivery="350">Africa Nazarene University</option>
+                                        <option value="Catholic University of Eastern Africa" data-delivery="250">Catholic University of Eastern Africa</option>
+                                        <option value="KAG East University" data-delivery="300">KAG East University</option>
+                                        <option value="Gretsa University" data-delivery="200">Gretsa University</option>
+                                        <option value="Zetech University" data-delivery="200">Zetech University</option>
+                                        <option value="Riara University" data-delivery="200">Riara University</option>
+                                        <option value="Pioneer International University" data-delivery="200">Pioneer International University</option>
+                                        <option value="Adventist University of Africa" data-delivery="350">Adventist University of Africa</option>
+                                        <option value="Management University of Africa" data-delivery="200">Management University of Africa</option>
+                                        <option value="Africa International University" data-delivery="200">Africa International University</option>
+                                        <option value="St. Paul’s University" data-delivery="300">St. Paul’s University</option>
+                                        <option value="Presbyterian University of East Africa" data-delivery="300">Presbyterian University of East Africa</option>
+                                        <option value="Co-operative University of Kenya" data-delivery="200">Co-operative University of Kenya</option>
+                                        <option value="Umma University" data-delivery="400">Umma University</option>
+                                        <option value="Lukenya University" data-delivery="350">Lukenya University</option>
+                                        <option value="Scott Christian University" data-delivery="500">Scott Christian University</option>
+                                        <option value="Karatina Town" data-delivery="150">Karatina Town</option>
+                                        <option value="Ngariama" data-delivery="100">Ngariama</option>
+                                        <option value="Kibirigwi" data-delivery="50">Kibirigwi</option>
+                                        <option value="Kagumo" data-delivery="100">Kagumo</option>
+                                        <option value="Kamacharia" data-delivery="200">Kamacharia</option>
+                                        <option value="Kiganjo" data-delivery="250">Kiganjo</option>
+                                        <option value="Karaba" data-delivery="150">Karaba</option>
+                                        <option value="Diffathas" data-delivery="100">Diffathas</option>
+                                        <option value="Mutira" data-delivery="50">Mutira</option>
+                                        <option value="Kithumbu" data-delivery="50">Kithumbu</option>
+                                        <option value="Kiamwathi" data-delivery="50">Kiamwathi</option>
+                                    </select>
                                 </div>
-                                <input type="email" class="form-control" id="customerEmail" name="customerEmail" placeholder="your@email.com" required>
                             </div>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="customerPhone" class="mb-2">Phone Number</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                </div>
-                                <input type="tel" class="form-control" id="customerPhone" name="customerPhone" placeholder="e.g., 0712345678" pattern="^(?:254|\+254|0)?[7][0-9]{8}$" required>
+                            <div class="form-group mb-4">
+                                <label for="cartSubtotal" class="mb-2">Cart Subtotal</label>
+                                <input type="number" class="form-control" id="cartSubtotal" name="cartSubtotal" value="<%= total.toFixed(2) %>" readonly>
                             </div>
-                            <small class="form-text text-muted">Format: 0712345678 or +254712345678</small>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="customerLocation" class="mb-2">Delivery Location</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                </div>
-                                 <select class="custom-dropdown form-control" id="customerLocation" name="customerLocation" required>
-                                    <option value="" disabled selected>Select your delivery location</option>
-                                    <option value="Pick-Up" data-delivery="0">Pick-Up</option>
-                                    <option value="Kianyaga" data-delivery="100">Kianyaga</option>
-                                    <option value="Nandi Hills" data-delivery="1000">Nandi Hills</option>
-                                    <option value="Chogoria" data-delivery="300">Chogoria</option>
-                                    <option value="Kisumu" data-delivery="1000">Kisumu</option>
-                                    <option value="Naromoru" data-delivery="350">Naromoru</option>
-                                    <option value="Moi University" data-delivery="1200">Moi University</option>
-                                    <option value="Kikuyu" data-delivery="300">Kikuyu</option>
-                                    <option value="Karatina" data-delivery="150">Karatina</option>
-                                    <option value="Mombasa" data-delivery="1000">Mombasa</option>
-                                    <option value="Kericho" data-delivery="1000">Kericho</option>
-                                    <option value="Maseno University" data-delivery="1200">Maseno University</option>
-                                    <option value="Ngong" data-delivery="350">Ngong</option>
-                                    <option value="Kapsabet" data-delivery="1000">Kapsabet</option>
-                                    <option value="Nyeri" data-delivery="250">Nyeri</option>
-                                    <option value="Kitengela" data-delivery="350">Kitengela</option>
-                                    <option value="Kutus" data-delivery="50">Kutus</option>
-                                    <option value="Sagana" data-delivery="100">Sagana</option>
-                                    <option value="Wajir" data-delivery="1500">Wajir</option>
-                                    <option value="Meru" data-delivery="350">Meru</option>
-                                    <option value="Kabarnet" data-delivery="1000">Kabarnet</option>
-                                    <option value="Kisii University" data-delivery="1200">Kisii University</option>
-                                    <option value="Kangai" data-delivery="50">Kangai</option>
-                                    <option value="Juja" data-delivery="200">Juja</option>
-                                    <option value="Kagio" data-delivery="100">Kagio</option>
-                                    <option value="Ruiru" data-delivery="200">Ruiru</option>
-                                    <option value="Thika" data-delivery="200">Thika</option>
-                                    <option value="Mwea" data-delivery="100">Mwea</option>
-                                    <option value="Karatina University" data-delivery="150">Karatina University</option>
-                                    <option value="Embu University" data-delivery="150">Embu University</option>
-                                    <option value="Murang'a University" data-delivery="200">Murang'a University</option>
-                                    <option value="Nairobi" data-delivery="200">Nairobi</option>
-                                    <option value="Machakos" data-delivery="350">Machakos</option>
-                                    <option value="Nanyuki" data-delivery="400">Nanyuki</option>
-                                    <option value="Kiambu" data-delivery="250">Kiambu</option>
-                                    <option value="Eldoret" data-delivery="1000">Eldoret</option>
-                                    <option value="Nakuru" data-delivery="500">Nakuru</option>
-                                    <option value="Kisii" data-delivery="1200">Kisii</option>
-                                    <option value="Kakamega" data-delivery="1000">Kakamega</option>
-                                    <option value="Kitale" data-delivery="1200">Kitale</option>
-                                    <option value="Bungoma" data-delivery="1200">Bungoma</option>
-                                    <option value="Busia" data-delivery="1200">Busia</option>
-                                    <option value="Kisumu University" data-delivery="1200">Kisumu University</option>
-                                    <option value="Egerton University" data-delivery="600">Egerton University</option>
-                                    <option value="Masinde Muliro University" data-delivery="1200">Masinde Muliro University</option>
-                                    <option value="Kirinyaga University" data-delivery="50">Kirinyaga University</option>
-                                    <option value="Kiamutugu" data-delivery="50">Kiamutugu</option>
-                                    <option value="Baricho" data-delivery="100">Baricho</option>
-                                    <option value="Wang'uru" data-delivery="100">Wang'uru</option>
-                                    <option value="Makutano" data-delivery="150">Makutano</option>
-                                    <option value="Embu" data-delivery="200">Embu</option>
-                                    <option value="Murang'a" data-delivery="200">Murang'a</option>
-                                    <option value="Kangema" data-delivery="200">Kangema</option>
-                                    <option value="Othaya" data-delivery="200">Othaya</option>
-                                    <option value="Mukurweini" data-delivery="200">Mukurweini</option>
-                                    <option value="Isiolo" data-delivery="500">Isiolo</option>
-                                    <option value="Kitui" data-delivery="500">Kitui</option>
-                                    <option value="Wote" data-delivery="500">Wote</option>
-                                    <option value="Gilgil" data-delivery="400">Gilgil</option>
-                                    <option value="Naivasha" data-delivery="400">Naivasha</option>
-                                    <option value="Limuru" data-delivery="300">Limuru</option>
-                                    <option value="Ongata Rongai" data-delivery="350">Ongata Rongai</option>
-                                    <option value="Athi River" data-delivery="350">Athi River</option>
-                                    <option value="Malindi" data-delivery="1200">Malindi</option>
-                                    <option value="Lamu" data-delivery="1500">Lamu</option>
-                                    <option value="Voi" data-delivery="1000">Voi</option>
-                                    <option value="Taveta" data-delivery="1200">Taveta</option>
-                                    <option value="Iten" data-delivery="1000">Iten</option>
-                                    <option value="Kapenguria" data-delivery="1200">Kapenguria</option>
-                                    <option value="Lodwar" data-delivery="1500">Lodwar</option>
-                                    <option value="Maralal" data-delivery="600">Maralal</option>
-                                    <option value="Rumuruti" data-delivery="500">Rumuruti</option>
-                                    <option value="Siaya" data-delivery="1200">Siaya</option>
-                                    <option value="Homa Bay" data-delivery="1200">Homa Bay</option>
-                                    <option value="Migori" data-delivery="1200">Migori</option>
-                                    <option value="Keroka" data-delivery="1000">Keroka</option>
-                                    <option value="Nyamira" data-delivery="1000">Nyamira</option>
-                                    <option value="Kilifi" data-delivery="1200">Kilifi</option>
-                                    <option value="University of Nairobi" data-delivery="200">University of Nairobi</option>
-                                    <option value="KCA University" data-delivery="200">KCA University</option>
-                                    <option value="Mount Kenya University" data-delivery="200">Mount Kenya University</option>
-                                    <option value="Kabarak University" data-delivery="600">Kabarak University</option>
-                                    <option value="Kaimosi Friends University" data-delivery="1200">Kaimosi Friends University</option>
-                                    <option value="Tom Mboya University" data-delivery="1200">Tom Mboya University</option>
-                                    <option value="Kenyatta University" data-delivery="200">Kenyatta University</option>
-                                    <option value="Jomo Kenyatta University (JKUAT)" data-delivery="200">Jomo Kenyatta University (JKUAT)</option>
-                                    <option value="Technical University of Kenya" data-delivery="200">Technical University of Kenya</option>
-                                    <option value="Technical University of Mombasa" data-delivery="1200">Technical University of Mombasa</option>
-                                    <option value="Dedan Kimathi University" data-delivery="200">Dedan Kimathi University</option>
-                                    <option value="Chuka University" data-delivery="300">Chuka University</option>
-                                    <option value="Meru University" data-delivery="350">Meru University</option>
-                                    <option value="Multimedia University" data-delivery="250">Multimedia University</option>
-                                    <option value="South Eastern Kenya University" data-delivery="500">South Eastern Kenya University</option>
-                                    <option value="Pwani University" data-delivery="1200">Pwani University</option>
-                                    <option value="Maasai Mara University" data-delivery="1000">Maasai Mara University</option>
-                                    <option value="University of Eldoret" data-delivery="1200">University of Eldoret</option>
-                                    <option value="Kibabii University" data-delivery="1200">Kibabii University</option>
-                                    <option value="Rongo University" data-delivery="1200">Rongo University</option>
-                                    <option value="Jaramogi Oginga Odinga University" data-delivery="1200">Jaramogi Oginga Odinga University</option>
-                                    <option value="Laikipia University" data-delivery="400">Laikipia University</option>
-                                    <option value="Garissa University" data-delivery="1200">Garissa University</option>
-                                    <option value="Taita Taveta University" data-delivery="1200">Taita Taveta University</option>
-                                    <option value="Bomet University College" data-delivery="1000">Bomet University College</option>
-                                    <option value="Strathmore University" data-delivery="200">Strathmore University</option>
-                                    <option value="USIU Africa" data-delivery="250">USIU Africa</option>
-                                    <option value="Gatundu" data-delivery="250">Gatundu</option>
-                                    <option value="Kajiado" data-delivery="400">Kajiado</option>
-                                    <option value="Namanga" data-delivery="600">Namanga</option>
-                                    <option value="Molo" data-delivery="600">Molo</option>
-                                    <option value="Njoro" data-delivery="600">Njoro</option>
-                                    <option value="Ol Kalou" data-delivery="400">Ol Kalou</option>
-                                    <option value="Nyandarua" data-delivery="400">Nyandarua</option>
-                                    <option value="Kinangop" data-delivery="400">Kinangop</option>
-                                    <option value="Matuu" data-delivery="350">Matuu</option>
-                                    <option value="Mwingi" data-delivery="500">Mwingi</option>
-                                    <option value="Nkubu" data-delivery="350">Nkubu</option>
-                                    <option value="Timau" data-delivery="400">Timau</option>
-                                    <option value="Marsabit" data-delivery="1200">Marsabit</option>
-                                    <option value="Moyale" data-delivery="1500">Moyale</option>
-                                    <option value="Mandera" data-delivery="1500">Mandera</option>
-                                    <option value="Hola" data-delivery="1200">Hola</option>
-                                    <option value="Mtwapa" data-delivery="1200">Mtwapa</option>
-                                    <option value="Ukunda" data-delivery="1200">Ukunda</option>
-                                    <option value="Diani" data-delivery="1200">Diani</option>
-                                    <option value="Msambweni" data-delivery="1200">Msambweni</option>
-                                    <option value="Lunga Lunga" data-delivery="1200">Lunga Lunga</option>
-                                    <option value="Bondo" data-delivery="1200">Bondo</option>
-                                    <option value="Ugunja" data-delivery="1200">Ugunja</option>
-                                    <option value="Mbale" data-delivery="1200">Mbale</option>
-                                    <option value="Webuye" data-delivery="1200">Webuye</option>
-                                    <option value="Kimilili" data-delivery="1200">Kimilili</option>
-                                    <option value="Malaba" data-delivery="1200">Malaba</option>
-                                    <option value="Luanda" data-delivery="1200">Luanda</option>
-                                    <option value="Sotik" data-delivery="1000">Sotik</option>
-                                    <option value="Bomet" data-delivery="1000">Bomet</option>
-                                    <option value="Litein" data-delivery="1000">Litein</option>
-                                    <option value="Londiani" data-delivery="600">Londiani</option>
-                                    <option value="Muhoroni" data-delivery="1000">Muhoroni</option>
-                                    <option value="Ahero" data-delivery="1000">Ahero</option>
-                                    <option value="Nyansiongo" data-delivery="1000">Nyansiongo</option>
-                                    <option value="Oyugis" data-delivery="1200">Oyugis</option>
-                                    <option value="Rachuonyo" data-delivery="1200">Rachuonyo</option>
-                                    <option value="Kendubay" data-delivery="1200">Kendubay</option>
-                                    <option value="Kehancha" data-delivery="1200">Kehancha</option>
-                                    <option value="Isebania" data-delivery="1200">Isebania</option>
-                                    <option value="Suna" data-delivery="1200">Suna</option>
-                                    <option value="Kapchorua" data-delivery="1000">Kapchorua</option>
-                                    <option value="Kapsowar" data-delivery="1000">Kapsowar</option>
-                                    <option value="Chepkorio" data-delivery="1000">Chepkorio</option>
-                                    <option value="Cheptais" data-delivery="1200">Cheptais</option>
-                                    <option value="Kiminini" data-delivery="1200">Kiminini</option>
-                                    <option value="Kaptumo" data-delivery="1000">Kaptumo</option>
-                                    <option value="Kakuma" data-delivery="1500">Kakuma</option>
-                                    <option value="Lokichoggio" data-delivery="1500">Lokichoggio</option>
-                                    <option value="Archers Post" data-delivery="600">Archers Post</option>
-                                    <option value="Laisamis" data-delivery="1000">Laisamis</option>
-                                    <option value="Loiyangalani" data-delivery="1500">Loiyangalani</option>
-                                    <option value="North Horr" data-delivery="1500">North Horr</option>
-                                    <option value="Sololo" data-delivery="1500">Sololo</option>
-                                    <option value="Kenya Methodist University" data-delivery="350">Kenya Methodist University</option>
-                                    <option value="Pan Africa Christian University" data-delivery="300">Pan Africa Christian University</option>
-                                    <option value="Daystar University" data-delivery="350">Daystar University</option>
-                                    <option value="Africa Nazarene University" data-delivery="350">Africa Nazarene University</option>
-                                    <option value="Catholic University of Eastern Africa" data-delivery="250">Catholic University of Eastern Africa</option>
-                                    <option value="KAG East University" data-delivery="300">KAG East University</option>
-                                    <option value="Gretsa University" data-delivery="200">Gretsa University</option>
-                                    <option value="Zetech University" data-delivery="200">Zetech University</option>
-                                    <option value="Riara University" data-delivery="200">Riara University</option>
-                                    <option value="Pioneer International University" data-delivery="200">Pioneer International University</option>
-                                    <option value="Adventist University of Africa" data-delivery="350">Adventist University of Africa</option>
-                                    <option value="Management University of Africa" data-delivery="200">Management University of Africa</option>
-                                    <option value="Africa International University" data-delivery="200">Africa International University</option>
-                                    <option value="St. Paul’s University" data-delivery="300">St. Paul’s University</option>
-                                    <option value="Presbyterian University of East Africa" data-delivery="300">Presbyterian University of East Africa</option>
-                                    <option value="Co-operative University of Kenya" data-delivery="200">Co-operative University of Kenya</option>
-                                    <option value="Umma University" data-delivery="400">Umma University</option>
-                                    <option value="Lukenya University" data-delivery="350">Lukenya University</option>
-                                    <option value="Scott Christian University" data-delivery="500">Scott Christian University</option>
-                                    <option value="Karatina Town" data-delivery="150">Karatina Town</option>
-                                    <option value="Ngariama" data-delivery="100">Ngariama</option>
-                                    <option value="Kibirigwi" data-delivery="50">Kibirigwi</option>
-                                    <option value="Kagumo" data-delivery="100">Kagumo</option>
-                                    <option value="Kamacharia" data-delivery="200">Kamacharia</option>
-                                    <option value="Kiganjo" data-delivery="250">Kiganjo</option>
-                                    <option value="Karaba" data-delivery="150">Karaba</option>
-                                    <option value="Diffathas" data-delivery="100">Diffathas</option>
-                                    <option value="Mutira" data-delivery="50">Mutira</option>
-                                    <option value="Kithumbu" data-delivery="50">Kithumbu</option>
-                                    <option value="Kiamwathi" data-delivery="50">Kiamwathi</option>
-                                </select>
+                            <div class="form-group mb-4">
+                                <label for="deliveryFee" class="mb-2">Delivery Fee</label>
+                                <input type="number" class="form-control" id="deliveryFee" name="deliveryFee" value="0" readonly>
                             </div>
+                            <div class="form-group mb-4">
+                                <label for="cartTotal" class="mb-2">Total Amount (incl. Delivery)</label>
+                                <input type="number" class="form-control font-weight-bold" id="cartTotal" name="cartTotal" value="<%= total.toFixed(2) %>" readonly>
+                            </div>
+                            <div id="umsPayContainer"></div>
                         </div>
-                        <div class="form-group mb-4">
-                            <label for="cartSubtotal" class="mb-2">Cart Subtotal</label>
-                            <input type="number" class="form-control" id="cartSubtotal" name="cartSubtotal" value="<%= total.toFixed(2) %>" readonly>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="deliveryFee" class="mb-2">Delivery Fee</label>
-                            <input type="number" class="form-control" id="deliveryFee" name="deliveryFee" value="0" readonly>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="cartTotal" class="mb-2">Total Amount (incl. Delivery)</label>
-                            <input type="number" class="form-control font-weight-bold" id="cartTotal" name="cartTotal" value="<%= total.toFixed(2) %>" readonly>
-                        </div>
-                        <div id="umsPayContainer"></div>
-                        <div class="modal-footer border-0">
-                            <button type="submit" class="btn btn-checkout w-100" id="confirmCheckout">
-                                <span class="button-text"><i class="fas fa-check mr-1"></i>Confirm Checkout</span>
-                                <span class="loader" style="display: none;">
-                                    <i class="fas fa-spinner fa-spin mr-1"></i>Processing...
-                                </span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="modal-footer border-0">
+                        <button type="submit" class="btn btn-checkout w-100" id="confirmCheckout">
+                            <span class="button-text"><i class="fas fa-check mr-1"></i>Confirm Checkout</span>
+                            <span class="loader" style="display: none;">
+                                <i class="fas fa-spinner fa-spin mr-1"></i>Processing...
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
+
+<style>
+    /* Checkout Modal Styling */
+.modal-content {
+    background: var(--surface);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: var(--text);
+}
+
+.modal-header {
+    background: var(--primary);
+    border-bottom: none;
+    padding: 15px 20px;
+}
+
+.modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    color: var(--text);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.close {
+    color: var(--text);
+    opacity: 0.8;
+    font-size: 1.5rem;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+/* Sections Wrapper */
+.sections-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Section Container */
+.section-container {
+    background: #222222;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow);
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+}
+
+/* Form Inputs */
+.form-control {
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text);
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(107, 148, 107, 0.25);
+    background: #2a2a2a;
+    color: var(--text);
+}
+
+.input-group-text {
+    background: var(--primary);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text);
+    border-radius: 6px 0 0 6px;
+}
+
+.form-text {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+
+/* Dropdown */
+.custom-dropdown {
+    background: #2a2a2a;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text);
+    font-size: 0.9rem;
+    border-radius: 6px;
+}
+
+.custom-dropdown:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 0.2rem rgba(107, 148, 107, 0.25);
+}
+
+/* Checkout Button */
+.btn-checkout {
+    background: var(--primary);
+    color: var(--text);
+    font-weight: 500;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    padding: 8px;
+    transition: var(--transition);
+}
+
+.btn-checkout:hover {
+    background: var(--secondary);
+    transform: scale(1.03);
+}
+
+.btn-checkout .loader {
+    display: none;
+}
+
+.btn-checkout:disabled {
+    background: #444;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Modal Footer */
+.modal-footer {
+    border-top: none;
+    padding: 15px 20px;
+}
+
+/* Responsive Adjustments */
+@media screen and (min-width: 768px) {
+    .modal-lg {
+        max-width: 900px;
+    }
+
+    .sections-wrapper {
+        flex-direction: row;
+        gap: 20px;
+    }
+
+    .section-container {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .section-container {
+        width: 100%;
+    }
+
+    .modal-body {
+        padding: 15px;
+    }
+
+    .btn-checkout {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    .modal-title {
+        font-size: 1.2rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .section-container {
+        padding: 10px;
+    }
+
+    .form-control,
+    .custom-dropdown {
+        font-size: 0.85rem;
+    }
+
+    .section-title {
+        font-size: 1rem;
+    }
+
+    .btn-checkout {
+        font-size: 0.95rem;
+        padding: 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn-checkout,
+    .form-control,
+    .custom-dropdown {
+        transition: none;
+    }
+}
+</style>
 
 <!-- Payment Processing Modal -->
 <div class="modal fade" id="paymentProcessingModal" tabindex="-1" role="dialog" aria-labelledby="paymentProcessingModalLabel" aria-hidden="true">
@@ -1045,44 +1257,15 @@ function downloadReceipt(receipt) {
         transform: scale(1.03);
     }
 
-    /* Modals */
-    .modal-content {
-        background: #222222;
-        border: none;
-        border-radius: 12px;
-        box-shadow: var(--shadow);
-    }
-
     .modal-header {
         background: var(--primary);
         color: var(--text);
         border-bottom: none;
-        border-radius: 12px 12px 0 0;
     }
 
     .modal-title {
         font-family: 'Orbitron', sans-serif;
         font-size: 1.4rem;
-    }
-
-    .modal-body {
-        background: #222222;
-        color: var(--text);
-    }
-
-    .form-control {
-        background: #333;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: var(--text);
-        border-radius: 8px;
-        transition: var(--transition);
-    }
-
-    .form-control:focus {
-        background: #444;
-        border-color: var(--accent);
-        color: var(--text);
-        box-shadow: none;
     }
 
     .input-group-text {
