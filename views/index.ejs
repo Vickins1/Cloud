@@ -2541,8 +2541,7 @@ function showNotification(message, isSuccess) {
             <div class="modal-header cosmic-header">
                 <h5 class="modal-title" id="ageVerificationLabel">
                     <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="modal-logo">
-                    <span class="four-twenty-badge">4/20</span>
-                    <span class="modal-title-text">Welcome to Cloud 420</span>
+                   <span class="modal-title-text">Welcome to Cloud 420</span>
                 </h5>
             </div>
             <div class="modal-body cosmic-body">
@@ -3032,9 +3031,10 @@ function updateCountdown() {
     }
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    document.getElementById('countdown').textContent = `4/20 Countdown: ${hours}h ${minutes}m`;
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    document.getElementById('countdown').textContent = `4/20 Countdown: ${hours}h ${minutes}m ${seconds}s`;
 }
-setInterval(updateCountdown, 60000);
+setInterval(updateCountdown, 1000); // Update every second
 updateCountdown();
 
 // Initialize Bootstrap tooltips
@@ -3042,7 +3042,6 @@ document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element => {
     new bootstrap.Tooltip(element);
 });
 </script>
-```
 
 
 
