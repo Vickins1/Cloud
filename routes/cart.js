@@ -18,13 +18,13 @@ function isLoggedIn(req, res, next) {
     res.redirect('/auth');
 }
 
-// Verify payment status
-async function verifyPaymentStatus(transactionRequestId) {
+// Verify payment status with UmeskiaSoftwares API
+async function verifyPaymentStatus(tranasaction_request_id) {
     try {
         const verifyPayload = {
             api_key: process.env.UMS_API_KEY,
             email: process.env.UMS_EMAIL,
-            tranasaction_request_id: transactionRequestId // Fixed typo
+            tranasaction_request_id
         };
 
         const response = await axios.post(
@@ -44,23 +44,60 @@ async function verifyPaymentStatus(transactionRequestId) {
     }
 }
 
-// Process payment verification
-async function processPaymentVerification(transactionRequestId) {
+// Process payment verification and clear cart on success
+async function processPaymentVerification(tranasaction_request_id, userId) {
     try {
-        const verification = await verifyPaymentStatus(transactionRequestId);
-        console.log(`Verification result for ${transactionRequestId}:`, verification);
-
-        const pendingOrder = pendingOrders.get(transactionRequestId);
+        const pendingOrder = pendingOrders.get(tranasaction_request_id);
         if (!pendingOrder) {
-            console.log(`No pending order found for ${transactionRequestId}`);
+            console.log(`No pending order found for ${tranasaction_request_id}`);
+            // Check for existing transaction to provide accurate status
+            const existingTransaction = await Transaction.findOne({ transactionRequestId: tranasaction_request_id });
+            if (existingTransaction) {
+                return {
+                    status: existingTransaction.status,
+                    orderId: existingTransaction.orderId || null,
+                    message: existingTransaction.status === 'completed' ? 'Payment already processed' : 'Transaction already processed',
+                    receipt: existingTransaction.status === 'completed' ? null : null,
+                    details: existingTransaction.gatewayResponse || {}
+                };
+            }
             return { status: 'error', orderId: null, message: 'No pending order found' };
         }
 
         const { orderData, transactionData } = pendingOrder;
 
+        // Check if transaction already exists
+        const existingTransaction = await Transaction.findOne({ transactionRequestId: tranasaction_request_id });
+        if (existingTransaction) {
+            console.log(`Transaction already exists for ${tranasaction_request_id}: ${existingTransaction._id}`);
+            pendingOrders.delete(tranasaction_request_id); // Clean up after returning result
+            return {
+                status: existingTransaction.status,
+                orderId: existingTransaction.orderId || null,
+                message: existingTransaction.status === 'completed' ? 'Payment already processed' : 'Transaction already processed',
+                receipt: existingTransaction.status === 'completed' ? pendingOrder.receipt : null,
+                details: existingTransaction.gatewayResponse || {}
+            };
+        }
+
+        // Check if order already processed
+        if (orderData._id) {
+            console.log(`Order already processed for ${tranasaction_request_id}: ${orderData._id}`);
+            pendingOrders.delete(tranasaction_request_id); // Clean up after returning result
+            return {
+                status: 'completed',
+                orderId: orderData._id,
+                message: 'Payment already processed',
+                receipt: pendingOrder.receipt
+            };
+        }
+
+        const verification = await verifyPaymentStatus(tranasaction_request_id);
+        console.log(`Verification result for ${tranasaction_request_id}:`, verification);
+
         if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
             orderData.paymentStatus = 'completed';
-            orderData.transactionRequestId = transactionRequestId;
+            orderData.transactionRequestId = tranasaction_request_id;
             orderData.paymentDetails = verification;
 
             const order = new Order(orderData);
@@ -70,10 +107,18 @@ async function processPaymentVerification(transactionRequestId) {
             transactionData.status = 'completed';
             transactionData.gatewayResponse = verification;
 
-            const transaction = new Transaction(transactionData);
-            await transaction.save();
+            // Save transaction with upsert
+            await Transaction.findOneAndUpdate(
+                { transactionRequestId: tranasaction_request_id },
+                transactionData,
+                { upsert: true, new: true }
+            );
 
-            // Fetch product details with flair
+            // Clear cart in database and session on successful payment
+            await Cart.updateOne({ userId }, { $set: { products: [] } });
+            pendingOrder.transactionData.sessionCart = [];
+
+            // Enrich items with product details
             const enrichedItems = await Promise.all(orderData.items.map(async (item) => {
                 const product = await Product.findById(item.productId);
                 return {
@@ -82,82 +127,112 @@ async function processPaymentVerification(transactionRequestId) {
                         _id: item.productId
                     },
                     quantity: item.quantity,
-                    price: item.price || product?.price || 0 
+                    price: item.price || product?.price || 0
                 };
             }));
 
-            // Send Payment Confirmation Email
-            await emailService.sendPaymentConfirmation({
-                customerName: orderData.customerName,
-                customerEmail: orderData.customerEmail,
-                transactionRequestId,
-                amount: orderData.total,
-                host: process.env.APP_HOST || 'cloud420.store'
-            });
-
-            // Send Order Confirmation Email
-            await emailService.sendOrderConfirmation({
-                customerName: orderData.customerName,
-                customerEmail: orderData.customerEmail,
-                cloudOrderId: order._id,
-                total: orderData.total,
-                items: enrichedItems,
-                host: process.env.APP_HOST || 'cloud420.store'
-            });
-
-            // Send New Order Notification to admin
-            await emailService.sendNewOrderNotificationToAdmin({
-                customerName: orderData.customerName,
-                cloudOrderId: order._id,
-                total: orderData.total,
-                items: enrichedItems,
-                host: process.env.APP_HOST || 'cloud420.store' 
-            });
-
-            // Generate receipt for successful payment
+            // Generate receipt
             const receiptBuffer = await generateReceiptPDF({
-                transactionRequestId,
+                transactionRequestId: tranasaction_request_id,
                 customerName: orderData.customerName,
-                amount: orderData.total || verification.amount
+                amount: orderData.total
             });
 
-            // Note: 'res' is undefined here; assuming this is meant to be returned
-            pendingOrders.delete(transactionRequestId);
+            const receipt = {
+                filename: `receipt-${tranasaction_request_id}.pdf`,
+                data: receiptBuffer.toString('base64'),
+                contentType: 'application/pdf'
+            };
+
+            // Store receipt in pendingOrder
+            pendingOrder.receipt = receipt;
+            orderData._id = order._id;
+
+            // Send emails
+            await Promise.all([
+                emailService.sendPaymentConfirmation({
+                    customerName: orderData.customerName,
+                    customerEmail: orderData.customerEmail,
+                    transactionRequestId: tranasaction_request_id,
+                    amount: orderData.total,
+                    host: process.env.APP_HOST
+                }),
+                emailService.sendOrderConfirmation({
+                    customerName: orderData.customerName,
+                    customerEmail: orderData.customerEmail,
+                    cloudOrderId: order._id,
+                    total: orderData.total,
+                    items: enrichedItems,
+                    host: process.env.APP_HOST
+                }),
+                emailService.sendNewOrderNotificationToAdmin({
+                    customerName: orderData.customerName,
+                    cloudOrderId: order._id,
+                    total: orderData.total,
+                    items: enrichedItems,
+                    host: process.env.APP_HOST
+                })
+            ]);
+
             console.log(`Payment completed for order: ${order._id}`);
+            pendingOrders.delete(tranasaction_request_id); // Clean up after processing
             return {
                 status: 'completed',
                 orderId: order._id,
                 message: 'Payment successful!',
-                receipt: {
-                    filename: `receipt-${transactionRequestId}.pdf`,
-                    data: receiptBuffer.toString('base64'),
-                    contentType: 'application/pdf'
-                }
+                receipt,
+                details: verification
             };
         } else if (
             verification.ResultCode === '503' ||
             verification.TransactionStatus === 'Failed' ||
+            verification.TransactionStatus === 'Cancelled' ||
             ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)
         ) {
             transactionData.status = 'failed';
             transactionData.orderId = null;
             transactionData.gatewayResponse = verification;
 
-            const transaction = new Transaction(transactionData);
-            await transaction.save();
+            // Save transaction with upsert
+            await Transaction.findOneAndUpdate(
+                { transactionRequestId: tranasaction_request_id },
+                transactionData,
+                { upsert: true, new: true }
+            );
 
-            pendingOrders.delete(transactionRequestId);
-            console.log(`Payment failed for transaction: ${transactionRequestId}`, verification);
-            return { status: 'failed', orderId: null, message: 'Payment declined' };
+            console.log(`Payment failed for transaction: ${tranasaction_request_id}`, verification);
+            const result = {
+                status: 'failed',
+                orderId: null,
+                message: verification.ResultDesc || 'Payment declined',
+                details: verification
+            };
+            pendingOrders.delete(tranasaction_request_id); // Clean up after preparing result
+            return result;
         }
-        return { status: 'pending', orderId: null, message: 'Payment still processing' };
+        return { status: 'pending', orderId: null, message: 'Payment still processing', details: verification };
     } catch (error) {
-        console.error(`Error verifying ${transactionRequestId}:`, error);
+        console.error(`Error verifying ${tranasaction_request_id}:`, error);
+        if (error.code === 11000) {
+            console.warn(`Duplicate transaction detected for ${tranasaction_request_id}`);
+            const existingTransaction = await Transaction.findOne({ transactionRequestId: tranasaction_request_id });
+            if (existingTransaction) {
+                pendingOrders.delete(tranasaction_request_id); // Clean up after returning result
+                return {
+                    status: existingTransaction.status,
+                    orderId: existingTransaction.orderId || null,
+                    message: existingTransaction.status === 'completed' ? 'Payment already processed' : 'Transaction already processed',
+                    receipt: existingTransaction.status === 'completed' ? pendingOrder?.receipt : null,
+                    details: existingTransaction.gatewayResponse || {}
+                };
+            }
+        }
         if (error.name === 'ValidationError') {
             console.error('Validation errors:', error.errors);
             return { status: 'error', orderId: null, message: 'Validation failed', details: error.errors };
         }
-        return { status: 'error', orderId: null, message: error.message || 'Verification error' };
+        pendingOrders.delete(tranasaction_request_id); // Clean up on unhandled error
+        return { status: 'error', orderId: null, message: error.message || 'Verification error', details: error };
     }
 }
 
@@ -167,7 +242,6 @@ async function generateReceiptPDF({ transactionRequestId, customerName, amount }
         const doc = new PDFDocument();
         let buffers = [];
 
-        // Collect buffer chunks
         doc.on('data', buffers.push.bind(buffers));
         doc.on('end', () => {
             const pdfBuffer = Buffer.concat(buffers);
@@ -175,7 +249,6 @@ async function generateReceiptPDF({ transactionRequestId, customerName, amount }
         });
         doc.on('error', reject);
 
-        // PDF content
         doc.fontSize(16).text('Payment Receipt', { align: 'center' });
         doc.moveDown();
         doc.fontSize(12).text(`Transaction ID: ${transactionRequestId}`);
@@ -187,6 +260,35 @@ async function generateReceiptPDF({ transactionRequestId, customerName, amount }
 
         doc.end();
     });
+}
+
+// Poll payment status
+async function pollPaymentStatus(tranasaction_request_id, maxAttempts = 30, intervalMs = 2000) {
+    let attempts = 0;
+    while (attempts < maxAttempts) {
+        const result = await processPaymentVerification(tranasaction_request_id);
+        if (result.status === 'completed' || result.status === 'failed' || result.status === 'error') {
+            return result;
+        }
+        attempts++;
+        await new Promise(resolve => setTimeout(resolve, intervalMs));
+    }
+    const pendingOrder = pendingOrders.get(tranasaction_request_id);
+    if (pendingOrder) {
+        pendingOrder.transactionData.status = 'failed';
+        pendingOrder.transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
+        await Transaction.findOneAndUpdate(
+            { transactionRequestId: tranasaction_request_id },
+            pendingOrder.transactionData,
+            { upsert: true, new: true }
+        );
+        await emailService.sendPaymentFailureNotification({
+            customerEmail: pendingOrder.orderData.customerEmail,
+            transactionRequestId: tranasaction_request_id
+        });
+        pendingOrders.delete(tranasaction_request_id);
+    }
+    return { status: 'failed', orderId: null, message: 'Payment processing timed out' };
 }
 
 // Initiate STK Push
@@ -204,7 +306,7 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
         }
 
         const deliveryLocations = {
-            'Pick-Up':0,
+            'Pick-Up': 0,
             'Kutus': 50,
             'Kerugoya': 50,
             'Kagio': 100,
@@ -395,7 +497,7 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
             'Kithumbu': 50,
             'Kiamwathi': 50
         };
-        
+
         const calculatedDeliveryFee = deliveryLocations[customerLocation] || 0;
         const calculatedSubtotal = cart.reduce((sum, item) => sum + (item.productId.price * item.quantity), 0);
         const calculatedTotal = calculatedSubtotal + calculatedDeliveryFee;
@@ -416,8 +518,8 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
                 price: item.productId.price,
                 quantityType: item.quantityType
             })),
-            paymentStatus: 'Pending',
-            shippingStatus: 'Processing',
+            paymentStatus: 'pending',
+            shippingStatus: 'processing',
             transactionRequestId: null,
             paymentDetails: {},
             createdAt: new Date()
@@ -438,27 +540,29 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
 
         const stkData = stkResponse.data;
         if (stkData.success === '200') {
-            const transactionRequestId = stkData.tranasaction_request_id; // Fixed typo
+            const tranasaction_request_id = stkData.tranasaction_request_id;
 
             const transactionData = {
                 orderId: null,
-                transactionRequestId,
+                transactionRequestId: tranasaction_request_id,
                 amount: calculatedTotal,
-                status: 'Pending',
+                status: 'pending',
                 paymentMethod: 'Mobile',
                 customerPhone: stkPayload.msisdn,
-                paymentReference: stkPayload.reference
+                paymentReference: stkPayload.reference,
+                sessionCart: req.session.cart
             };
 
-            pendingOrders.set(transactionRequestId, { orderData, transactionData });
+            pendingOrders.set(tranasaction_request_id, { orderData, transactionData });
 
-            req.session.cart = [];
-
-            setImmediate(() => processPaymentVerification(transactionRequestId));
+            // Start polling in the background
+            setImmediate(async () => {
+                await pollPaymentStatus(tranasaction_request_id);
+            });
 
             return res.json({
                 success: true,
-                transactionRequestId, // Match frontend expectation
+                transactionRequestId: tranasaction_request_id,
                 message: 'STK Push initiated. Please check your phone to complete payment.'
             });
         } else {
@@ -480,49 +584,19 @@ router.post('/initiate-payment', isLoggedIn, async (req, res) => {
 });
 
 // Verify payment endpoint
-router.get('/verify-payment/:transactionRequestId', async (req, res) => {
+router.get('/verify-payment/:transactionRequestId', isLoggedIn, async (req, res) => {
     const { transactionRequestId } = req.params;
+    const userId = req.user._id;
     try {
-        const verification = await verifyPaymentStatus(transactionRequestId);
-        const pendingOrder = pendingOrders.get(transactionRequestId);
-
-        if (verification.ResultCode === '200' && verification.TransactionStatus === 'Completed') {
-            // Ensure order is saved before responding
-            if (pendingOrder && !pendingOrder.orderData._id) {
-                await processPaymentVerification(transactionRequestId);
-            }
-            const orderId = pendingOrder?.transactionData?.orderId || null;
-            res.json({
-                status: 'completed',
-                orderId,
-                message: 'Payment successful!'
-            });
-        } else if (
-            verification.ResultCode === '503' ||
-            verification.TransactionStatus === 'Failed' ||
-            ['1032', '1037', '1025', '9999', '2001', '1019', '1001'].includes(verification.ResultCode)
-        ) {
-            if (pendingOrder) {
-                await processPaymentVerification(transactionRequestId);
-            }
-            res.json({
-                status: 'failed',
-                orderId: null,
-                message: verification.message || 'Payment failed'
-            });
-        } else {
-            res.json({
-                status: 'pending',
-                orderId: null,
-                message: 'Payment still processing'
-            });
-        }
+        const result = await processPaymentVerification(transactionRequestId, userId);
+        res.json(result);
     } catch (error) {
+        console.error(`Error in verify-payment for ${transactionRequestId}:`, error);
         res.status(error.status || 500).json({
             status: 'error',
             orderId: null,
-            message: 'Verification error',
-            details: error.details
+            message: error.message || 'Verification error',
+            details: error
         });
     }
 });
@@ -530,23 +604,26 @@ router.get('/verify-payment/:transactionRequestId', async (req, res) => {
 // Periodic cleanup
 setInterval(async () => {
     const now = Date.now();
-    for (const [transactionRequestId, { orderData, transactionData }] of pendingOrders.entries()) {
-        if ((now - orderData.createdAt.getTime()) > 1000 * 60 * 30) { 
+    for (const [tranasaction_request_id, { orderData, transactionData }] of pendingOrders.entries()) {
+        if ((now - orderData.createdAt.getTime()) > 1000 * 60 * 30) {
             try {
                 transactionData.status = 'failed';
                 transactionData.gatewayResponse = { message: 'Payment timeout', ResultCode: 'TIMEOUT' };
-                const transaction = new Transaction(transactionData);
-                await transaction.save();
+                await Transaction.findOneAndUpdate(
+                    { transactionRequestId: tranasaction_request_id },
+                    transactionData,
+                    { upsert: true, new: true }
+                );
 
                 await emailService.sendPaymentFailureNotification({
                     customerEmail: orderData.customerEmail,
-                    transactionRequestId
+                    transactionRequestId: tranasaction_request_id
                 });
 
-                pendingOrders.delete(transactionRequestId);
-                console.log(`Cleaned up expired transaction: ${transactionRequestId}`);
+                pendingOrders.delete(tranasaction_request_id);
+                console.log(`Cleaned up expired transaction: ${tranasaction_request_id}`);
             } catch (error) {
-                console.error(`Error cleaning up ${transactionRequestId}:`, error);
+                console.error(`Error cleaning up ${tranasaction_request_id}:`, error);
             }
         }
     }
@@ -584,6 +661,25 @@ router.get('/', isLoggedIn, async (req, res) => {
             isAuthenticated: true,
             error: { message: 'An error occurred while fetching the cart.' }
         });
+    }
+});
+
+// POST clear cart (optional, for explicit clearing)
+router.post('/clear', isLoggedIn, async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        // Clear cart in database
+        await Cart.updateOne({ userId }, { $set: { products: [] } });
+
+        // Clear cart in session
+        req.session.cart = [];
+
+        // Respond with success
+        res.json({ success: true, message: 'Cart cleared successfully' });
+    } catch (error) {
+        console.error('Error clearing cart:', error);
+        res.status(500).json({ success: false, message: 'An error occurred while clearing the cart' });
     }
 });
 
