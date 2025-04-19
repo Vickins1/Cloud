@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="/images/icon.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         body {
             background: linear-gradient(135deg, #000000 0%, #1a2a2a 100%);
@@ -503,411 +504,633 @@
     }
 </style>
 
-    <div class="container mt-5">
-        <div class="container mt-5">
-            <div class="row">
-                <% products.slice().reverse().forEach(product => { %>
-                    <div class="col-md-3 mb-4"> 
-                        <div class="card h-100 product-card" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
-                          
-                            <!-- Professional Image Carousel with Click to Open Modal -->
-                            <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
-                                <div class="carousel-inner" data-bs-toggle="modal" data-bs-target="#productModal-<%= product._id %>" style="cursor: pointer;">
-                                    <div class="carousel-item active">
-                                        <img src="<%= product.imageUrl %>" class="d-block w-100 product-img" alt="Main Product Image">
-                                    </div>
-                                    <% if (product.additionalImages && product.additionalImages.length > 0) { %>
-                                        <% product.additionalImages.forEach((img, index) => { %>
-                                            <div class="carousel-item">
-                                                <img src="<%= img %>" class="d-block w-100 product-img" alt="Product Image <%= index + 1 %>">
-                                            </div>
-                                        <% }) %>
-                                    <% } %>
-                                </div>
+<div class="container mt-5">
+    <div class="row">
+        <% products.slice().reverse().forEach(product => { %>
+            <div class="col-md-3 mb-4">
+                <div class="card h-100 product-card" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
+                    <!-- 4/20 Badge -->
+                    <div class="four-twenty-badge">4/20 Exclusive</div>
+                    <!-- Cannabis Leaf Overlay -->
+                    <div class="cannabis-leaf-overlay"></div>
+                    <!-- Image Carousel -->
+                    <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
+                        <div class="carousel-inner" data-bs-toggle="modal" data-bs-target="#productModal-<%= product._id %>" style="cursor: pointer;">
+                            <div class="carousel-item active">
+                                <img src="<%= product.imageUrl %>" class="d-block w-100 product-img" alt="Main Product Image">
                             </div>
-                            
-                            <div class="card-body">
-                                <h5 class="card-title"><%= product.name %></h5>
-                                <p class="card-text short-desc"><%= product.shortDescription %></p>
-                                <p class="card-text price text-success">KES <%= product.price.toFixed(2) %></p>
-                            </div>
-                            <div class="card-footer text-center">
-                                <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>">Buy Now!</button>
-                                <button class="btn btn-dark add-to-cart">Add to Cart</button>
-                            </div>
-                        </div>
-                        
-                        <style>
-                        .product-card {
-                            transition: all 0.3s ease;
-                            max-width: 350px;
-                            margin: 0 auto;
-                            background: #2a2a2a; /* Dark gray background */
-                            color: #ffffff; /* White text */
-                            border: 1px solid #3a3a3a; /* Subtle border */
-                            border-radius: 8px; /* Slightly rounded corners */
-                        }
-                        
-                        /* Carousel Image Styling */
-                        .product-card .carousel-inner {
-                            background: #333333; /* Darker carousel background */
-                            border-top-left-radius: 8px;
-                            border-top-right-radius: 8px;
-                        }
-                        
-                        .product-img {
-                            object-fit: cover;
-                            height: 200px;
-                            width: 100%;
-                            opacity: 0.95; /* Slight transparency for style */
-                            transition: opacity 0.3s ease;
-                        }
-                        
-                        .product-img:hover {
-                            opacity: 1; /* Full opacity on hover */
-                        }
-                        
-                        /* Card Body */
-                        .card-body {
-                            padding: 1rem;
-                            background: #2a2a2a;
-                        }
-                        
-                        .card-title {
-                            font-size: 1.25rem;
-                            margin-bottom: 0.5rem;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-                            color: #e0e0e0; /* Light gray for title */
-                        }
-                        
-                        .short-desc {
-                            font-size: 0.9rem;
-                            margin-bottom: 0.5rem;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 2;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                            color: #b0b0b0; /* Medium gray for description */
-                        }
-                        
-                        .price {
-                            font-size: 1.1rem;
-                            font-weight: bold;
-                        }
-                        
-                        /* Card Footer */
-                        .card-footer {
-                            padding: 0.75rem;
-                            background: #252525; /* Slightly darker footer */
-                            border-top: 1px solid #3a3a3a;
-                            border-bottom-left-radius: 8px;
-                            border-bottom-right-radius: 8px;
-                        }
-                        
-                        .card-footer .btn {
-                            margin: 0.25rem;
-                            padding: 0.5rem 1rem;
-                            width: 45%;
-                            font-size: 0.9rem;
-                            transition: all 0.3s ease;
-                        }
-                        
-                        /* Ensure Bootstrap button styles work with dark theme */
-                        .btn-primary, .btn-dark {
-                            color: #ffffff; /* Ensure text remains white */
-                        }
-                        
-                        /* Hover Effect */
-                        @media (hover: hover) {
-                            .product-card:hover {
-                                transform: translateY(-5px);
-                                box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Darker shadow */
-                            }
-                        }
-                        
-                        /* Responsive Design */
-                        @media screen and (max-width: 1200px) {
-                            .product-card {
-                                max-width: 300px;
-                            }
-                            .product-img {
-                                height: 180px;
-                            }
-                            .card-title {
-                                font-size: 1.1rem;
-                            }
-                        }
-                        
-                        @media screen and (max-width: 992px) {
-                            .product-img {
-                                height: 160px;
-                            }
-                            .card-footer .btn {
-                                width: 48%;
-                                padding: 0.4rem 0.8rem;
-                            }
-                        }
-                        
-                        @media screen and (max-width: 768px) {
-                            .product-card {
-                                max-width: 100%;
-                            }
-                            .product-img {
-                                height: 140px;
-                            }
-                            .card-title {
-                                font-size: 1rem;
-                            }
-                            .short-desc {
-                                font-size: 0.85rem;
-                            }
-                            .price {
-                                font-size: 1rem;
-                            }
-                        }
-                        
-                        @media screen and (max-width: 576px) {
-                            .product-img {
-                                height: 120px;
-                            }
-                            .card-body {
-                                padding: 0.75rem;
-                            }
-                            .card-title {
-                                font-size: 0.95rem;
-                            }
-                            .short-desc {
-                                font-size: 0.8rem;
-                                -webkit-line-clamp: 1;
-                            }
-                            .card-footer .btn {
-                                font-size: 0.8rem;
-                                padding: 0.35rem 0.7rem;
-                            }
-                        }
-                        </style>
-
-<!-- Product Details Modal -->
-<div class="modal fade" id="productModal-<%= product._id %>" tabindex="-1" aria-labelledby="productModalLabel-<%= product._id %>" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content bg-dark text-white shadow-lg" style="border-radius: 10px; overflow: hidden;">
-            <div class="modal-header border-secondary bg-gradient" style="background: linear-gradient(90deg, #1a1a1a, #2d2d2d);">
-                <h5 class="modal-title fw-bold" id="productModalLabel-<%= product._id %>">
-                    <%= product.name %>
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="row g-4">
-                    <!-- Carousel Section -->
-                    <div class="col-md-6">
-                        <div class="carousel slide" data-bs-ride="carousel" id="modal-carousel-<%= product._id %>">
-                            <div class="carousel-inner rounded">
-                                <div class="carousel-item active">
-                                    <img src="<%= product.imageUrl %>" class="d-block w-100 modal-img img-clickable" alt="Main Product Image" style="object-fit: cover; max-height: 400px;">
-                                </div>
-                                <% if (product.additionalImages && product.additionalImages.length > 0) { %>
-                                    <% product.additionalImages.forEach((img, index) => { %>
-                                        <div class="carousel-item">
-                                            <img src="<%= img %>" class="d-block w-100 modal-img img-clickable" alt="Product Image <%= index + 1 %>" style="object-fit: cover; max-height: 400px;">
-                                        </div>
-                                    <% }) %>
-                                <% } %>
-                            </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide="next">
-                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        </div>
-                        <!-- Thumbnail Previews -->
-                        <div class="d-flex flex-wrap gap-2 mt-2 justify-content-center">
-                            <img src="<%= product.imageUrl %>" class="thumbnail rounded img-clickable" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide-to="0" alt="Thumbnail">
                             <% if (product.additionalImages && product.additionalImages.length > 0) { %>
                                 <% product.additionalImages.forEach((img, index) => { %>
-                                    <img src="<%= img %>" class="thumbnail rounded img-clickable" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide-to="<%= index + 1 %>" alt="Thumbnail">
+                                    <div class="carousel-item">
+                                        <img src="<%= img %>" class="d-block w-100 product-img" alt="Product Image <%= index + 1 %>">
+                                    </div>
                                 <% }) %>
                             <% } %>
                         </div>
                     </div>
+                    <div class="card-body">
+                        <h5 class="card-title"><%= product.name %></h5>
+                        <p class="card-text short-desc"><%= product.shortDescription %></p>
+                        <p class="card-text price text-success">KES <%= product.price.toFixed(2) %></p>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-primary buy-now" data-product-id="<%= product._id %>" data-bs-toggle="tooltip" title="Purchase this premium strain">Buy Now</button>
+                        <button class="btn btn-dark add-to-cart" data-product-id="<%= product._id %>" data-bs-toggle="tooltip" title="Add to your cart">Add to Cart</button>
+                    </div>
+                </div>
 
-                    <!-- Details Section -->
-                    <div class="col-md-6 details-section">
-                        <p class="mt-3 Category-box">
-                            <i class="bi bi-tag-fill text-info me-1"></i><strong> Category:</strong>  
-                            <span class="text-info fw-semibold"><%= product.category %></span>
-                        </p>
-                        <h6 class="text mb-2">
-                            <i class="bi bi-cash-stack text-success me-1"></i><strong> Price: </strong> 
-                            <span class="text-success fw-bold">KES <%= product.price.toFixed(2) %></span>
-                        </h6>
-                        <p class="mt-3 description-box">
-                            <strong class="text-light">Description:</strong>
-                            <span class="text-light d-block mt-1"><%= product.description %></span>
-                        </p>
-                        <p class="availability-box">
-                            <strong class="text-light">Availability:<br></strong>
-                            <span class="fw-semibold <%= product.stockQuantity > 0 ? 'text-success' : 'text-danger' %> d-inline-flex align-items-center">
-                                <i class="bi <%= product.stockQuantity > 0 ? 'bi-check-circle-fill' : 'bi-x-circle-fill' %> me-1"></i>
-                                <%= product.stockQuantity > 0 ? 'In Stock' : 'Out of Stock' %>
-                            </span>
-                        </p>
+                <!-- Product Details Modal -->
+                <div class="modal fade" id="productModal-<%= product._id %>" tabindex="-1" aria-labelledby="productModalLabel-<%= product._id %>" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content cosmic-modal">
+                            <div class="modal-header cosmic-header">
+                                <h5 class="modal-title fw-bold" id="productModalLabel-<%= product._id %>">
+                                    <span class="four-twenty-banner">4/20 Exclusive</span>
+                                    <%= product.name %>
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4 cosmic-body">
+                                <div class="nebula-bg"></div>
+                                <div class="row g-4">
+                                    <!-- Carousel Section -->
+                                    <div class="col-md-6">
+                                        <div class="carousel slide" data-bs-ride="carousel" id="modal-carousel-<%= product._id %>">
+                                            <div class="carousel-inner rounded">
+                                                <div class="carousel-item active">
+                                                    <img src="<%= product.imageUrl %>" class="d-block w-100 modal-img img-clickable" alt="Main Product Image" style="object-fit: cover; max-height: 400px;">
+                                                </div>
+                                                <% if (product.additionalImages && product.additionalImages.length > 0) { %>
+                                                    <% product.additionalImages.forEach((img, index) => { %>
+                                                        <div class="carousel-item">
+                                                            <img src="<%= img %>" class="d-block w-100 modal-img img-clickable" alt="Product Image <%= index + 1 %>" style="object-fit: cover; max-height: 400px;">
+                                                        </div>
+                                                    <% }) %>
+                                                <% } %>
+                                            </div>
+                                            <button class="carousel-control-prev" type="button" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide="prev">
+                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Previous</span>
+                                            </button>
+                                            <button class="carousel-control-next" type="button" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide="next">
+                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                <span class="visually-hidden">Next</span>
+                                            </button>
+                                        </div>
+                                        <!-- Thumbnail Previews -->
+                                        <div class="d-flex flex-wrap gap-2 mt-2 justify-content-center">
+                                            <img src="<%= product.imageUrl %>" class="thumbnail rounded img-clickable" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide-to="0" alt="Thumbnail">
+                                            <% if (product.additionalImages && product.additionalImages.length > 0) { %>
+                                                <% product.additionalImages.forEach((img, index) => { %>
+                                                    <img src="<%= img %>" class="thumbnail rounded img-clickable" style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;" data-bs-target="#modal-carousel-<%= product._id %>" data-bs-slide-to="<%= index + 1 %>" alt="Thumbnail">
+                                                <% }) %>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                    <!-- Details Section -->
+                                    <div class="col-md-6 details-section">
+                                        <p class="mt-3 category-box">
+                                            <i class="bi bi-tag-fill text-success me-1"></i><strong>Category:</strong>
+                                            <span class="text-success fw-semibold"><%= product.category %></span>
+                                        </p>
+                                        <h6 class="text mb-2">
+                                            <i class="bi bi-cash-stack text-success me-1"></i><strong>Price:</strong>
+                                            <span class="text-success fw-bold">KES <%= product.price.toFixed(2) %></span>
+                                        </h6>
+                                        <p class="mt-3 description-box">
+                                            <strong class="text-light">Description:</strong>
+                                            <span class="text-light d-block mt-1"><%= product.description %></span>
+                                        </p>
+                                        <p class="availability-box">
+                                            <strong class="text-light">Availability:</strong>
+                                            <span class="fw-semibold <%= product.stockQuantity > 0 ? 'text-success' : 'text-danger' %> d-inline-flex align-items-center">
+                                                <i class="bi <%= product.stockQuantity > 0 ? 'bi-check-circle-fill' : 'bi-x-circle-fill' %> me-1"></i>
+                                                <%= product.stockQuantity > 0 ? `In Stock (${product.stockQuantity} left)` : 'Out of Stock' %>
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer cosmic-footer">
+                                <button class="btn btn-outline-light buy-now" data-product-id="<%= product._id %>">Buy Now</button>
+                                <button type="button" class="btn btn-success add-to-cart-modal" data-product-id="<%= product._id %>">
+                                    <i class="bi bi-cart-plus"></i> Add to Cart
+                                </button>
+                                <p class="disclaimer">Cloud 420 promotes responsible cannabis use. Please consume wisely.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lightbox Modal for Full Image View -->
+                <div id="imageLightbox-<%= product._id %>" class="lightbox d-none">
+                    <div class="lightbox-content">
+                        <span class="close-lightbox">×</span>
+                        <img id="lightboxImage-<%= product._id %>" src="" alt="Full Image">
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-secondary bg-gradient" style="background: linear-gradient(90deg, #2d2d2d, #1a1a1a);">
-                <button class="btn btn-outline-light buy-now" data-product-id="<%= product._id %>">Buy Now!</button>
-                <button type="button" class="btn btn-success add-to-cart-modal" data-product-id="<%= product._id %>">
-                    <i class="bi bi-cart-plus"></i> Add to Cart
-                </button>
-            </div>
-        </div>
+        <% }) %>
     </div>
 </div>
 
-<!-- Lightbox Modal for Full Image View -->
-<div id="imageLightbox" class="lightbox d-none">
-    <div class="lightbox-content">
-        <span class="close-lightbox">&times;</span>
-        <img id="lightboxImage" src="" alt="Full Image">
-    </div>
-</div>
-
-<!-- Lightbox Styling -->
 <style>
-    .lightbox {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1070;
-    }
+/* Product Card Styling */
+.product-card {
+    position: relative;
+    transition: all 0.3s ease;
+    max-width: 350px;
+    margin: 0 auto;
+    background: #0a0a0a; /* Deep black */
+    color: #e0e0e0; /* Off-white text */
+    border: 1px solid #2a4d2a; /* Muted green border */
+    border-radius: 8px;
+    overflow: hidden;
+}
 
-    .lightbox-content {
-        position: relative;
-        max-width: 90%;
-        max-height: 90%;
-    }
+/* 4/20 Badge */
+.four-twenty-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #2a4d2a; /* Muted green */
+    color: #e0e0e0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    box-shadow: 0 0 4px rgba(74, 112, 74, 0.5); /* Soft green glow */
+    z-index: 10;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
 
-    .lightbox img {
-        width: 100%;
-        height: auto;
-        max-height: 80vh;
-    }
+.product-card:hover .four-twenty-badge {
+    opacity: 1;
+}
 
-    .close-lightbox {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 2rem;
-        color: white;
-        cursor: pointer;
-    }
-     /* Details Section Styling */
-     .details-section {
-        padding: 15px;
-        background: rgba(255, 255, 255, 0.05); /* Subtle background for contrast */
-        border-radius: 8px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+/* Cannabis Leaf Overlay */
+.cannabis-leaf-overlay {
+    position: absolute;
+    top: 20%;
+    right: 10%;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(74, 112, 74, 0.3) 20%, transparent 60%); /* Muted green */
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+}
 
-    .details-section:hover {
-        transform: translateY(-5px); /* Slight lift on hover */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
-    }
+.product-card:hover .cannabis-leaf-overlay {
+    opacity: 0.5;
+    animation: leafFade 3s infinite ease-in-out;
+}
 
-    .details-section h6 {
+@keyframes leafFade {
+    0% { opacity: 0.5; }
+    50% { opacity: 0.7; }
+    100% { opacity: 0.5; }
+}
+
+/* Carousel Image Styling */
+.product-card .carousel-inner {
+    background: #1a1a1a; /* Dark gray */
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.product-img {
+    object-fit: cover;
+    height: 200px;
+    width: 100%;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.product-img:hover {
+    opacity: 1;
+}
+
+/* Card Body */
+.card-body {
+    padding: 1rem;
+    background: #0a0a0a;
+}
+
+.card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #ffffff;
+    text-shadow: 0 0 2px rgba(74, 112, 74, 0.3); /* Subtle green shadow */
+}
+
+.short-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: #e0e0e0;
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #4a704a; /* Soft green */
+}
+
+/* Card Footer */
+.card-footer {
+    padding: 0.75rem;
+    background: #0a0a0a;
+    border-top: 1px solid #2a4d2a;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.card-footer .btn {
+    margin: 0.25rem;
+    padding: 0.5rem 1rem;
+    width: 45%;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #2a4d2a; /* Muted green */
+    border: none;
+    color: #e0e0e0;
+}
+
+.btn-primary:hover {
+    background: #4a704a; /* Soft green */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 112, 74, 0.4);
+}
+
+.btn-dark {
+    background: #1a1a1a;
+    border: 1px solid #2a4d2a;
+    color: #e0e0e0;
+}
+
+.btn-dark:hover {
+    background: #2a4d2a;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(74, 112, 74, 0.4);
+}
+
+/* Hover Effect */
+@media (hover: hover) {
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(74, 112, 74, 0.2);
+    }
+}
+
+/* Product Modal Styling */
+.cosmic-modal {
+    background: #0a0a0a;
+    border: 1px solid #2a4d2a;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(74, 112, 74, 0.3);
+    color: #e0e0e0;
+    overflow: hidden;
+}
+
+.cosmic-header {
+    background: #0a0a0a;
+    border-bottom: 1px solid #2a4d2a;
+    position: relative;
+    padding: 12px 20px;
+}
+
+.four-twenty-banner {
+    background: #2a4d2a; /* Muted green */
+    color: #e0e0e0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    margin-right: 8px;
+    text-transform: uppercase;
+    box-shadow: 0 0 4px rgba(74, 112, 74, 0.5);
+}
+
+.cosmic-header::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(74, 112, 74, 0.1), transparent);
+    animation: cosmicPulse 10s infinite ease-in-out;
+}
+
+@keyframes cosmicPulse {
+    0% { transform: scale(0.9); opacity: 0.1; }
+    50% { transform: scale(1.1); opacity: 0.2; }
+    100% { transform: scale(0.9); opacity: 0.1; }
+}
+
+.cosmic-body {
+    position: relative;
+    background: #0a0a0a;
+}
+
+.nebula-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 30%, rgba(74, 112, 74, 0.1) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
+    z-index: 0;
+    animation: nebulaGlow 12s infinite ease-in-out;
+}
+
+@keyframes nebulaGlow {
+    0% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.02); }
+    100% { opacity: 0.4; transform: scale(1); }
+}
+
+.modal-img {
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.modal-img:hover {
+    opacity: 1;
+}
+
+.thumbnail {
+    border: 1px solid #2a4d2a;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.thumbnail:hover {
+    opacity: 1;
+}
+
+.details-section {
+    padding: 15px;
+    background: rgba(74, 112, 74, 0.1);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+}
+
+.details-section:hover {
+    background: rgba(74, 112, 74, 0.15);
+}
+
+.category-box, .description-box, .availability-box {
+    padding: 10px;
+    border-radius: 6px;
+    border-left: 3px solid #4a704a;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.text-success {
+    color: #4a704a !important; /* Soft green */
+}
+
+.text-danger {
+    color: #a94442 !important; /* Muted red for out-of-stock */
+}
+
+.cosmic-footer {
+    background: #0a0a0a;
+    border-top: 1px solid #2a4d2a;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-outline-light {
+    border-color: #2a4d2a;
+    color: #e0e0e0;
+}
+
+.btn-outline-light:hover {
+    background: #2a4d2a;
+    color: #ffffff;
+}
+
+.btn-success {
+    background: #2a4d2a;
+    border: none;
+    color: #e0e0e0;
+}
+
+.btn-success:hover {
+    background: #4a704a;
+    box-shadow: 0 4px 8px rgba(74, 112, 74, 0.4);
+}
+
+.disclaimer {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    color: #e0e0e0;
+    margin: 8px 0 0;
+    text-align: center;
+    width: 100%;
+}
+
+/* Lightbox Styling */
+.lightbox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1070;
+}
+
+.lightbox-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.lightbox img {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    border: 1px solid #2a4d2a;
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 2rem;
+    color: #e0e0e0;
+    cursor: pointer;
+    text-shadow: 0 0 2px rgba(74, 112, 74, 0.3);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1200px) {
+    .product-card {
+        max-width: 300px;
+    }
+    .product-img {
+        height: 180px;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .product-img {
+        height: 160px;
+    }
+    .card-footer .btn {
+        width: 48%;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .product-card {
+        max-width: 100%;
+    }
+    .product-img {
+        height: 140px;
+    }
+    .card-title {
         font-size: 1rem;
-        letter-spacing: 0.5px;
-        transition: color 0.3s ease;
     }
-
-    .details-section h6:hover {
-        color: #e0e0e0; /* Lighten text on hover */
+    .short-desc {
+        font-size: 0.85rem;
     }
-
-    .description-box {
-        background: rgba(255, 255, 255, 0.1);
+    .price {
+        font-size: 1rem;
+    }
+    .modal-img {
+        max-height: 300px;
+    }
+    .details-section {
         padding: 10px;
-        border-radius: 6px;
-        border-left: 4px solid #17a2b8; /* Info color accent */
-        transition: background 0.3s ease;
     }
+}
 
-    .description-box:hover {
-        background: rgba(255, 255, 255, 0.15);
+@media screen and (max-width: 576px) {
+    .product-img {
+        height: 120px;
     }
-
-    .availability-box {
-        padding: 8px 12px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        transition: background 0.3s ease;
+    .card-body {
+        padding: 0.75rem;
     }
-
-    .availability-box:hover {
-        background: rgba(255, 255, 255, 0.15);
+    .card-title {
+        font-size: 0.95rem;
     }
-
-    /* Responsive Adjustments */
-    @media screen and (max-width: 768px) {
-        .details-section {
-            padding: 10px;
-        }
-
-        .details-section h6 {
-            font-size: 0.9rem;
-        }
-
-        .description-box, .availability-box {
-            padding: 8px;
-        }
+    .short-desc {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 1;
     }
+    .card-footer .btn {
+        font-size: 0.8rem;
+        padding: 0.35rem 0.7rem;
+    }
+    .modal-img {
+        max-height: 250px;
+    }
+    .thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+    .four-twenty-badge, .four-twenty-banner {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+    .cannabis-leaf-overlay {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .card-title {
+        font-size: 0.9rem;
+    }
+    .short-desc {
+        font-size: 0.75rem;
+    }
+    .modal-img {
+        max-height: 200px;
+    }
+    .cannabis-leaf-overlay {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .four-twenty-badge, .cannabis-leaf-overlay, .nebula-bg, .cosmic-header::after {
+        animation: none;
+    }
+}
 </style>
 
-<!-- Lightbox Script -->
 <script>
-    document.querySelectorAll('.img-clickable').forEach(img => {
-        img.addEventListener('click', function () {
-            document.getElementById('lightboxImage').src = this.src;
-            document.getElementById('imageLightbox').classList.remove('d-none');
-        });
+// Lightbox Script
+document.querySelectorAll('.img-clickable').forEach(img => {
+    img.addEventListener('click', function () {
+        const lightbox = document.getElementById(`imageLightbox-${this.closest('.product-card').dataset.productId}`);
+        document.getElementById(`lightboxImage-${this.closest('.product-card').dataset.productId}`).src = this.src;
+        lightbox.classList.remove('d-none');
     });
+});
 
-    document.querySelector('.close-lightbox').addEventListener('click', function () {
-        document.getElementById('imageLightbox').classList.add('d-none');
+document.querySelectorAll('.close-lightbox').forEach(closeBtn => {
+    closeBtn.addEventListener('click', function () {
+        this.closest('.lightbox').classList.add('d-none');
     });
+});
 
-    document.getElementById('imageLightbox').addEventListener('click', function (e) {
-        if (e.target !== document.getElementById('lightboxImage')) {
+document.querySelectorAll('.lightbox').forEach(lightbox => {
+    lightbox.addEventListener('click', function (e) {
+        if (e.target !== document.getElementById(`lightboxImage-${this.id.split('-')[1]}`)) {
             this.classList.add('d-none');
         }
     });
+});
+
+// Initialize Bootstrap Tooltips
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element => {
+    new bootstrap.Tooltip(element);
+});
 </script>
-
-
-
-
-                </div>
-                <% }) %>
-        </div>
-    </div>
 
     <!-- Script Dependencies -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log("DOM fully loaded");

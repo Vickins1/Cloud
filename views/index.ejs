@@ -336,8 +336,7 @@
                                         <span class="orders-sparkle"><i class="fas fa-star sparkle-icon"></i></span>
                                     </a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="/auth?form=login" data-toggle="login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                                <li class="nav-item"><a class="nav-link" href="/auth?form=signup" data-toggle="signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+                                <li class="nav-item"><a class="nav-link" href="/logout" data-toggle="logout"><i class="fas fa-sign-in-alt"></i> Logout</a></li>
                             <% } else { %>
                                 <li class="nav-item"><a class="nav-link" href="/auth?form=login" data-toggle="login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
                             <li class="nav-item"><a class="nav-link" href="/auth?form=signup" data-toggle="signup"><i class="fas fa-user-plus"></i> Sign Up</a></li>
@@ -2530,41 +2529,106 @@ function showNotification(message, isSuccess) {
     </script>
 
 
+
+
+
+
+<!-- Age Verification Modal -->
+<div class="modal fade" id="ageVerificationModal" tabindex="-1" aria-labelledby="ageVerificationLabel"
+    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content cosmic-modal">
+            <div class="modal-header cosmic-header">
+                <h5 class="modal-title" id="ageVerificationLabel">
+                    <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="modal-logo">
+                    <span class="four-twenty-badge">4/20</span>
+                    <span class="modal-title-text">Welcome to Cloud 420</span>
+                </h5>
+            </div>
+            <div class="modal-body cosmic-body">
+                <div class="nebula-bg"></div>
+                <div class="cannabis-leaf"></div>
+                <h6 class="modal-subtitle">A Cosmic 4/20 Experience</h6>
+                <p class="modal-text">
+                    Dive into Cloud 420’s premium cannabis universe this 4/20, crafted for connoisseurs 21+. Our artisan strains promise stellar highs—consume responsibly under the stars.
+                    <span id="countdown" class="countdown-text"></span>
+                </p>
+                <div class="age-check">
+                    <p class="modal-warning">
+                        <strong>Are you 21 or older?</strong> By entering, you confirm your age and agree to our 
+                        <a href="/terms" class="terms-link" data-bs-toggle="tooltip" title="View Terms of Cosmic Conduct">Terms of Cosmic Conduct</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer cosmic-footer">
+                <button type="button" class="btn btn-exit" onclick="window.location.href='https://www.google.com'">
+                    <i class="fas fa-rocket"></i> Exit to Earth
+                </button>
+                <button type="button" class="btn btn-confirm" data-bs-dismiss="modal">
+                    <i class="fas fa-star"></i> Ascend to Cloud 420
+                </button>
+                <p class="disclaimer">Cloud 420 promotes responsible cannabis use. Please consume wisely.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 /* Cosmic Modal Styling */
 .cosmic-modal {
-    background: linear-gradient(135deg, #0a0a0a, #1a2a1e);
-    border: 2px solid rgba(0, 204, 0, 0.4);
-    border-radius: 20px;
-    box-shadow: 0 0 30px rgba(0, 204, 0, 0.6), inset 0 0 10px rgba(0, 204, 0, 0.2);
-    color: #ffffff;
+    background: linear-gradient(145deg, #0a0a0a, #1a1a1a); /* Black gradient */
+    border: 2px solid #00ff00; /* Vibrant green */
+    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(0, 255, 0, 0.5), inset 0 0 12px rgba(0, 255, 0, 0.2);
+    color: #f0f0f0;
     overflow: hidden;
     position: relative;
+    max-width: 90vw;
+    font-family: 'Inter', 'Orbitron', sans-serif;
 }
 
-/* Starry Background Effect */
-.stars-bg {
+/* Nebula and Cannabis Leaf Effects */
+.nebula-bg {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    background: radial-gradient(circle at 20% 30%, rgba(0, 255, 0, 0.1) 0%, transparent 60%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
     z-index: 0;
-    animation: twinkle 8s infinite ease-in-out;
+    animation: nebulaGlow 10s infinite ease-in-out;
 }
 
-@keyframes twinkle {
-    0% { opacity: 0.8; }
-    50% { opacity: 0.4; }
-    100% { opacity: 0.8; }
+.cannabis-leaf {
+    position: absolute;
+    top: 10%;
+    right: 8%;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.4) 20%, transparent 60%);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: leafPulse 4s infinite ease-in-out;
+    z-index: 1;
+}
+
+@keyframes nebulaGlow {
+    0% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.03); }
+    100% { opacity: 0.5; transform: scale(1); }
+}
+
+@keyframes leafPulse {
+    0% { transform: scale(1); opacity: 0.4; }
+    50% { transform: scale(1.15); opacity: 0.6; }
+    100% { transform: scale(1); opacity: 0.4; }
 }
 
 /* Header */
 .cosmic-header {
-    background: #000000;
-    border-bottom: 1px solid rgba(0, 204, 0, 0.3);
-    padding: 20px 30px;
+    background: #0a0a0a;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+    padding: 12px 20px;
     position: relative;
     overflow: hidden;
 }
@@ -2576,526 +2640,409 @@ function showNotification(message, isSuccess) {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(0, 204, 0, 0.1), transparent);
-    animation: cosmicPulse 10s infinite ease-in-out;
+    background: radial-gradient(circle, rgba(0, 255, 0, 0.1), transparent);
+    animation: cosmicPulse 8s infinite ease-in-out;
 }
 
 @keyframes cosmicPulse {
-    0% { transform: scale(0.9); opacity: 0.3; }
-    50% { transform: scale(1.1); opacity: 0.5; }
-    100% { transform: scale(0.9); opacity: 0.3; }
+    0% { transform: scale(0.85); opacity: 0.2; }
+    50% { transform: scale(1.15); opacity: 0.3; }
+    100% { transform: scale(0.85); opacity: 0.2; }
 }
 
 .modal-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.5rem;
-    color: #e0e0e0;
-    text-shadow: 0 0 15px rgba(0, 204, 0, 0.8), 0 0 5px rgba(0, 204, 0, 0.5);
-    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.6rem;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+    letter-spacing: 1px;
     z-index: 1;
-    position: relative;
+    margin: 0;
+}
+
+.modal-logo {
+    width: 120px;
+    height: auto;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.6));
+    animation: logoGlow 3s infinite ease-in-out;
+}
+
+.four-twenty-badge {
+    background: #00ff00;
+    color: #0a0a0a;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    box-shadow: 0 0 6px rgba(0, 255, 0, 0.8);
+}
+
+.modal-title-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+}
+
+@keyframes logoGlow {
+    0% { filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.6)); }
+    50% { filter: drop-shadow(0 0 12px rgba(0, 255, 0, 1)); }
+    100% { filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.6)); }
 }
 
 /* Body */
 .cosmic-body {
-    padding: 40px;
+    padding: 20px;
     text-align: center;
     position: relative;
     z-index: 1;
 }
 
 .modal-subtitle {
-    font-family: 'Lora', serif;
-    font-size: 1.4rem;
-    color: #b3ffb3;
-    margin-bottom: 20px;
-    text-shadow: 0 0 8px rgba(0, 204, 0, 0.4);
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    color: #00ff00;
+    margin-bottom: 12px;
+    text-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
 }
 
 .modal-text {
-    font-size: 1.3rem;
-    color: #c0c0c0;
-    margin-bottom: 30px;
+    font-size: 1rem;
+    color: #f0f0f0;
+    margin-bottom: 16px;
     line-height: 1.6;
-    font-weight: 300;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    font-weight: 400;
+}
+
+.countdown-text {
+    display: block;
+    color: #ffffff;
+    font-weight: 600;
+    margin-top: 8px;
+    text-shadow: 0 0 4px rgba(0, 255, 0, 0.6);
 }
 
 .age-check {
-    background: rgba(0, 72, 36, 0.2);
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 204, 0, 0.3);
-    box-shadow: inset 0 0 10px rgba(0, 204, 0, 0.1);
+    background: rgba(0, 255, 0, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    box-shadow: inset 0 0 8px rgba(0, 255, 0, 0.15);
 }
 
 .modal-warning {
-    font-size: 1.5rem;
-    color: #d4d4d4;
+    font-size: 1.2rem;
+    color: #ffffff;
     margin-bottom: 0;
 }
 
 .modal-warning strong {
-    color: #00cc00;
-    text-shadow: 0 0 5px rgba(0, 204, 0, 0.6);
+    color: #00ff00;
+    text-shadow: 0 0 4px rgba(0, 255, 0, 0.7);
 }
 
 .terms-link {
-    color: #8aa68e;
+    color: #ffffff;
     text-decoration: none;
-    border-bottom: 1px dashed #587a60;
+    border-bottom: 1px dashed #00ff00;
     transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .terms-link:hover {
-    color: #b3ffb3;
-    border-color: #8aa68e;
+    color: #00ff00;
+    border-color: #ffffff;
 }
 
 /* Footer */
 .cosmic-footer {
-    border-top: 1px solid rgba(0, 204, 0, 0.3);
-    padding: 20px;
-    justify-content: space-around;
-    background: #000000;
-    position: relative;
+    border-top: 1px solid rgba(0, 255, 0, 0.3);
+    padding: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    background: #0a0a0a;
+    gap: 10px;
 }
 
 .btn-exit {
-    background: linear-gradient(45deg, #4a2a1e, #6a3a2e);
-    color: #e0e0e0;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 30px;
-    font-weight: 700;
+    background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+    color: #ffffff;
+    border: 1px solid #00ff00;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.4s ease;
+    letter-spacing: 0.8px;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 0.9rem;
 }
 
 .btn-exit:hover {
-    background: linear-gradient(45deg, #6a3a2e, #8a4a3e);
-    color: #fff;
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(74, 42, 30, 0.6);
+    background: linear-gradient(45deg, #2a2a2a, #3a3a3a);
+    color: #00ff00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 255, 0, 0.4);
 }
 
 .btn-confirm {
-    background: linear-gradient(45deg, #003615, #00cc00);
+    background: linear-gradient(45deg, #1a3c1a, #00ff00); /* Green gradient */
     color: #ffffff;
     border: none;
-    padding: 12px 30px;
-    border-radius: 30px;
-    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.4s ease;
+    letter-spacing: 0.8px;
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .btn-confirm:hover {
-    background: linear-gradient(45deg, #00cc00, #003615);
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 204, 0, 0.7);
+    background: linear-gradient(45deg, #00ff00, #1a3c1a);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 255, 0, 0.6);
+}
+
+.btn-confirm::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s ease, height 0.5s ease;
+}
+
+.btn-confirm:hover::after {
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+}
+
+.disclaimer {
+    font-size: 0.8rem;
+    color: #f0f0f0;
+    margin: 8px 0 0;
+    text-align: center;
+    width: 100%;
 }
 
 /* Animation for Modal Entry */
 @keyframes cosmicFade {
-    0% { opacity: 0; transform: scale(0.9) rotate(2deg); }
+    0% { opacity: 0; transform: scale(0.95) rotate(1deg); }
     100% { opacity: 1; transform: scale(1) rotate(0deg); }
 }
 
 .modal.fade .modal-dialog {
-    animation: cosmicFade 0.6s ease-out forwards;
+    animation: cosmicFade 0.5s ease-out forwards;
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .nebula-bg, .cannabis-leaf, .cosmic-header::after, .modal-logo, .modal.fade .modal-dialog {
+        animation: none;
+    }
+    .btn-confirm::after {
+        transition: none;
+    }
 }
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
-    .modal-title { font-size: 2rem; }
-    .modal-subtitle { font-size: 1.2rem; }
-    .modal-text { font-size: 1.1rem; }
-    .modal-warning { font-size: 1.3rem; }
-    .btn-exit, .btn-confirm { padding: 10px 20px; font-size: 1rem; }
+    .cosmic-modal {
+        max-width: 80vw;
+        border-radius: 12px;
+    }
+    .cosmic-header {
+        padding: 10px 16px;
+    }
+    .modal-title {
+        font-size: 1.4rem;
+        gap: 8px;
+    }
+    .modal-logo {
+        width: 100px;
+    }
+    .four-twenty-badge {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+    }
+    .modal-title-text {
+        font-size: 1.5rem;
+    }
+    .cosmic-body {
+        padding: 16px;
+    }
+    .modal-subtitle {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    .modal-text {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+    .modal-warning {
+        font-size: 1rem;
+    }
+    .age-check {
+        padding: 10px;
+    }
+    .cannabis-leaf {
+        width: 40px;
+        height: 40px;
+        top: 8%;
+        right: 5%;
+    }
+    .btn-exit, .btn-confirm {
+        padding: 8px 20px;
+        font-size: 0.8rem;
+        border-radius: 18px;
+    }
 }
 
 @media (max-width: 576px) {
-    .modal-title { font-size: 1.5rem; }
-    .modal-subtitle { font-size: 1rem; }
-    .modal-text { font-size: 1rem; }
-    .modal-warning { font-size: 1.1rem; }
-    .age-check { padding: 15px; }
-    .btn-exit, .btn-confirm { padding: 8px 15px; font-size: 0.9rem; }
+    .cosmic-modal {
+        max-width: 90vw;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+    }
+    .cosmic-header {
+        padding: 8px 12px;
+    }
+    .modal-title {
+        font-size: 1.2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+    }
+    .modal-logo {
+        width: 80px;
+    }
+    .four-twenty-badge {
+        font-size: 0.65rem;
+        padding: 2px 5px;
+    }
+    .modal-title-text {
+        font-size: 1.3rem;
+    }
+    .cosmic-body {
+        padding: 12px;
+    }
+    .modal-subtitle {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    .modal-text {
+        font-size: 0.8rem;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+    .modal-warning {
+        font-size: 0.9rem;
+    }
+    .age-check {
+        padding: 8px;
+        border-radius: 6px;
+    }
+    .cannabis-leaf {
+        width: 30px;
+        height: 30px;
+    }
+    .cosmic-footer {
+        padding: 10px;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-exit, .btn-confirm {
+        padding: 8px 16px;
+        font-size: 0.75rem;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 220px;
+    }
+    .disclaimer {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .cosmic-modal {
+        max-width: 95vw;
+    }
+    .modal-title {
+        font-size: 1rem;
+    }
+    .modal-logo {
+        width: 70px;
+    }
+    .four-twenty-badge {
+        font-size: 0.6rem;
+    }
+    .modal-title-text {
+        font-size: 1.1rem;
+    }
+    .modal-subtitle {
+        font-size: 0.9rem;
+    }
+    .modal-text {
+        font-size: 0.75rem;
+    }
+    .modal-warning {
+        font-size: 0.85rem;
+    }
+    .cannabis-leaf {
+        width: 25px;
+        height: 25px;
+    }
+    .btn-exit, .btn-confirm {
+        padding: 6px 14px;
+        font-size: 0.7rem;
+    }
 }
 </style>
 
+<script>
+// 4/20 countdown
+function updateCountdown() {
+    const now = new Date();
+    const april20 = new Date(now.getFullYear(), 3, 20, 23, 59, 59); // April 20, 23:59:59
+    if (now.getDate() === 20 && now.getMonth() === 3) {
+        document.getElementById('countdown').textContent = 'Happy 4/20! Celebrate Now!';
+        return;
+    }
+    const diff = april20 - now;
+    if (diff <= 0) {
+        document.getElementById('countdown').textContent = 'Happy 4/20! Celebrate Now!';
+        return;
+    }
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    document.getElementById('countdown').textContent = `4/20 Countdown: ${hours}h ${minutes}m`;
+}
+setInterval(updateCountdown, 60000);
+updateCountdown();
 
-
-
-    <!-- Age Verification Modal -->
-    <div class="modal fade" id="ageVerificationModal" tabindex="-1" aria-labelledby="ageVerificationLabel"
-        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content cosmic-modal">
-                <div class="modal-header cosmic-header">
-                    <h5 class="modal-title" id="ageVerificationLabel">
-                        <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="modal-logo" style="width: 250px;">
-                        Welcome to Cloud 420
-                    </h5>
-                </div>
-                <div class="modal-body cosmic-body">
-                    <div class="stars-bg"></div>
-                    <h6 class="modal-subtitle">A Galactic Disclaimer</h6>
-                    <p class="modal-text">
-                        You’re about to explore a premium cannabis universe, reserved for connoisseurs 21+ seeking
-                        transcendent highs. Our artisan strains are crafted with care, but cannabis carries
-                        risks—consume with wisdom under celestial skies.
-                    </p>
-                    <div class="age-check">
-                        <p class="modal-warning">
-                            <strong>Are you 21 or older?</strong> By crossing this threshold, you affirm your age and
-                            accept our <a href="/terms" class="terms-link">Terms of Cosmic Conduct</a>.
-                        </p>
-                    </div>
-                </div>
-                <div class="modal-footer cosmic-footer">
-                    <button type="button" class="btn btn-exit" onclick="window.location.href='https://www.google.com'">
-                        <i class="fas fa-rocket"></i> No, Eject to Earth
-                    </button>
-                    <button type="button" class="btn btn-confirm" data-bs-dismiss="modal">
-                        <i class="fas fa-star"></i> Yes, Ascend to Cloud 420
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        /* Cosmic Modal Styling */
-        .cosmic-modal {
-            background: linear-gradient(135deg, #0a0a0a, #1a2a1e);
-            border: 2px solid rgba(0, 204, 0, 0.4);
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0, 204, 0, 0.6), inset 0 0 10px rgba(0, 204, 0, 0.2);
-            color: #ffffff;
-            overflow: hidden;
-            position: relative;
-            max-width: 90vw; /* Limit width on all screens */
-        }
-    
-        /* Starry Background Effect */
-        .stars-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-            z-index: 0;
-            animation: twinkle 8s infinite ease-in-out;
-        }
-    
-        @keyframes twinkle {
-            0% { opacity: 0.8; }
-            50% { opacity: 0.4; }
-            100% { opacity: 0.8; }
-        }
-    
-        /* Header */
-        .cosmic-header {
-            background: #000000;
-            border-bottom: 1px solid rgba(0, 204, 0, 0.3);
-            padding: 15px 20px; /* Reduced padding */
-            position: relative;
-            overflow: hidden;
-        }
-    
-        .cosmic-header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(0, 204, 0, 0.1), transparent);
-            animation: cosmicPulse 10s infinite ease-in-out;
-        }
-    
-        @keyframes cosmicPulse {
-            0% { transform: scale(0.9); opacity: 0.3; }
-            50% { transform: scale(1.1); opacity: 0.5; }
-            100% { transform: scale(0.9); opacity: 0.3; }
-        }
-    
-        .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem; /* Smaller base size */
-            color: #e0e0e0;
-            text-shadow: 0 0 15px rgba(0, 204, 0, 0.8), 0 0 5px rgba(0, 204, 0, 0.5);
-            letter-spacing: 1.5px; /* Slightly reduced spacing */
-            z-index: 1;
-            position: relative;
-            margin: 0; /* Remove default margins */
-        }
-    
-        /* Body */
-        .cosmic-body {
-            padding: 20px; /* Reduced padding */
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-    
-        .modal-subtitle {
-            font-family: 'Lora', serif;
-            font-size: 1.2rem; /* Smaller base size */
-            color: #b3ffb3;
-            margin-bottom: 15px; /* Reduced margin */
-            text-shadow: 0 0 8px rgba(0, 204, 0, 0.4);
-        }
-    
-        .modal-text {
-            font-size: 1.1rem; /* Smaller base size */
-            color: #c0c0c0;
-            margin-bottom: 20px; /* Reduced margin */
-            line-height: 1.5; /* Slightly tighter line height */
-            font-weight: 300;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-        }
-    
-        .age-check {
-            background: rgba(0, 72, 36, 0.2);
-            padding: 15px; /* Reduced padding */
-            border-radius: 8px; /* Slightly smaller radius */
-            border: 1px solid rgba(0, 204, 0, 0.3);
-            box-shadow: inset 0 0 10px rgba(0, 204, 0, 0.1);
-        }
-    
-        .modal-warning {
-            font-size: 1.3rem; /* Smaller base size */
-            color: #d4d4d4;
-            margin-bottom: 0;
-        }
-    
-        .modal-warning strong {
-            color: #00cc00;
-            text-shadow: 0 0 5px rgba(0, 204, 0, 0.6);
-        }
-    
-        .terms-link {
-            color: #8aa68e;
-            text-decoration: none;
-            border-bottom: 1px dashed #587a60;
-            transition: color 0.3s ease, border-color 0.3s ease;
-        }
-    
-        .terms-link:hover {
-            color: #b3ffb3;
-            border-color: #8aa68e;
-        }
-    
-        /* Footer */
-        .cosmic-footer {
-            border-top: 1px solid rgba(0, 204, 0, 0.3);
-            padding: 15px; /* Reduced padding */
-            display: flex; /* Ensure flex for responsiveness */
-            justify-content: space-around;
-            background: #000000;
-            position: relative;
-            flex-wrap: wrap; /* Allow buttons to wrap on small screens */
-            gap: 10px; /* Add spacing between wrapped buttons */
-        }
-    
-        .btn-exit {
-            background: linear-gradient(45deg, #4a2a1e, #6a3a2e);
-            color: #e0e0e0;
-            border: none;
-            padding: 10px 25px; /* Reduced padding */
-            border-radius: 25px; /* Slightly smaller radius */
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px; /* Reduced gap */
-            font-size: 0.9rem; /* Smaller base font */
-        }
-    
-        .btn-exit:hover {
-            background: linear-gradient(45deg, #6a3a2e, #8a4a3e);
-            color: #fff;
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(74, 42, 30, 0.6);
-        }
-    
-        .btn-confirm {
-            background: linear-gradient(45deg, #003615, #00cc00);
-            color: #ffffff;
-            border: none;
-            padding: 10px 25px; /* Reduced padding */
-            border-radius: 25px; /* Slightly smaller radius */
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px; /* Reduced gap */
-            font-size: 0.9rem; /* Smaller base font */
-        }
-    
-        .btn-confirm:hover {
-            background: linear-gradient(45deg, #00cc00, #003615);
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 204, 0, 0.7);
-        }
-    
-        /* Animation for Modal Entry */
-        @keyframes cosmicFade {
-            0% { opacity: 0; transform: scale(0.9) rotate(2deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
-        }
-    
-        .modal.fade .modal-dialog {
-            animation: cosmicFade 0.6s ease-out forwards;
-        }
-    
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-            .cosmic-modal {
-                max-width: 80vw; /* Smaller width on tablets */
-                border-radius: 15px; /* Slightly smaller radius */
-            }
-    
-            .cosmic-header {
-                padding: 10px 15px; /* Further reduced padding */
-            }
-    
-            .modal-title {
-                font-size: 1.6rem; /* Smaller title */
-                letter-spacing: 1px;
-            }
-    
-            .cosmic-body {
-                padding: 15px; /* Further reduced padding */
-            }
-    
-            .modal-subtitle {
-                font-size: 1rem;
-                margin-bottom: 10px;
-            }
-    
-            .modal-text {
-                font-size: 0.9rem;
-                margin-bottom: 15px;
-            }
-    
-            .modal-warning {
-                font-size: 1.1rem;
-            }
-    
-            .age-check {
-                padding: 10px;
-            }
-    
-            .btn-exit,
-            .btn-confirm {
-                padding: 8px 20px;
-                font-size: 0.8rem;
-                border-radius: 20px;
-            }
-        }
-    
-        @media (max-width: 576px) {
-            .cosmic-modal {
-                max-width: 90vw; /* Full width on phones, with some margin */
-                border-radius: 10px; /* Even smaller radius */
-                box-shadow: 0 0 20px rgba(0, 204, 0, 0.5); /* Reduced shadow */
-            }
-    
-            .cosmic-header {
-                padding: 8px 12px; /* Minimal padding */
-            }
-    
-            .modal-title {
-                font-size: 1.3rem; /* Much smaller title */
-                letter-spacing: 0.8px;
-            }
-    
-            .cosmic-body {
-                padding: 12px; /* Minimal padding */
-            }
-    
-            .modal-subtitle {
-                font-size: 0.9rem;
-                margin-bottom: 8px;
-            }
-    
-            .modal-text {
-                font-size: 0.8rem;
-                line-height: 1.4;
-                margin-bottom: 12px;
-            }
-    
-            .modal-warning {
-                font-size: 0.9rem;
-            }
-    
-            .age-check {
-                padding: 8px;
-                border-radius: 6px;
-            }
-    
-            .cosmic-footer {
-                padding: 10px;
-                flex-direction: column; /* Stack buttons vertically */
-                align-items: center;
-                gap: 8px;
-            }
-    
-            .btn-exit,
-            .btn-confirm {
-                padding: 6px 15px;
-                font-size: 0.7rem;
-                border-radius: 18px;
-                width: 100%; /* Full width buttons */
-                max-width: 200px; /* Cap width for aesthetics */
-            }
-        }
-    
-        @media (max-width: 400px) {
-            .cosmic-modal {
-                max-width: 95vw; /* Nearly full width on very small screens */
-            }
-    
-            .modal-title {
-                font-size: 1.1rem;
-            }
-    
-            .modal-subtitle {
-                font-size: 0.8rem;
-            }
-    
-            .modal-text {
-                font-size: 0.7rem;
-            }
-    
-            .modal-warning {
-                font-size: 0.8rem;
-            }
-    
-            .btn-exit,
-            .btn-confirm {
-                padding: 5px 12px;
-                font-size: 0.65rem;
-            }
-        }
-    </style>
+// Initialize Bootstrap tooltips
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element => {
+    new bootstrap.Tooltip(element);
+});
+</script>
+```
 
 
 
