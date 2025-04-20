@@ -574,9 +574,6 @@
         <% products.slice().reverse().forEach(product => { %>
             <div class="col-md-3 mb-4">
                 <div class="card h-100 product-card" data-product-id="<%= product._id %>" data-category="<%= product.category %>">
-                    <!-- 4/20 Badge -->
-                    <div class="four-twenty-badge">4/20 Exclusive</div>
-                    <!-- Cannabis Leaf Overlay -->
                     <div class="cannabis-leaf-overlay"></div>
                     <!-- Image Carousel -->
                     <div class="carousel slide" data-bs-ride="carousel" id="carousel-<%= product._id %>">
