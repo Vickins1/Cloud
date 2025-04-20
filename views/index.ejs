@@ -2550,8 +2550,7 @@ function showNotification(message, isSuccess) {
                 <h6 class="modal-subtitle">A Cosmic 4/20 Experience</h6>
                 <p class="modal-text">
                     Dive into Cloud 420’s premium cannabis universe this 4/20, crafted for connoisseurs 21+. Our artisan strains promise stellar highs—consume responsibly under the stars.
-                    <span id="countdown" class="countdown-text"></span>
-                </p>
+                   </p>
                 <div class="age-check">
                     <p class="modal-warning">
                         <strong>Are you 21 or older?</strong> By entering, you confirm your age and agree to our 
@@ -3014,38 +3013,6 @@ function showNotification(message, isSuccess) {
     }
 }
 </style>
-
-<script>
-// 4/20 countdown
-function updateCountdown() {
-    const now = new Date();
-    const april20 = new Date(now.getFullYear(), 3, 20, 23, 59, 59); // April 20, 23:59:59
-    if (now.getDate() === 20 && now.getMonth() === 3) {
-        document.getElementById('countdown').textContent = 'Happy 4/20! Celebrate Now!';
-        return;
-    }
-    const diff = april20 - now;
-    if (diff <= 0) {
-        document.getElementById('countdown').textContent = 'Happy 4/20! Celebrate Now!';
-        return;
-    }
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    document.getElementById('countdown').textContent = `4/20 Countdown: ${hours}h ${minutes}m ${seconds}s`;
-}
-setInterval(updateCountdown, 1000); // Update every second
-updateCountdown();
-
-// Initialize Bootstrap tooltips
-document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element => {
-    new bootstrap.Tooltip(element);
-});
-</script>
-
-
-
-
 
 
     <!-- Footer -->

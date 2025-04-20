@@ -1162,32 +1162,105 @@
 </style>
 
 <script>
-// Lightbox Script
-document.querySelectorAll('.img-clickable').forEach(img => {
-    img.addEventListener('click', function () {
-        const lightbox = document.getElementById(`imageLightbox-${this.closest('.product-card').dataset.productId}`);
-        document.getElementById(`lightboxImage-${this.closest('.product-card').dataset.productId}`).src = this.src;
-        lightbox.classList.remove('d-none');
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Lightbox Functionality
+    document.querySelectorAll('.img-clickable').forEach(img => {
+        img.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const productId = img.closest('.product-card')?.dataset.productId || 
+                            img.closest('.modal')?.id.split('-')[1];
+            if (productId) {
+                const lightbox = document.getElementById(`imageLightbox-${productId}`);
+                const lightboxImage = document.getElementById(`lightboxImage-${productId}`);
+                if (lightbox && lightboxImage) {
+                    lightboxImage.src = img.src;
+                    lightbox.classList.remove('d-none');
+                }
+            }
+        });
     });
-});
 
-document.querySelectorAll('.close-lightbox').forEach(closeBtn => {
-    closeBtn.addEventListener('click', function () {
-        this.closest('.lightbox').classList.add('d-none');
+    // Close Lightbox
+    document.querySelectorAll('.close-lightbox').forEach(closeBtn => {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const lightbox = closeBtn.closest('.lightbox');
+            if (lightbox) {
+                lightbox.classList.add('d-none');
+            }
+        });
     });
-});
 
-document.querySelectorAll('.lightbox').forEach(lightbox => {
-    lightbox.addEventListener('click', function (e) {
-        if (e.target !== document.getElementById(`lightboxImage-${this.id.split('-')[1]}`)) {
-            this.classList.add('d-none');
-        }
+    // Close Lightbox when clicking outside image
+    document.querySelectorAll('.lightbox').forEach(lightbox => {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target.classList.contains('lightbox') || e.target.classList.contains('lightbox-content')) {
+                lightbox.classList.add('d-none');
+            }
+        });
     });
-});
 
-// Initialize Bootstrap Tooltips
-document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element => {
-    new bootstrap.Tooltip(element);
+    // Handle Modal Carousel Trigger
+    document.querySelectorAll('.carousel-inner[data-bs-toggle="modal"]').forEach(carousel => {
+        carousel.addEventListener('click', (e) => {
+            if (e.target.classList.contains('img-clickable')) {
+                e.stopPropagation(); // Prevent modal when clicking images
+            } else {
+                const modalId = carousel.dataset.bsTarget;
+                if (modalId) {
+                    const modal = document.querySelector(modalId);
+                    if (modal) {
+                        new bootstrap.Modal(modal).show();
+                    }
+                }
+            }
+        });
+    });
+
+    // Handle Thumbnail Clicks in Modal
+    document.querySelectorAll('.thumbnail.img-clickable').forEach(thumbnail => {
+        thumbnail.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const carouselId = thumbnail.dataset.bsTarget;
+            const slideTo = thumbnail.dataset.bsSlideTo;
+            if (carouselId && slideTo) {
+                const carousel = document.querySelector(carouselId);
+                if (carousel) {
+                    const bsCarousel = new bootstrap.Carousel(carousel);
+                    bsCarousel.to(parseInt(slideTo));
+                }
+            }
+            // Also trigger lightbox
+            const productId = thumbnail.closest('.modal')?.id.split('-')[1];
+            if (productId) {
+                const lightbox = document.getElementById(`imageLightbox-${productId}`);
+                const lightboxImage = document.getElementById(`lightboxImage-${productId}`);
+                if (lightbox && lightboxImage) {
+                    lightboxImage.src = thumbnail.src;
+                    lightbox.classList.remove('d-none');
+                }
+            }
+        });
+    });
+
+    // Initialize Bootstrap Tooltips
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(element => {
+        new bootstrap.Tooltip(element);
+    });
+
+    // Ensure Modals Close Properly (Bootstrap handles data-bs-dismiss, but we can add custom handling if needed)
+    document.querySelectorAll('.btn-close').forEach(closeBtn => {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const modal = closeBtn.closest('.modal');
+            if (modal) {
+                const bsModal = bootstrap.Modal.getInstance(modal) || new bootstrap.Modal(modal);
+                bsModal.hide();
+            }
+        });
+    });
 });
 </script>
 
