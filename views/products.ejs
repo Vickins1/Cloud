@@ -543,30 +543,67 @@
 </style>
 
 <script>
-    // JavaScript to handle category button functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const buttons = document.querySelectorAll('.category-btn');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons
-                buttons.forEach(btn => btn.classList.remove('active'));
-                // Add active class to clicked button
-                button.classList.add('active');
-                // Get the category value
-                const category = button.getAttribute('data-category');
-                // Trigger filtering logic (assuming a filter function exists)
-                filterProducts(category);
-            });
+   document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.category-btn');
+    const searchInput = document.getElementById('searchInput');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const productCards = document.querySelectorAll('.product-card');
+
+    // Function to filter products
+    function filterProducts(category, searchQuery = '') {
+        let visibleProducts = 0;
+        const lowerCaseQuery = searchQuery.toLowerCase().trim();
+
+        // Loop through all product cards
+        productCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            const cardName = card.querySelector('.card-title').textContent.toLowerCase();
+
+            // Check if the card matches the category and search query
+            const matchesCategory = !category || cardCategory === category;
+            const matchesSearch = !lowerCaseQuery || cardName.includes(lowerCaseQuery);
+
+            // Show or hide the card
+            if (matchesCategory && matchesSearch) {
+                card.parentElement.style.display = 'block'; // Show the card (col-md-3)
+                visibleProducts++;
+            } else {
+                card.parentElement.style.display = 'none'; // Hide the card (col-md-3)
+            }
+        });
+
+        // Update results container with a message if no products are visible
+        resultsContainer.innerHTML = visibleProducts === 0
+            ? '<p class="text-light">No products found for the selected category or search query.</p>'
+            : '';
+    }
+
+    // Event listeners for category buttons
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            button.classList.add('active');
+            // Get the category value
+            const category = button.getAttribute('data-category');
+            // Filter products with the current search query
+            filterProducts(category, searchInput.value);
         });
     });
 
-    // Placeholder filter function (to be implemented based on your backend or data)
-    function filterProducts(category) {
-        console.log(`Filtering by category: ${category}`);
-        // Add your filtering logic here, e.g., fetch products from an API
-        const resultsContainer = document.getElementById('resultsContainer');
-        resultsContainer.innerHTML = `<p>Filtering products for: ${category || 'All Categories'}</p>`;
-    }
+    // Event listener for search input
+    searchInput.addEventListener('input', () => {
+        // Get the currently active category
+        const activeButton = document.querySelector('.category-btn.active');
+        const category = activeButton ? activeButton.getAttribute('data-category') : '';
+        // Filter products with the current category and search query
+        filterProducts(category, searchInput.value);
+    });
+
+    // Initial filter to show all products
+    filterProducts('');
+});
 </script>
 
 <div class="container mt-5">
