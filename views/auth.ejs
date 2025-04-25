@@ -1,407 +1,457 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <!-- Google Tag Manager -->
-        <script>
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-TKJ8PPFD');
-        </script>
-        <!-- End Google Tag Manager -->
-    
-        <!-- Meta Tags -->
-        <meta charset="UTF-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-        <meta name="title" content="Cloud 420 - Secure Login">
-        <meta name="description" content="Access your Cloud 420 account securely. Enjoy premium cannabis services and manage your preferences with confidence.">
-        <meta name="keywords" content="Cloud 420 login, cannabis account access, secure cannabis login, premium weed login, marijuana member access">
-        <meta name="robots" content="noindex, nofollow"> <!-- Auth pages shouldn't be indexed -->
-        <meta name="author" content="Cloud 420 Team">
-    
-        <!-- Open Graph Tags -->
-        <meta property="og:title" content="Cloud 420 - Secure Login">
-        <meta property="og:description" content="Access your account at Cloud 420 for a premium cannabis experience.">
-        <meta property="og:image" content="https://cloud420.store/images/icon.png">
-        <meta property="og:url" content="https://cloud420.store/login">
-        <meta property="og:type" content="website">
-    
-        <!-- Twitter Card -->
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:title" content="Cloud 420 - Secure Login">
-        <meta name="twitter:description" content="Manage your Cloud 420 cannabis profile and orders securely.">
-        <meta name="twitter:image" content="https://cloud420.store/images/icon.png">
-    
-        <!-- Canonical -->
-        <link rel="canonical" href="https://cloud420.store/login">
-    
-        <!-- Page Title -->
-        <title>Cloud 420 - Auth</title>
-    
-        <!-- Favicon -->
-        <link rel="icon" href="/images/icon.png" type="image/png">
-    
-        <!-- Stylesheets -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-LtrjvnR4/Jds7M2GzDm9zYtkyy8kMllA9+fsPiO2v5GzFyjgNqd0xcpWy4a3q5pE" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha384-dyUuwqJH1eDhDaA4lTnMBnUmnMQvWZs3nTskUiw8XYNYjRHB5ZEl0poa8I34ZBdd" crossorigin="anonymous">
-    
-        <!-- Custom Styles (optional) -->
-        <link rel="stylesheet" href="/assets/css/auth.css">
-    
-    <style>
-        body {
-            background: #1c2526;
-            color: #e0e0e0;
-            min-height: 100vh;
-            margin: 0;
-            font-family: 'Poppins', Arial, sans-serif;
-            padding-top: 60px; /* Reduced for smaller screens */
-        }
-        .navbar {
-            background: #263031;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            padding: 0.5rem 1rem; /* Reduced padding */
-        }
-        .navbar-brand img {
-            height: 40px; /* Smaller logo for better fit */
-            width: auto;
-            max-width: 120px;
-        }
-        .navbar-nav .nav-link {
-            color: #e0e0e0;
-            font-weight: 500;
-            padding: 0.4rem 0.8rem; /* Adjusted padding */
-            transition: color 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            color: #c0c0c0;
-        }
-        .badge.bg-success {
-            vertical-align: middle;
-            margin-left: 4px;
-            font-size: 0.7rem; /* Smaller badge */
-        }
-        .orders-link {
-            display: flex;
-            align-items: center;
-        }
-        .orders-sparkle {
-            margin-left: 4px;
-        }
-        .sparkle-icon {
-            color: #66cc66;
-            font-size: 0.8rem;
-        }
-        .auth-wrapper {
-            display: flex;
-            width: 100%;
-            max-width: 900px;
-            background: #2d3839;
-            border-radius: 12px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
-            margin: 1rem auto; /* Added margin for spacing */
-        }
-        .sidebar {
-            background: #263031;
-            padding: 1.5rem;
-            width: 30%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .logo {
-            max-width: 120px;
-            height: auto;
-            margin-bottom: 1rem; /* Reduced margin */
-        }
-        .sidebar-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        .toggle-btn {
-            background: #3a4647;
-            color: #e0e0e0;
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            width: 100%;
-            margin: 0.4rem 0;
-        }
-        .toggle-btn.active, .toggle-btn:hover {
-            background: #4a5657;
-        }
-        .content {
-            padding: 1.5rem;
-            width: 70%;
-            background: #2d3839;
-        }
-        .form-container {
-            display: none;
-        }
-        .form-container.active {
-            display: block;
-        }
-        h2 {
-            font-size: 1.6rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #e0e0e0;
-        }
-        label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #e0e0e0;
-            margin-bottom: 0.3rem;
-        }
-        input {
-            width: 100%;
-            padding: 0.7rem;
-            margin-bottom: 0.8rem;
-            background: #1c2526;
-            border: 1px solid #3a4647;
-            border-radius: 6px;
-            color: #e0e0e0;
-            font-size: 0.9rem;
-            transition: border-color 0.3s ease;
-        }
-        input:focus {
-            border-color: #5a6667;
-            outline: none;
-        }
-        button, .google-btn {
-            background: #3a4647;
-            color: #e0e0e0;
-            padding: 0.7rem;
-            width: 100%;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: background 0.3s ease;
-            margin-bottom: 0.8rem;
-        }
-        .google-btn {
-            background: #fff;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .google-btn img {
-            width: 18px;
-            margin-right: 6px;
-        }
-        button:hover:not(:disabled), .google-btn:hover {
-            background: #4a5657;
-            color: #fff;
-        }
-        button:disabled {
-            background: #2a3435;
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        a {
-            color: #a0a0a0;
-            text-decoration: none;
-            font-size: 0.8rem;
-            transition: color 0.3s ease;
-            display: block;
-            text-align: center;
-            margin-top: 0.6rem;
-        }
-        a:hover {
-            color: #c0c0c0;
-        }
-        .message {
-            font-size: 0.8rem;
-            padding: 0.5rem;
-            border-radius: 6px;
-            text-align: center;
-            margin-bottom: 0.8rem;
-        }
-        .error {
-            color: #ff6666;
-            background: rgba(255, 102, 102, 0.1);
-        }
-        .success {
-            color: #66cc66;
-            background: rgba(102, 204, 102, 0.1);
-        }
-        .modal-content {
-            background: #2d3839;
-            border: 1px solid #3a4647;
-            color: #e0e0e0;
-            border-radius: 10px;
-        }
-        .modal-header, .modal-footer {
-            border-color: #3a4647;
-        }
-        .modal-title {
-            color: #e0e0e0;
-            font-weight: 500;
-            font-size: 1.2rem;
-        }
-        .btn-close {
-            color: #e0e0e0;
-            opacity: 0.8;
-        }
-        .btn-close:hover {
-            opacity: 1;
-        }
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-TKJ8PPFD');
+    </script>
+    <!-- End Google Tag Manager -->
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding-top: 50px; /* Less space for navbar */
-            }
-            .navbar-brand img {
-                height: 35px;
-                max-width: 100px;
-            }
-            .navbar-nav .nav-link {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.9rem;
-            }
-            .auth-wrapper {
-                flex-direction: column;
-                max-width: 90%;
-                margin: 0.5rem auto;
-            }
-            .sidebar, .content {
-                width: 100%;
-                padding: 1rem;
-            }
-            .logo {
-                max-width: 100px;
-            }
-            .sidebar-title {
-                font-size: 1.2rem;
-                margin-bottom: 0.8rem;
-            }
-            h2 {
-                font-size: 1.4rem;
-            }
-            .navbar-nav {
-                text-align: center;
-            }
-            .navbar-nav .nav-item {
-                margin: 0.3rem 0;
-            }
-        }
-        @media (max-width: 576px) {
-            body {
-                padding-top: 45px; /* Even less space */
-            }
-            .navbar {
-                padding: 0.4rem 0.8rem;
-            }
-            .navbar-brand img {
-                height: 30px;
-                max-width: 80px;
-            }
-            .navbar-nav .nav-link {
-                font-size: 0.8rem;
-                padding: 0.2rem 0.5rem;
-            }
-            .badge.bg-success {
-                font-size: 0.6rem;
-            }
-            .sparkle-icon {
-                font-size: 0.7rem;
-            }
-            .auth-wrapper {
-                max-width: 100%;
-                margin: 0.3rem;
-                border-radius: 8px;
-            }
-            .sidebar, .content {
-                padding: 0.8rem;
-            }
-            .logo {
-                max-width: 80px;
-                margin-bottom: 0.6rem;
-            }
-            .sidebar-title {
-                font-size: 1.1rem;
-                margin-bottom: 0.6rem;
-            }
-            .toggle-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-                margin: 0.3rem 0;
-            }
-            h2 {
-                font-size: 1.2rem;
-                margin-bottom: 0.8rem;
-            }
-            label {
-                font-size: 0.8rem;
-            }
-            input {
-                padding: 0.6rem;
-                font-size: 0.8rem;
-                margin-bottom: 0.6rem;
-            }
-            button, .google-btn {
-                padding: 0.6rem;
-                font-size: 0.8rem;
-                margin-bottom: 0.6rem;
-            }
-            .google-btn img {
-                width: 16px;
-            }
-            a {
-                font-size: 0.7rem;
-                margin-top: 0.5rem;
-            }
-            .message {
-                font-size: 0.7rem;
-                padding: 0.4rem;
-                margin-bottom: 0.6rem;
-            }
-            .modal-dialog {
-                margin: 0.5rem;
-            }
-            .modal-content {
-                padding: 0.5rem;
-            }
-        }
-        @media (max-width: 400px) {
-            .navbar-brand img {
-                height: 25px;
-                max-width: 70px;
-            }
-            .navbar-nav .nav-link {
-                font-size: 0.75rem;
-            }
-            .sidebar, .content {
-                padding: 0.6rem;
-            }
-            .logo {
-                max-width: 60px;
-            }
-            .sidebar-title {
-                font-size: 1rem;
-            }
-            h2 {
-                font-size: 1.1rem;
-            }
-            .toggle-btn {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.75rem;
-            }
-        }
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="title" content="Cloud 420 - Secure Login">
+    <meta name="description" content="Access your Cloud 420 account securely. Enjoy premium cannabis services with a seamless experience.">
+    <meta name="keywords" content="Cloud 420 login, cannabis account, secure login, premium cannabis, marijuana access">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="author" content="Cloud 420 Team">
+
+    <!-- Open Graph Tags -->
+    <meta property="og:title" content="Cloud 420 - Secure Login">
+    <meta property="og:description" content="Access your Cloud 420 account for a premium cannabis experience.">
+    <meta property="og:image" content="https://cloud420.store/images/icon.png">
+    <meta property="og:url" content="https://cloud420.store/login">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Cloud 420 - Secure Login">
+    <meta name="twitter:description" content="Manage your Cloud 420 profile and orders securely.">
+    <meta name="twitter:image" content="https://cloud420.store/images/icon.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://cloud420.store/login">
+
+    <!-- Page Title -->
+    <title>Cloud 420 - Auth</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="/images/icon.png" type="image/png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" integrity="sha512-c42qTSw/wPZ3/5LBzD+Bw5f7bSF2oxou6wEb+I/lqeaKV5FDIfMvvRp772y4jcJLKuGUOpbJMdg/BTl50fJYAw==" crossorigin="anonymous">
+    <style>
+body {
+    background: #000000;
+    color: #fff;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Inter', Arial, sans-serif;
+    padding-top: 60px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(105, 155, 135, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+    opacity: 0.3;
+    z-index: -1;
+}
+
+.auth-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    margin: 2rem auto;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.auth-wrapper:hover {
+    transform: translateY(-3px);
+}
+
+.sidebar {
+    background: #e8edea;
+    padding: 2rem;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    max-width: 250px;
+    height: auto;
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2e4a3d;
+    text-align: center;
+}
+
+.toggle-btn {
+    background: #699b87;
+    color: #ffffff;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 60%;
+    margin: 0.5rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-btn.active,
+.toggle-btn:hover {
+    background: rgba(1, 109, 1, 0.873);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03);
+}
+
+.content {
+    padding: 2rem;
+    width: 70%;
+    background: #ffffff;
+}
+
+.form-container {
+    display: none;
+}
+
+.form-container.active {
+    display: block;
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2e4a3d;
+}
+
+label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333333;
+    margin-bottom: 0.4rem;
+}
+
+input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    background: #f9faf9;
+    border: 1px solid #d1d5d4;
+    border-radius: 8px;
+    color: #333333;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    border-color: #699b87;
+    box-shadow: 0 0 6px rgba(105, 155, 135, 0.3);
+    outline: none;
+}
+
+button,
+.google-btn {
+    background: #699b87;
+    color: #ffffff;
+    padding: 0.8rem;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn {
+    background: #ffffff;
+    color: #333333;
+    border: 1px solid #d1d5d4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn img {
+    width: 20px;
+    margin-right: 8px;
+}
+
+button:hover:not(:disabled),
+.google-btn:hover {
+    background: rgba(1, 109, 1, 0.873);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03);
+}
+
+button:disabled {
+    background: #d1d5d4;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+a {
+    color: #699b87;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s ease;
+    display: block;
+    text-align: center;
+    margin-top: 0.8rem;
+}
+
+a:hover {
+    color: #557a6b;
+}
+
+.message {
+    font-size: 0.85rem;
+    padding: 0.6rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.error {
+    color: #d9534f;
+    background: rgba(217, 83, 79, 0.1);
+}
+
+.success {
+    color: #699b87;
+    background: rgba(105, 155, 135, 0.1);
+}
+
+.modal-content {
+    background: #ffffff;
+    border: 1px solid #d1d5d4;
+    border-radius: 12px;
+    color: #333333;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header,
+.modal-footer {
+    border-color: #d1d5d4;
+}
+
+.modal-title {
+    color: #2e4a3d;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+.btn-close {
+    background: none;
+    color: #333333;
+    opacity: 0.7;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+.form-check-input {
+    background-color: #f9faf9;
+    border-color: #d1d5d4;
+    border-radius: 0.2rem;
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background-color: #699b87;
+    border-color: #699b87;
+}
+
+.form-check-label {
+    color: #333333;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .auth-wrapper {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 992px) {
+    .auth-wrapper {
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-top: 50px;
+    }
+    .auth-wrapper {
+        flex-direction: column;
+        max-width: 90%;
+        margin: 1rem auto;
+    }
+    .sidebar,
+    .content {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    .logo {
+        max-width: 150px;
+    }
+    .sidebar-title {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    h2 {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        padding-top: 40px;
+    }
+    .auth-wrapper {
+        max-width: 95%;
+        margin: 0.5rem;
+        border-radius: 10px;
+    }
+    .sidebar,
+    .content {
+        padding: 1rem;
+    }
+    .logo {
+        max-width: 150px;
+        margin-bottom: 1rem;
+    }
+    .sidebar-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.8rem;
+    }
+    .toggle-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+        margin: 0.4rem 0;
+    }
+    h2 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+    label {
+        font-size: 0.9rem;
+    }
+    input {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+    }
+    button,
+    .google-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
+    }
+    .google-btn img {
+        width: 18px;
+    }
+    a {
+        font-size: 0.8rem;
+        margin-top: 0.6rem;
+    }
+    .message {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    .modal-content {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .sidebar,
+    .content {
+        padding: 0.8rem;
+    }
+    .logo {
+        max-width: 150px;
+    }
+    .sidebar-title {
+        font-size: 1.1rem;
+    }
+    h2 {
+        font-size: 1.2rem;
+    }
+    .toggle-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .auth-wrapper {
+        margin: 0.3rem;
+        border-radius: 8px;
+    }
+    .sidebar,
+    .content {
+        padding: 0.6rem;
+    }
+    .logo {
+        max-width: 60px;
+    }
+    .sidebar-title {
+        font-size: 1rem;
+    }
+    h2 {
+        font-size: 1.1rem;
+    }
+    input,
+    button,
+    .google-btn {
+        padding: 0.6rem;
+        font-size: 0.85rem;
+    }
+    .message {
+        font-size: 0.75rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -410,62 +460,61 @@
     <!-- End Google Tag Manager (noscript) -->
 
     <!-- Auth Section -->
-    <div class="auth-wrapper">
+    <div class="auth-wrapper animate__animated animate__fadeIn">
         <div class="sidebar">
-            <a href="/">
+            <a href="/" aria-label="Cloud 420 Home">
                 <img src="/images/Cloud.png" alt="Cloud 420 Logo" class="logo">
             </a>
-            <div class="sidebar-title">Cloud 420</div>
-            <button class="toggle-btn active" data-target="signup">Signup</button>
-            <button class="toggle-btn" data-target="login">Login</button>
+            <button class="toggle-btn active" data-target="signup" aria-controls="signup">Signup</button>
+            <button class="toggle-btn" data-target="login" aria-controls="login">Login</button>
         </div>
         <div class="content">
             <!-- Signup Form -->
-            <div id="signup" class="form-container active">
-                <h2>Sign Up</h2>
+            <div id="signup" class="form-container active animate__animated animate__fadeIn" role="region" aria-labelledby="signup-heading">
+                <h2 id="signup-heading">Create Account</h2>
                 <% if (error_msg) { %>
-                    <div class="message error"><%= error_msg %></div>
+                    <div class="message error animate__animated animate__shakeX" role="alert"><%= error_msg %></div>
                 <% } %>
                 <% if (success_msg) { %>
-                    <div class="message success"><%= success_msg %></div>
+                    <div class="message success animate__animated animate__bounceIn" role="alert"><%= success_msg %></div>
                 <% } %>
                 <form action="/auth/signup" method="POST" id="signupForm">
                     <label for="signup-username">Username</label>
-                    <input type="text" id="signup-username" name="username" placeholder="Enter your username" required>
+                    <input type="text" id="signup-username" name="username" placeholder="Enter your username" required aria-required="true">
                     
                     <label for="signup-email">Email</label>
-                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required>
+                    <input type="email" id="signup-email" name="email" placeholder="Enter your email" required aria-required="true">
                     
                     <label for="signup-password">Password</label>
-                    <input type="password" id="signup-password" name="password" placeholder="Enter your password" required>
+                    <input type="password" id="signup-password" name="password" placeholder="Enter your password" required aria-required="true">
                     
                     <label for="signup-confirm-password">Confirm Password</label>
-                    <input type="password" id="signup-confirm-password" name="confirm-password" placeholder="Confirm your password" required>
-                    <div id="passwordError" class="message error"></div>
+                    <input type="password" id="signup-confirm-password" name="confirm-password" placeholder="Confirm your password" required aria-required="true">
+                    <div id="passwordError" class="message error" role="alert"></div>
                     
-                    <button type="submit">Signup</button>
-                    <a href="#" class="google-btn" onclick="googleSignIn()">
+                    <button type="submit">Sign Up</button>
+                    <a href="/auth/google" class="google-btn">
                         <img src="https://www.google.com/favicon.ico" alt="Google Icon"> Sign in with Google
                     </a>
                 </form>
-                <a href="#" data-toggle="login">Already have an account? Login</a>
+                <a href="#" data-toggle="login" aria-label="Switch to login form">Already have an account? Login</a>
             </div>
 
             <!-- Login Form -->
-            <div id="login" class="form-container">
-                <h2>Login</h2>
+            <div id="login" class="form-container animate__animated animate__fadeIn" role="region" aria-labelledby="login-heading">
+                <h2 id="login-heading">Welcome Back</h2>
                 <% if (error_msg) { %>
-                    <div class="message error"><%= error_msg %></div>
+                    <div class="message error animate__animated animate__shakeX" role="alert"><%= error_msg %></div>
                 <% } %>
                 <% if (success_msg) { %>
-                    <div class="message success"><%= success_msg %></div>
+                    <div class="message success animate__animated animate__bounceIn" role="alert"><%= success_msg %></div>
                 <% } %>
                 <form action="/auth/login" method="POST">
                     <label for="login-username">Username</label>
-                    <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
+                    <input type="text" id="login-username" name="username" placeholder="Enter your username" required aria-required="true">
                     
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required aria-required="true">
                     <div class="form-check">
                         <input type="checkbox" id="togglePassword" class="form-check-input">
                         <label class="form-check-label" for="togglePassword">Show Password</label>
@@ -474,10 +523,10 @@
                     <button type="submit">Login</button>
                     <a href="/auth/google" class="google-btn">
                         <img src="https://www.google.com/favicon.ico" alt="Google Icon"> Sign in with Google
-                    </a>                    
+                    </a>
                 </form>
-                <a href="#" data-toggle="signup">Don't have an account? Sign up</a>
-                <a href="#" data-toggle="modal" data-target="#forgotPasswordModal">Forgot Password?</a>
+                <a href="#" data-toggle="signup" aria-label="Switch to signup form">Don't have an account? Sign up</a>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" aria-label="Open forgot password modal">Forgot Password?</a>
             </div>
         </div>
     </div>
@@ -488,14 +537,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
-                    <button type="button" class="close btn-close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" aria-label="Close modal"></button>
                 </div>
                 <div class="modal-body">
                     <form action="/auth/forgot-password" method="POST">
                         <label for="reset-email">Email</label>
-                        <input type="email" id="reset-email" name="email" placeholder="Enter your email" required>
+                        <input type="email" id="reset-email" name="email" placeholder="Enter your email" required aria-required="true">
                         <button type="submit">Send Reset Link</button>
                     </form>
                 </div>
@@ -503,11 +550,8 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Google Sign-In Script -->
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
         // Toggle between signup and login
@@ -532,9 +576,9 @@
             });
         });
 
-        // Set initial form state based on backend data
+        // Set initial form state
         const initialForm = '<%= initialForm %>';
-        toggleForm(initialForm);
+        if (initialForm) toggleForm(initialForm);
 
         // Password match check for signup
         const signupPassword = document.getElementById('signup-password');
@@ -562,9 +606,9 @@
             passwordInput.type = this.checked ? 'text' : 'password';
         });
 
-        // Google Sign-In placeholder function (requires backend integration)
+        // Google Sign-In placeholder
         function googleSignIn() {
-            alert('Google Sign-In functionality requires backend setup. Please configure OAuth 2.0 with Google.');
+            alert('Google Sign-In requires backend OAuth 2.0 setup. Contact support for assistance.');
         }
     </script>
 </body>

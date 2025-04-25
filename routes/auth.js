@@ -18,22 +18,26 @@ router.get(
   }
 );
 
-// Single route for auth page
+// GET /auth route (combined login/signup page)
 router.get('/', (req, res) => {
-  const errorFlash = req.flash('error_msg') || [];
-  const successFlash = req.flash('success_msg') || [];
-  
+  // Flash messages (if any)
+  const errorFlash = req.flash('error_msg');
+  const successFlash = req.flash('success_msg');
+
+  // Prioritize query string errors, fallback to flash messages
   const error = req.query.error || (errorFlash.length > 0 ? errorFlash[0] : null);
   const success = successFlash.length > 0 ? successFlash[0] : null;
-  
+
+  // Determine which form to show: 'login' or 'signup'
   const form = req.query.form === 'login' ? 'login' : 'signup';
 
-  res.render('auth', { 
-    error_msg: error, 
-    success_msg: success, 
+  // Render the auth page with necessary data
+  res.render('auth', {
+    error_msg: error,
+    success_msg: success,
     initialForm: form,
     isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
-    cartItems: req.session ? req.session.cartItems || 0 : 0
+    cartItems: req.session?.cartItems || 0
   });
 });
 
