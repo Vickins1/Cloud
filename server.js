@@ -87,7 +87,7 @@ const upload = multer({
 module.exports = { app, upload };
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'weed-secret',
+  secret: process.env.SESSION_SECRET || 'secret',
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
@@ -416,12 +416,12 @@ function getLocalIP() {
   }
   return '127.0.0.1';
 }
-
 // Start server
-app.listen(4200, '0.0.0.0', () => {
+const port = process.env.PORT;
+app.listen(port, '0.0.0.0', () => {
   const localIP = getLocalIP();
   console.log(`Cloud 420 is running at:
-    - Local: http://localhost:4200
-    - Network: http://${localIP}:4200
+    - Local: http://localhost:${port}
+    - Network: http://${localIP}:${port}
     - Network (via Nginx): https://cloud420.store`);
 });
