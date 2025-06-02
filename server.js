@@ -416,12 +416,12 @@ function getLocalIP() {
   }
   return '127.0.0.1';
 }
+
 // Start server
-const port = process.env.PORT;
+const port = process.env.PORT || 4200; // Fallback to 3000 if process.env.PORT is undefined
 app.listen(port, '0.0.0.0', () => {
   const localIP = getLocalIP();
   console.log(`Cloud 420 is running at:
     - Local: http://localhost:${port}
-    - Network: http://${localIP}:${port}
-    - Network (via Nginx): https://cloud420.store`);
+    - Network: http://${localIP}:${port}`);
 });
