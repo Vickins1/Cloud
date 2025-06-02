@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -17,33 +18,49 @@ const multer = require('multer');
 const adminRouter = require('./routes/admin');
 const supportRoutes = require('./routes/support');
 const Cart = require('./models/cart');
-require('dotenv').config();
-require("./config/passport");
+const nodemailer = require('nodemailer');
+require('./config/passport');
 const os = require('os');
+
 const app = express();
 app.set('view engine', 'ejs');
 app.set('trust proxy', 1);
-const nodemailer = require('nodemailer');
 
 // Validate environment variables
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASS = process.env.EMAIL_PASS;
+const requiredEnvVars = ['MONGODB_URI', 'SESSION_SECRET', 'EMAIL_USER', 'EMAIL_PASS'];
+requiredEnvVars.forEach((varName) => {
+  if (!process.env[varName]) {
+    console.error(`Error: Environment variable ${varName} is not set`);
+    process.exit(1);
+  }
+});
 
-// MongoDB connection URI
-const uri = "mongodb+srv://Admin:Kefini360@cluster0.5ib26.mongodb.net/Cloud-db?retryWrites=true&w=majority&appName=Cluster0";
+// MongoDB connection
+const uri = process.env.MONGODB_URI;
 
 async function connectToDatabase() {
   try {
-    await mongoose.connect(uri);
-    console.log("Connected to MongoDB!");
+    await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
+    });
+    console.log('Connected to MongoDB!');
+    // Start server
+    const port = process.env.PORT || 4200;
+    app.listen(port, '0.0.0.0', () => {
+      const localIP = getLocalIP();
+      console.log(`Cloud 420 is running at:
+        - Local: http://localhost:${port}
+        - Network: http://${localIP}:${port}`);
+    });
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
+    console.error('Error connecting to MongoDB:', error);
     process.exit(1);
   }
 }
 
 connectToDatabase();
-
 
 // Ensure upload directory exists
 const uploadDir = 'public/uploads/';
@@ -67,12 +84,11 @@ const storage = multer.diskStorage({
   },
 });
 
-// Multer upload configuration
 const upload = multer({
   storage: storage,
-  limits: { 
+  limits: {
     fileSize: 10 * 1024 * 1024, // 10MB
-    files: 10, // Max 10 files
+    files: 10,
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -86,34 +102,32 @@ const upload = multer({
 
 module.exports = { app, upload };
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'secret',
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: uri,
-    ttl: 14 * 24 * 60 * 60,
-    autoRemove: 'native',
-    touchAfter: 24 * 3600,
-  }).on('error', (error) => {
-    console.error('MongoStore error:', error);
-  }),
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    maxAge: 14 * 24 * 60 * 60 * 1000,
-  },
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: uri,
+      ttl: 14 * 24 * 60 * 60,
+      autoRemove: 'native',
+      touchAfter: 24 * 3600,
+    }).on('error', (error) => {
+      console.error('MongoStore error:', error);
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 14 * 24 * 60 * 60 * 1000,
+    },
+  })
+);
 
-// Middleware for flash messages
 app.use(flash());
-
-// Middleware setup
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Passport setup (must come after session and before routes)
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -121,7 +135,6 @@ passport.deserializeUser(User.deserializeUser());
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Pass flash messages and user data to all views
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated();
   res.locals.isAdmin = req.user && req.user.isAdmin;
@@ -138,40 +151,34 @@ app.use('/cart', cartRoutes);
 app.use('/admin', adminRouter);
 app.use('/support', supportRoutes);
 
-//isLoggedIn middleware
 const isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
-    return next(); 
+    return next();
   }
-  res.redirect("/auth");
+  res.redirect('/auth');
 };
 
-
-// Home page route
 app.get('/home', isLoggedIn, async (req, res) => {
   try {
     const [products, cart, user, recentOrders] = await Promise.all([
-      Product.find().lean(), 
+      Product.find().lean(),
       Cart.findOne({ userId: req.user._id }).lean(),
       User.findById(req.user._id).lean(),
       Order.find({ userId: req.user._id })
         .sort({ createdAt: -1 })
-        .limit(5) 
+        .limit(5)
         .lean()
-        .select('orderId createdAt status')
+        .select('orderId createdAt status'),
     ]);
 
-    // Process fetched data
     const cartItems = cart ? cart.products.length : 0;
     const userName = user.name || user.username || 'Cloud Explorer';
     const userPoints = user.points || 0;
 
-    // Fetch flash messages
     const success = req.flash('success_msg')[0] || null;
     const error = req.flash('error_msg')[0] || null;
 
-    // Render the home page with all required data
-    res.render('home', { 
+    res.render('home', {
       products,
       cartItems,
       userName,
@@ -180,7 +187,7 @@ app.get('/home', isLoggedIn, async (req, res) => {
       isAuthenticated: true,
       success,
       error,
-      user: req.user 
+      user: req.user,
     });
   } catch (err) {
     console.error('Error in /home route:', err);
@@ -189,36 +196,33 @@ app.get('/home', isLoggedIn, async (req, res) => {
   }
 });
 
-
-// Routes
 app.get('/', async (req, res) => {
   try {
-      const userId = req.user ? req.user._id : null;
-      let cartItems = 0;
-      if (userId) {
-          const cart = await Cart.findOne({ userId });
-          cartItems = cart ? cart.products.length : 0;
-      }
-      const products = await Product.find()
-          .sort({ createdAt: -1 })
-          .limit(4);
-      const success = req.flash('success_msg')[0] || null;
-      const error = req.flash('error_msg')[0] || null;
-      res.render('index', { 
-          cartItems, 
-          isAuthenticated: req.isAuthenticated(),
-          success,
-          error,
-          products
-      });
+    const userId = req.user ? req.user._id : null;
+    let cartItems = 0;
+    if (userId) {
+      const cart = await Cart.findOne({ userId });
+      cartItems = cart ? cart.products.length : 0;
+    }
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .limit(4);
+    const success = req.flash('success_msg')[0] || null;
+    const error = req.flash('error_msg')[0] || null;
+    res.render('index', {
+      cartItems,
+      isAuthenticated: req.isAuthenticated(),
+      success,
+      error,
+      products,
+    });
   } catch (error) {
-      console.error('Error fetching data:', error);
-      req.flash('error_msg', 'Server Error');
-      res.redirect('/'); // Status 500 is implicit in redirect
+    console.error('Error fetching data:', error);
+    req.flash('error_msg', 'Server Error');
+    res.redirect('/');
   }
 });
 
-// Get cart data
 app.get('/cart/data', isLoggedIn, async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId: req.user._id });
@@ -229,36 +233,35 @@ app.get('/cart/data', isLoggedIn, async (req, res) => {
   }
 });
 
-app.get("/cart-count", isLoggedIn, async (req, res) => {
+app.get('/cart-count', isLoggedIn, async (req, res) => {
   try {
     const cart = await Cart.findOne({ userId: req.user._id });
     const cartCount = cart ? cart.products.length : 0;
     res.json({ cartCount });
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch cart count" });
+    res.status(500).json({ error: 'Failed to fetch cart count' });
   }
 });
 
 app.get('/about', (req, res) => {
   const success = req.flash('success_msg')[0] || null;
   const error = req.flash('error_msg')[0] || null;
-  res.render('about', { 
-    title: 'About - Cloud 420', 
-    currentDate: new Date().toLocaleDateString(), 
-    cartItems: req.session.cartItems || 0, 
+  res.render('about', {
+    title: 'About - Cloud 420',
+    currentDate: new Date().toLocaleDateString(),
+    cartItems: req.session.cartItems || 0,
     isAuthenticated: req.isAuthenticated(),
     success,
-    error
+    error,
   });
 });
 
 app.get('/terms', (req, res) => {
   res.render('terms', {
-      cartItems: req.session.cart ? req.session.cart.length : 0
+    cartItems: req.session.cart ? req.session.cart.length : 0,
   });
 });
 
-// Profile Route (GET)
 app.get('/profile', isLoggedIn, async (req, res) => {
   try {
     const user = req.user;
@@ -274,13 +277,13 @@ app.get('/profile', isLoggedIn, async (req, res) => {
       title: 'Profile',
       user: {
         username: user.username,
-        email: user.email
+        email: user.email,
       },
       currentDate: new Date().toLocaleString(),
       isAuthenticated: true,
       cartItems: 0,
       error,
-      success
+      success,
     });
   } catch (err) {
     console.error(err);
@@ -289,51 +292,49 @@ app.get('/profile', isLoggedIn, async (req, res) => {
   }
 });
 
-// Nodemailer transporter with connection pooling
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-      user: EMAIL_USER,
-      pass: EMAIL_PASS,
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
   pool: true,
   maxConnections: 5,
   maxMessages: 100,
 });
 
-// Contact route
-app.post('/contact', (req, res) => {
-  console.log('Request Body:', req.body);
+transporter.verify((error, success) => {
+  if (error) {
+    console.error('Nodemailer verification failed:', error);
+  } else {
+    console.log('Nodemailer is ready to send emails');
+  }
+});
 
+app.post('/contact', (req, res) => {
   const { name, email, message } = req.body;
 
   if (!name || !email || !message) {
-      return res.redirect('/?success=false&message=All fields are required');
+    return res.redirect('/?success=false&message=All fields are required');
   }
 
   const mailOptions = {
-      from:`Cloud 420 Store <${EMAIL_USER}>`,
-      to: 'aj9589362@gmail.com',
-      subject: `New Contact Form Submission from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+    from: `Cloud 420 Store <${process.env.EMAIL_USER}>`,
+    to: 'aj9589362@gmail.com',
+    subject: `New Contact Form Submission from ${name}`,
+    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-          console.error('Error sending email:', error);
-          return res.redirect('/?success=false&message=Failed to send message');
-      }
-      console.log('Email sent:', info.response);
-      res.redirect('/?success=true&message=Message sent successfully!');
+    if (error) {
+      console.error('Error sending email:', error);
+      return res.redirect('/?success=false&message=Failed to send message');
+    }
+    console.log('Email sent:', info.response);
+    res.redirect('/?success=true&message=Message sent successfully!');
   });
 });
 
-// Serve the HTML 
-app.get('/', (req, res) => {
-  res.send(`<!DOCTYPE html>${document.documentElement.outerHTML}`);
-});
-
-// Change Password Route
 app.post('/profile/change-password', isLoggedIn, async (req, res) => {
   const { currentPassword, newPassword, confirmPassword } = req.body;
 
@@ -376,35 +377,29 @@ app.post('/profile/change-password', isLoggedIn, async (req, res) => {
   }
 });
 
-// 404 Error Handling
 app.use((req, res, next) => {
   const success = req.flash('success_msg')[0] || null;
   const error = req.flash('error_msg')[0] || null;
-  res.status(404).render('404', { 
-    title: '404 - Not Found', 
+  res.status(404).render('404', {
+    title: '404 - Not Found',
     url: req.originalUrl,
     success,
-    error
+    error,
   });
 });
 
-// Routes
-app.use('/support', supportRoutes);
-
-// 500 Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   const success = req.flash('success_msg')[0] || null;
   const error = req.flash('error_msg')[0] || 'Server Error';
-  res.status(500).render('500', { 
-    title: '500 - Server Error', 
+  res.status(500).render('500', {
+    title: '500 - Server Error',
     error: err.message,
     success,
-    error
+    error,
   });
 });
 
-// Get local IP for logging
 function getLocalIP() {
   const interfaces = os.networkInterfaces();
   for (const name in interfaces) {
@@ -416,12 +411,3 @@ function getLocalIP() {
   }
   return '127.0.0.1';
 }
-
-// Start server
-const port = process.env.PORT || 4200; // Fallback to 3000 if process.env.PORT is undefined
-app.listen(port, '0.0.0.0', () => {
-  const localIP = getLocalIP();
-  console.log(`Cloud 420 is running at:
-    - Local: http://localhost:${port}
-    - Network: http://${localIP}:${port}`);
-});
